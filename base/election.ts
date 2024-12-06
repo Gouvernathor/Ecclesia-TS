@@ -1,3 +1,4 @@
+import { Counter } from "../utils/python/collections";
 import { HasOpinions } from "./actors";
 
 /**
@@ -10,5 +11,5 @@ export interface Election<Voter extends HasOpinions, Party extends HasOpinions> 
      * and returns a multi-set of elected representatives as returned
      * by the Attribution class.
      */
-    elect(pool: Collection<Voter>): Map<Party, number>;
+    elect(pool: Collection<Voter>): Counter<Party>;
 }
