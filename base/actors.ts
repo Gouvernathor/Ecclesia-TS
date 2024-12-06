@@ -1,4 +1,4 @@
-import { erf, hypot, range, sum } from "../pythonUtils";
+import { math, range, sum } from "../utils/python";
 
 const SQ2 = Math.sqrt(2);
 
@@ -13,8 +13,8 @@ const SQ2 = Math.sqrt(2);
  * @param mu mean value of the normal distribution
  * @param sigma standard deviation of the normal distribution
  */
-function normal_to_uniform(x: number, mu: number, sigma: number): number {
-    return 0.5 * (1 + erf((x - mu) / (sigma * SQ2)));
+function normalToUniform(x: number, mu: number, sigma: number): number {
+    return 0.5 * (1 + math.erf((x - mu) / (sigma * SQ2)));
 }
 
 /**
@@ -49,7 +49,7 @@ export function get_alignment(
     // standard deviation of one opinion taken on its own
     const one_sigma = Math.sqrt(sum(rang.map(i => i**2)) / rang.length);
     // using Lyapunov's central limit theorem
-    const sigma = hypot(...factors.map(f => f * one_sigma));
+    const sigma = math.hypot(...factors.map(f => f * one_sigma));
 
-    return normal_to_uniform(scapro, 0, sigma);
+    return normalToUniform(scapro, 0, sigma);
 }

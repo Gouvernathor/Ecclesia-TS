@@ -1,6 +1,4 @@
-/**
- * This module provides equivalent functions to Python's math and builtins modules.
- */
+import { sum } from "../python";
 
 /**
  * This is the Gauss Error Function.
@@ -24,20 +22,6 @@ export function erf(x: number): number {
     // A&S formula 7.1.26
     const t = 1 / (1 + p * x);
     return sign * (1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x));
-}
-
-export function sum(array: number[]): number {
-    return array.reduce((a, b) => a + b, 0);
-}
-
-export function range(end: number): number[];
-export function range(start: number, end: number): number[];
-export function range(start: number, end?: number): number[] {
-    if (end === undefined) {
-        return [...Array(start).keys()];
-    } else {
-        return Array.from({ length: end - start }, (_, i) => i + start);
-    }
 }
 
 export function hypot(...coordinates: number[]): number {
