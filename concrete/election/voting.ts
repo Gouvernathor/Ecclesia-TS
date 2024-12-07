@@ -76,3 +76,55 @@ export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> 
         return scores;
     }
 }
+
+/**
+ * Alternative implementation of CardinalVote.
+ */
+export class BalancedCardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends CardinalVote<Voter, Party> {
+    override vote(voters: Collection<Voter>, candidates: Collection<Party>): Scores<Party> {
+        const scores = Scores.fromGrades<Party>(this.ngrades);
+        const partees = this.randomObj.shuffled(candidates);
+
+        // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
+        for (const voter of voters) {
+            const prefs = new Map<Party, number>(partees.map(party => [party, 1-voter.disagree(party)]));
+            const minpref = Math.min(...prefs.values());
+            let maxpref = Math.max(...prefs.values());
+
+            if (minpref !== maxpref) { // avoid division by zero
+                maxpref -= minpref;
+            }
+
+            for (const party of partees) {
+                let grade = Math.floor(this.ngrades * (prefs.get(party)! - minpref) / maxpref);
+                if (grade === this.ngrades) {
+                    grade--;
+                }
+                scores.get(party)![grade]++;
+            }
+        }
+
+        return scores;
+    }
+}
+
+/**
+ * Each voter approves or disapproves each of the candidates
+ *
+ * Technically a special case of grading vote where grades are 0 and 1,
+ * but it makes it open to additional attribution methods (proportional ones
+ * for example). That's why the format it returns is not the same as with CardinalVote.
+ * Of you want a scores-like attribution, use BalancedCardinalVote(2) instead.
+ */
+export class ApprovalVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Simple<Party>> {
+    private static cardinal = new BalancedCardinalVote({ngrades: 2});
+
+    override vote(voters: Collection<Voter>, candidates: Collection<Party>): Simple<Party> {
+        const scores = ApprovalVote.cardinal.vote(voters, candidates) as Scores<Party>;
+        const approvals = new Simple<Party>();
+        for (const [party, [_disapp, app]] of scores) {
+            approvals.increment(party, app);
+        }
+        return approvals;
+    }
+}
