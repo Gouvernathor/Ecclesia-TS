@@ -5,6 +5,10 @@ export function sum(array: Iterable<number>, start=0): number {
         .reduce((a, b) => a + b, start);
 }
 
+export function divmod(a: number, b: number): [number, number] {
+    return [Math.floor(a / b), a % b];
+}
+
 export function range(end: number): number[];
 export function range(start: number, end: number): number[];
 export function range(start: number, end?: number): number[] {

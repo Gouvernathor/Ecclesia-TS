@@ -1,7 +1,7 @@
 import { HasOpinions } from "../../base/actors";
-import { Attribution, AttributionFailure } from "../../base/election/attribution";
+import { Attribution, AttributionFailure, DivisorMethod, Proportional } from "../../base/election/attribution";
 import { Order, Scores, Simple } from "../../base/election/ballots";
-import { enumerate, max, min } from "../../utils/python";
+import { divmod, enumerate, max, min } from "../../utils/python";
 import { Counter, DefaultMap } from "../../utils/python/collections";
 import { fmean, median } from "../../utils/python/statistics";
 
@@ -194,3 +194,59 @@ export class MedianScore<Party extends HasOpinions> implements Attribution<Party
         return this.contingency.attrib(trimmedResults, rest);
     }
 }
+
+
+// Proportional methods
+
+export class DHondt<Party extends HasOpinions> extends DivisorMethod<Party> {
+    nseats: number;
+    constructor({ nseats, ...rest }: { nseats: number }) {
+        super(rest);
+        this.nseats = nseats;
+    }
+
+    divisor(k: number): number {
+        return k + 1;
+    }
+}
+
+export const HighestAverages = DHondt;
+
+export class Webster<Party extends HasOpinions> extends DivisorMethod<Party> {
+    nseats: number;
+    constructor({ nseats, ...rest }: { nseats: number }) {
+        super(rest);
+        this.nseats = nseats;
+    }
+
+    divisor(k: number): number {
+        // return k + .5
+        return 2 * k + 1; // int math is more accurate
+    }
+}
+
+export class Hare<Party extends HasOpinions> extends Proportional<Party> {
+    nseats: number;
+    constructor({ nseats, ...rest }: { nseats: number }) {
+        super(rest);
+        this.nseats = nseats;
+    }
+
+    proportionalAttrib(votes: Simple<Party>, rest: { [s: string]: any; }): Counter<Party> {
+        const seats = new Counter<Party>();
+        const remainders = new Map<Party, number>();
+        const nseats = this.nseats;
+        const sumvotes = votes.total;
+
+        for (const [parti, scores] of votes) {
+            const [i, r] = divmod(scores * nseats, sumvotes);
+            seats.set(parti, i);
+            remainders.set(parti, r);
+        }
+
+        seats.update([...remainders.keys()].sort((a, b) => remainders.get(b)! - remainders.get(a)!).slice(0, nseats - seats.total));
+        return seats;
+    }
+}
+
+export const LargestRemainders = Hare;
