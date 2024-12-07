@@ -1,10 +1,24 @@
+import RNG from "../../utils/RNG";
 import { HasOpinions } from "../actors";
 import { Ballots } from "./ballots";
 
 /**
  * This represents the rules for citizens to cast ballots.
  */
-export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
+export abstract class Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
+    protected randomObj;
+    constructor();
+    constructor({ randomObj }: { randomObj: RNG });
+    constructor({ randomSeed }: { randomSeed: number | string });
+    constructor({ randomObj, randomSeed }:
+        { randomObj?: RNG, randomSeed?: number | string } = {},
+    ) {
+        if (randomObj === undefined) {
+            randomObj = new RNG(randomSeed);
+        }
+        this.randomObj = randomObj;
+    }
+
     /**
      * @returns the ballots cast by the voters
      * @param pool the opinionated voters. They are generally citizens, but it
@@ -12,5 +26,5 @@ export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B 
      * Their disagreement with the candidate parties are quantified by the .disagree
      * method, supported by the HasOpinions class.
      */
-    vote(pool: Collection<Voter>): B;
+    abstract vote(pool: Collection<Voter>, candidates: Collection<Party>): B;
 }
