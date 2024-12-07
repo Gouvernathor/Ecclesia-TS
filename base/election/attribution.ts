@@ -15,11 +15,14 @@ export class AttributionFailure extends Error { }
 
 /**
  * Manages how the results from the ballots determine the allocation of seats.
- *
- * The nseats attribute should generally be set in the constructor and be fixed.
  */
 export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>> {
-    get nseats(): number;
+    /**
+     * The nseats attribute should generally be set in the constructor and be fixed.
+     * However, some attributions may yield variable numbers of seats, for instance
+     * the federal German system.
+     */
+    nseats?: number;
 
     /**
      * Returns the attribution of seats to the parties based upon the votes.
