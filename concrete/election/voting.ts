@@ -3,6 +3,10 @@ import { Simple } from "../../base/election/ballots";
 import { Voting } from "../../base/election/voting";
 import { min } from "../../utils/python";
 
+/**
+ * The most basic and widespread voting system : each voter casts one ballot for
+ * one of the available candidates, or (not implemented here) for none of them.
+ */
 export class SingleVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Simple<Party>> {
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Simple<Party> {
         const scores = Simple.fromkeys(candidates, 0);

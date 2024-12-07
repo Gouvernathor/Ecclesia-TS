@@ -352,6 +352,12 @@ export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Par
 
 // Random-based attribution method
 
+/**
+ * Randomized attribution.
+ * Everyone votes, then one ballot is selected at random.
+ * (One ballot per seat to fill, and assuming there's
+ * enough ballots that the picking is with replacement.)
+ */
 export class Randomize<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
     nseats: number;
     randomObj: RNG;
