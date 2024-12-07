@@ -1,10 +1,10 @@
 import { HasOpinions } from "../actors";
-import { Ballot } from "./ballots";
+import { Ballots } from "./ballots";
 
 /**
  * This represents the rules for citizens to cast ballots.
  */
-export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballot<Party>> {
+export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
     /**
      * @returns the ballots cast by the voters
      * @param pool the opinionated voters. They are generally citizens, but it

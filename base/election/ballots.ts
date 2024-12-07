@@ -66,4 +66,4 @@ export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
     }
 }
 
-export type Ballot<Party extends HasOpinions> = Simple<Party> | Order<Party> | Scores<Party>;
+export type Ballots<Party extends HasOpinions> = Simple<Party> | Order<Party> | Scores<Party>;
