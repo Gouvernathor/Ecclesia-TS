@@ -3,7 +3,7 @@ import { Attribution, AttributionFailure } from "../../base/election/attribution
 import { Order, Scores, Simple } from "../../base/election/ballots";
 import { enumerate, max, min } from "../../utils/python";
 import { Counter, DefaultMap } from "../../utils/python/collections";
-import { fmean } from "../../utils/python/statistics";
+import { fmean, median } from "../../utils/python/statistics";
 
 // Majority methods
 
@@ -158,5 +158,39 @@ export class AverageScore<Party extends HasOpinions> implements Attribution<Part
         }
 
         return new Counter([[max(counts.keys(), party => fmean(counts.get(party)!)), this.nseats]]);
+    }
+}
+
+export class MedianScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
+    nseats: number;
+    contingency: Attribution<Party, Scores<Party>>;
+    constructor({nseats, contingency}: {nseats: number, contingency?: Attribution<Party, Scores<Party>>}) {
+        this.nseats = nseats;
+        if (contingency === undefined) {
+            contingency = new AverageScore({nseats});
+        }
+        this.contingency = contingency;
+    }
+
+    attrib(votes: Scores<Party>, rest = {}): Counter<Party> {
+        const counts = new DefaultMap<Party, number[]>(() => []);
+        for (const [party, grades] of votes) {
+            for (const [grade, qty] of enumerate(grades)) {
+                counts.get(party).push(...Array(qty).fill(grade));
+            }
+        }
+
+        const medians = new Map<Party, number>([...counts.entries()].map(([parti, partigrades]) => [parti, median(partigrades)]));
+
+        const winscore = Math.max(...medians.values());
+        const [winner, ...winners] = [...medians.keys()].filter(party => medians.get(party) === winscore);
+
+        if (winners.length === 0) { // no tie
+            return new Counter([[winner, this.nseats]]);
+        }
+
+        winners.unshift(winner);
+        const trimmedResults = new Scores<Party>(winners.map(party => [party, votes.get(party)!]));
+        return this.contingency.attrib(trimmedResults, rest);
     }
 }
