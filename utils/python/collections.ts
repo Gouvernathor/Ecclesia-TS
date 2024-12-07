@@ -69,7 +69,7 @@ export class Counter<T> extends Map<T, number> {
      * Mimics the unary + operator.
      * Returns a new Counter with only the positive counts.
      */
-    pos() {
+    get pos() {
         const copy = new Counter<T>();
         for (const [key, value] of this) {
             if (value > 0) {
@@ -84,7 +84,7 @@ export class Counter<T> extends Map<T, number> {
      * Returns a new Counter with inverted counts,
      * filtered to only the now-positive counts.
      */
-    neg() {
+    get neg() {
         const copy = new Counter<T>();
         for (const [key, value] of this) {
             if (value < 0) {

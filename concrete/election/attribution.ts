@@ -162,7 +162,7 @@ export class Condorcet<Party extends HasOpinions> implements Attribution<Party, 
 
         const win = new Set<Party>(counts.keys());
         for (const [party, partycounter] of counts) {
-            for (const value of partycounter.pos().values()) {
+            for (const value of partycounter.pos.values()) {
                 if (value < majority) {
                     win.delete(party);
                     break;
