@@ -25,11 +25,22 @@ abstract class Majority<Party extends HasOpinions> implements Attribution<Party,
     }
 }
 
+/**
+ * Attribution method where the party with the most votes wins all the seats.
+ * No threshold.
+ */
 export class Plurality<Party extends HasOpinions> extends Majority<Party> {
     threshold = 0;
     contingency = null;
 }
 
+/**
+ * Attribution method where you need to reach a certain percentage of the votes
+ * to win all the seats.
+ *
+ * If no party reaches the threshold and no contingency is provided,
+ * an AttributionFailure is thrown.
+ */
 export class SuperMajority<Party extends HasOpinions> extends Majority<Party> {
     threshold: number;
     contingency: Attribution<Party, Simple<Party>>|null;
@@ -45,6 +56,14 @@ export class SuperMajority<Party extends HasOpinions> extends Majority<Party> {
 
 // Ordering-based methods
 
+/**
+ * Attribution method where the party with the least votes is eliminated,
+ * and its votes are redistributed to the other parties according to the voters'
+ * preferences. Repeats until a party reaches a majority of the remaining votes,
+ * winning all the seats.
+ *
+ * Ballots not ranking all candidates are supported.
+ */
 export class InstantRunoff<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
     nseats: number;
     constructor({ nseats }: { nseats: number }) {
@@ -78,6 +97,14 @@ export class InstantRunoff<Party extends HasOpinions> implements Attribution<Par
     }
 }
 
+/**
+ * Attribution method where each party receives points according to the position
+ * it occupies on each ballot, and the party with the most points wins all the seats.
+ *
+ * Uses the Modified Borda Count, where the least-ranked candidate gets 1 point,
+ * and unranked candidates get 0 points.
+ * So, ballots not ranking all candidates are supported.
+ */
 export class Borda<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
     nseats: number;
     constructor({ nseats }: { nseats: number }) {
@@ -95,6 +122,18 @@ export class Borda<Party extends HasOpinions> implements Attribution<Party, Orde
     }
 }
 
+/**
+ * Attribution method where each party is matched against each other party,
+ * and the party winning each of its matches wins all the seats.
+ * If no party wins against all others, the attribution fails.
+ *
+ * Doesn't support candidates with equal ranks, because the Order format doesn't allow it.
+ * This implementation also doesn't support incomplete ballots.
+ *
+ * The constructor takes an optional contingency method to use in case of a tie.
+ * If none is provided, a Condorcet.Standoff exception is raised
+ * (itself a subclass of AttributionFailure).
+ */
 export class Condorcet<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
     nseats: number;
     contingency: Attribution<Party, Order<Party>>|null;
@@ -141,6 +180,11 @@ export class Condorcet<Party extends HasOpinions> implements Attribution<Party, 
 
 // Score-based methods
 
+/**
+ * Gives the seat(s) to the party with the highest average score.
+ *
+ * Supports tallies where some parties were not graded by everyone.
+ */
 export class AverageScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
     nseats: number;
     constructor({ nseats }: { nseats: number }) {
@@ -148,7 +192,7 @@ export class AverageScore<Party extends HasOpinions> implements Attribution<Part
     }
 
     attrib(votes: Scores<Party>, rest = {}): Counter<Party> {
-        const ngrades = votes.ngrades ?? votes.values().next().value.length;
+        // const ngrades = votes.ngrades ?? votes.values().next().value.length;
 
         const counts = new DefaultMap<Party, number[]>(() => []);
         for (const [party, grades] of votes) {
@@ -161,6 +205,14 @@ export class AverageScore<Party extends HasOpinions> implements Attribution<Part
     }
 }
 
+/**
+ * Gives the seat(s) to the party with the highest median score.
+ *
+ * If there is a tie, the contingency method is called on the tied parties.
+ * The default contingency is to take the maximum average score.
+ *
+ * Supports tallies where some parties were not graded by everyone.
+ */
 export class MedianScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
     nseats: number;
     contingency: Attribution<Party, Scores<Party>>;
