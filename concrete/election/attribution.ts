@@ -1,8 +1,8 @@
 import { HasOpinions } from "../../base/actors";
-import { Attribution } from "../../base/election/attribution";
+import { Attribution, AttributionFailure } from "../../base/election/attribution";
 import { Order, Simple } from "../../base/election/ballots";
 import { enumerate, max, min } from "../../utils/python";
-import { Counter } from "../../utils/python/collections";
+import { Counter, DefaultMap } from "../../utils/python/collections";
 
 // Majority methods
 
@@ -91,5 +91,48 @@ export class Borda<Party extends HasOpinions> implements Attribution<Party, Orde
             }
         }
         return new Counter([[max(scores.keys(), p => scores.get(p)!), this.nseats]]);
+    }
+}
+
+export class Condorcet<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
+    nseats: number;
+    contingency: Attribution<Party, Order<Party>>|null;
+    constructor({ nseats, contingency = null }: { nseats: number, contingency: Attribution<Party, Order<Party>>|null }) {
+        this.nseats = nseats;
+        this.contingency = contingency;
+    }
+
+    static Standoff = class Standoff extends AttributionFailure {}
+
+    attrib(votes: Order<Party>, rest = {}): Counter<Party> {
+        const counts = new DefaultMap<Party, Counter<Party>>(() => new Counter());
+        const majority = votes.length / 2;
+
+        for (const ballot of votes) {
+            for (const [i, party1] of enumerate(ballot)) {
+                for (const party2 of ballot.slice(i+1)) {
+                    counts.get(party1).increment(party2);
+                }
+            }
+        }
+
+        const win = new Set<Party>(counts.keys());
+        for (const [party, partycounter] of counts) {
+            for (const value of partycounter.pos().values()) {
+                if (value < majority) {
+                    win.delete(party);
+                    break;
+                }
+            }
+        }
+
+        if (win.size === 0) {
+            if (this.contingency === null) {
+                throw new Condorcet.Standoff("No Condorcet winner");
+            }
+            return this.contingency.attrib(votes, rest);
+        }
+        const [winner, ] = win;
+        return new Counter([[winner, this.nseats]]);
     }
 }

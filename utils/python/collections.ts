@@ -91,3 +91,19 @@ export class Counter<T> extends Map<T, number> {
         return copy;
     }
 }
+
+export class DefaultMap<K, V> extends Map<K, V> {
+    private factory: (key: K) => V;
+
+    constructor(factory: (key: K) => V, iterable?: Iterable<[K, V]>) {
+        super(iterable);
+        this.factory = factory;
+    }
+
+    override get(key: K): V {
+        if (!this.has(key)) {
+            this.set(key, this.factory(key));
+        }
+        return super.get(key)!;
+    }
+}
