@@ -1,13 +1,29 @@
 import { sum } from "../python";
 
+/**
+ * T must not be a 2-tuple.
+ */
 export class Counter<T> extends Map<T, number> {
-    constructor(iterable?: Iterable<T>) {
+    private static getMapEntriesFromIterable<T>(
+        iterable: Iterable<T>|Iterable<[T, number]>,
+    ): Iterable<[T, number]> {
         if (iterable instanceof Map) {
-            super(iterable);
+            return iterable.entries();
         } else {
-            super();
-            this.update(iterable);
+            let array = ((iterable instanceof Array) ? iterable : [...iterable]) as T[]|[T, number][];
+            if (array.length && !(array[0] instanceof Array && array[0].length === 2)) {
+                array = (array as T[]).map(item => [item, 1] as [T, number]);
+            }
+            return array as [T, number][];
         }
+    }
+
+    constructor(iterable?: Iterable<T>|Iterable<[T, number]>) {
+        super(Counter.getMapEntriesFromIterable(iterable));
+    }
+
+    static fromkeys<T>(keys: Iterable<T>, value: number) {
+        return new Counter<T>([...keys].map(key => [key, value] as [T, number]));
     }
 
     override get(key: T): number {
@@ -26,30 +42,18 @@ export class Counter<T> extends Map<T, number> {
         return sum(this.values());
     }
 
-    update(iterable?: Iterable<T>) {
+    update(iterable?: Iterable<T>|Iterable<[T, number]>) {
         if (iterable) {
-            if (iterable instanceof Map) {
-                for (const [item, count] of iterable) {
-                    this.set(item, (this.get(item)||0) + count);
-                }
-            } else {
-                for (const item of iterable) {
-                    this.set(item, (this.get(item)||0) + 1);
-                }
+            for (const [item, count] of Counter.getMapEntriesFromIterable(iterable)) {
+                this.set(item, (this.get(item)||0) + count);
             }
         }
     }
 
     subtract(iterable: Iterable<T>) {
         if (iterable) {
-            if (iterable instanceof Map) {
-                for (const [item, count] of iterable) {
-                    this.set(item, (this.get(item)||0) - count);
-                }
-            } else {
-                for (const item of iterable) {
-                    this.set(item, (this.get(item)||0) - 1);
-                }
+            for (const [item, count] of Counter.getMapEntriesFromIterable(iterable)) {
+                this.set(item, (this.get(item)||0) - count);
             }
         }
     }
