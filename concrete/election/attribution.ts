@@ -1,8 +1,9 @@
 import { HasOpinions } from "../../base/actors";
 import { Attribution, AttributionFailure } from "../../base/election/attribution";
-import { Order, Simple } from "../../base/election/ballots";
+import { Order, Scores, Simple } from "../../base/election/ballots";
 import { enumerate, max, min } from "../../utils/python";
 import { Counter, DefaultMap } from "../../utils/python/collections";
+import { fmean } from "../../utils/python/statistics";
 
 // Majority methods
 
@@ -134,5 +135,28 @@ export class Condorcet<Party extends HasOpinions> implements Attribution<Party, 
         }
         const [winner, ] = win;
         return new Counter([[winner, this.nseats]]);
+    }
+}
+
+
+// Score-based methods
+
+export class AverageScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
+    nseats: number;
+    constructor({ nseats }: { nseats: number }) {
+        this.nseats = nseats;
+    }
+
+    attrib(votes: Scores<Party>, rest = {}): Counter<Party> {
+        const ngrades = votes.ngrades ?? votes.values().next().value.length;
+
+        const counts = new DefaultMap<Party, number[]>(() => []);
+        for (const [party, grades] of votes) {
+            for (const [grade, qty] of enumerate(grades)) {
+                counts.get(party).push(...Array(qty).fill(grade));
+            }
+        }
+
+        return new Counter([[max(counts.keys(), party => fmean(counts.get(party)!)), this.nseats]]);
     }
 }
