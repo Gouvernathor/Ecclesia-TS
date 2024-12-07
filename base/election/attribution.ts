@@ -33,6 +33,8 @@ export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>
      * If the attribution method is expected, by design, to fail under expected
      * conditions, such as a majority threshold not being reached, this method
      * should raise an AttributionFailure error.
+     *
+     * The second parameter may be used to pass additional data to specific subclasses.
      */
-    attrib(votes: B): Counter<Party>;
+    attrib(votes: B, rest?: {[s: string]: any}): Counter<Party>;
 }
