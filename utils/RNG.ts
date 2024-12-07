@@ -60,9 +60,26 @@ export default class RNG {
      * This reseeds k times, not 1 time.
      * @param k number of elements to choose
      */
-    choices<T>(array: T[], {k}: {k: number}): T[] {
-        const copy = array.slice();
-        return Array(k).map(() => copy.splice(this.randRange(0, copy.length), 1)[0]);
+    choices<T>(array: T[], {k, weights}: {k: number, weights?: number[]}): T[] {
+        if (weights === undefined) {
+            return Array(k).map(() => this.choice(array));
+        } else {
+            const gen = this.weightedChoicesGenerator(array, weights);
+            return Array(k).map(() => gen.next().value!);
+        }
+    }
+    /**
+     * Warning: this generator is infinite.
+     * It reseeds at every generation.
+     */
+    *weightedChoicesGenerator<T>(array: T[], weights: number[]) {
+        const cumWeights = weights.map((w, i) => weights.slice(0, i + 1).reduce((a, b) => a + b, 0));
+        const maxCumWeight = cumWeights[cumWeights.length - 1];
+        while (true) {
+            const rand = this.random() * maxCumWeight;
+            const idx = cumWeights.findIndex(w => w > rand);
+            yield array[idx];
+        }
     }
 }
 
