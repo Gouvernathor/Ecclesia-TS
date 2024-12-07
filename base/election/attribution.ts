@@ -101,7 +101,7 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
      * The votes are guaranteed to be above the threshold, if any.
      * The method will not be called at all if no party reached the threshold.
      */
-    abstract proportionalAttrib: typeof Proportional.prototype.attrib;
+    abstract proportionalAttrib(votes: Simple<Party>, rest: {[s: string]: any}): Counter<Party>;
 }
 
 /**
@@ -126,7 +126,7 @@ export abstract class RankIndexMethod<Party extends HasOpinions> extends Proport
      * This implementation is optimized so as to call rankIndexFunction as
      * few times as possible.
      */
-    attrib(votes: Simple<Party>, rest={}): Counter<Party> {
+    proportionalAttrib(votes: Simple<Party>, rest={}): Counter<Party> {
         const allvotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([p, v]) => [p, v / allvotes]));
 
