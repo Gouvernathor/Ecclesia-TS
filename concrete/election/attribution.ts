@@ -250,3 +250,45 @@ export class Hare<Party extends HasOpinions> extends Proportional<Party> {
 }
 
 export const LargestRemainders = Hare;
+
+/**
+ * This method requires some creativity and tweaks, since the divisor won't work
+ * without an initial seats value, causing a division by 0.
+ * As a result, the threshold is required in this case.
+ * In a situation where the parties are already limited by other means
+ * (for example when sharing representatives between US states) to be less or
+ * equal to the number of states, a threshold of 0 can be passed.
+ */
+export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Party> {
+    nseats: number;
+    constructor({nseats, threshold, contingency = null}:
+        {nseats: number, threshold: number, contingency?: Attribution<Party, Simple<Party>>|null},
+    ) {
+        super({threshold, contingency});
+        this.nseats = nseats;
+    }
+
+    divisor(k: number): number {
+        return Math.sqrt(k * (k + 1));
+    }
+
+    override rankIndexFunction(t: number, a: number): number {
+        if (a <= 0) {
+            return Infinity;
+        }
+        return super.rankIndexFunction(t, a);
+    }
+
+    // override attrib(votes: Simple<Party>, rest = {}): Counter<Party> {
+    //     const original_votes = votes;
+    //     const threshold = this.threshold*votes.total;
+    //     votes = new Simple<Party>([...votes.entries()].filter(([party, score]) => score >= threshold));
+    //     if (votes.size === 0) {
+    //         if (this.contingency === null) {
+    //             throw new AttributionFailure("No party over threshold");
+    //         }
+    //         return this.contingency.attrib(original_votes, rest);
+    //     }
+    //     return super.proportionalAttrib(votes, rest);
+    // }
+}
