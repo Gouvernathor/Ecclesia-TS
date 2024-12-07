@@ -1,8 +1,8 @@
 export * as math from "./python/math";
 
-export function sum(array: Iterable<number>): number {
+export function sum(array: Iterable<number>, start=0): number {
     return (array instanceof Array ? array : [...array])
-        .reduce((a, b) => a + b, 0);
+        .reduce((a, b) => a + b, start);
 }
 
 export function range(end: number): number[];
