@@ -30,6 +30,10 @@ export class Counter<T> extends Map<T, number> {
         return super.get(key) || 0;
     }
 
+    increment(key: T, value = 1) {
+        this.set(key, this.get(key) + value);
+    }
+
     *elements() {
         for (const [key, count] of this) {
             for (let i = 0; i < count; i++) {

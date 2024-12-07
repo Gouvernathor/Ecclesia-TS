@@ -59,7 +59,7 @@ export class InstantRunoff<Party extends HasOpinions> implements Attribution<Par
             for (const ballot of votes) {
                 for (const party of ballot) {
                     if (!blacklisted.has(party)) {
-                        first_places.set(party, first_places.get(party) + 1);
+                        first_places.increment(party);
                         break;
                     }
                 }
@@ -87,7 +87,7 @@ export class Borda<Party extends HasOpinions> implements Attribution<Party, Orde
         const scores = new Counter<Party>();
         for (const ballot of votes) {
             for (const [i, party] of enumerate(ballot.slice().reverse(), 1)) {
-                scores.set(party, scores.get(party) + i);
+                scores.increment(party, i);
             }
         }
         return new Counter([[max(scores.keys(), p => scores.get(p)!), this.nseats]]);

@@ -138,7 +138,7 @@ export abstract class RankIndexMethod<Party extends HasOpinions> extends Proport
 
         s: for (let _s = 0; _s < this.nseats; _s++) {
             const winner = parties.pop()!;
-            seats.set(winner, seats.get(winner) + 1);
+            seats.increment(winner);
             rankIndexValues.set(winner, this.rankIndexFunction(fractions.get(winner)!, seats.get(winner)!));
             for (let i = 0; i < parties.length; i++) {
                 if (rankIndexValues.get(parties[i])! >= rankIndexValues.get(winner)!) {
