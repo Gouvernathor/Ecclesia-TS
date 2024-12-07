@@ -21,10 +21,10 @@ export abstract class Voting<Voter extends HasOpinions, Party extends HasOpinion
 
     /**
      * @returns the ballots cast by the voters
-     * @param pool the opinionated voters. They are generally citizens, but it
+     * @param voters the opinionated voters. They are generally citizens, but it
      * could also be parties in some situations (indirect elections for instance).
      * Their disagreement with the candidate parties are quantified by the .disagree
      * method, supported by the HasOpinions class.
      */
-    abstract vote(pool: Collection<Voter>, candidates: Collection<Party>): B;
+    abstract vote(voters: Collection<Voter>, candidates: Collection<Party>): B;
 }

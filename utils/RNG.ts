@@ -56,9 +56,10 @@ export default class RNG {
         return array[this.randRange(0, array.length)];
     }
     /**
-     * Picks k elements from the array without replacement.
+     * Picks k elements from the array with replacement.
      * This reseeds k times, not 1 time.
      * @param k number of elements to choose
+     * @param weights if provided, the probability of each element to be chosen
      */
     choices<T>(array: T[], {k, weights}: {k: number, weights?: number[]}): T[] {
         if (weights === undefined) {
@@ -80,6 +81,13 @@ export default class RNG {
             const idx = cumWeights.findIndex(w => w > rand);
             yield array[idx];
         }
+    }
+    /**
+     * @returns an array with the same elements in random order (without replacement)
+     */
+    shuffled<T>(input: Iterable<T>): T[] {
+        const copy = [...input];
+        return Array(copy.length).map(() => copy.splice(this.randRange(0, copy.length), 1)[0]);
     }
 }
 
