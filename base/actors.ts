@@ -93,7 +93,7 @@ export abstract class HasOpinions {
             if (randomObj === undefined) {
                 randomObj = new RNG(randomSeed);
             }
-            opinions = randomObj.choices(range(-cls.opinmax, cls.opinmax + 1), cls.nopinions);
+            opinions = randomObj.choices(range(-cls.opinmax, cls.opinmax + 1), {k: cls.nopinions});
         }
         this.opinions = opinions;
     }

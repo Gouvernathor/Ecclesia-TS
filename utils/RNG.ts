@@ -60,7 +60,7 @@ export default class RNG {
      * This reseeds k times, not 1 time.
      * @param k number of elements to choose
      */
-    choices<T>(array: T[], k: number): T[] {
+    choices<T>(array: T[], {k}: {k: number}): T[] {
         const copy = array.slice();
         return Array(k).map(() => copy.splice(this.randRange(0, copy.length), 1)[0]);
     }
