@@ -42,7 +42,7 @@ export class Order<Party extends HasOpinions> extends Array<Party[]> {}
  * undefined for unlisted parties.
  */
 export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
-    ngrades: number;
+    ngrades?: number;
 
     constructor(...parameters) {
         super(...parameters);
