@@ -4,6 +4,7 @@ import { Order, Scores, Simple } from "../../base/election/ballots";
 import { divmod, enumerate, max, min } from "../../utils/python";
 import { Counter, DefaultMap } from "../../utils/python/collections";
 import { fmean, median } from "../../utils/python/statistics";
+import RNG from "../../utils/RNG";
 
 // Majority methods
 
@@ -346,4 +347,28 @@ export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Par
     //     }
     //     return super.proportionalAttrib(votes, rest);
     // }
+}
+
+
+// Random-based attribution method
+
+export class Randomize<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
+    nseats: number;
+    randomObj: RNG;
+    constructor({nseats}: {nseats: number});
+    constructor({nseats, randomObj}: {nseats: number, randomObj: RNG});
+    constructor({nseats, randomSeed}: {nseats: number, randomSeed: number | string});
+    constructor({nseats, randomObj, randomSeed}:
+        {nseats: number, randomObj?: RNG, randomSeed?: number | string},
+    ) {
+        this.nseats = nseats;
+        if (randomObj === undefined) {
+            randomObj = new RNG(randomSeed);
+        }
+        this.randomObj = randomObj;
+    }
+
+    attrib(votes: Simple<Party>, rest = {}): Counter<Party> {
+        return new Counter<Party>(this.randomObj.choices([...votes.keys()], {weights: [...votes.values()], k: this.nseats}));
+    }
 }
