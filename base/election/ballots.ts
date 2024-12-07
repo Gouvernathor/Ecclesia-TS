@@ -44,10 +44,10 @@ export class Order<Party extends HasOpinions> extends Array<Party[]> {}
 export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
     ngrades?: number;
 
-    constructor(...parameters) {
+    constructor(...parameters: any[]) {
         super(...parameters);
         if (this.size > 0) {
-            this.ngrades = this.values().next().value.length;
+            this.ngrades = this.values().next().value!.length;
         }
     }
 
@@ -57,7 +57,7 @@ export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
         return ths;
     }
 
-    override get(key: Party): number[] {
+    override get(key: Party): number[]|undefined {
         const value = super.get(key);
         if (value === undefined && this.ngrades !== undefined) {
             return Array(this.ngrades).fill(0);

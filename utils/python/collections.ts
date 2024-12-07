@@ -5,8 +5,11 @@ import { sum } from "../python";
  */
 export class Counter<T> extends Map<T, number> {
     private static getMapEntriesFromIterable<T>(
-        iterable: Iterable<T>|Iterable<[T, number]>,
+        iterable?: Iterable<T>|Iterable<[T, number]>,
     ): Iterable<[T, number]> {
+        if (iterable === undefined) {
+            return [];
+        }
         if (iterable instanceof Map) {
             return iterable.entries();
         } else {

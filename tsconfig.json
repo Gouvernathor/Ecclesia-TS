@@ -4,5 +4,6 @@
         "module": "Preserve",
         "sourceMap": true,
         "outDir": "out",
+        "strict": true,
     }
 }

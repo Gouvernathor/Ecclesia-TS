@@ -10,7 +10,7 @@ import { fmean, median } from "../../utils/python/statistics";
 abstract class Majority<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
     nseats: number;
     abstract threshold: number;
-    abstract contingency: Attribution<Party, Simple<Party>>;
+    abstract contingency: Attribution<Party, Simple<Party>>|null;
 
     constructor({nseats}: {nseats: number}) {
         this.nseats = nseats;
@@ -20,6 +20,9 @@ abstract class Majority<Party extends HasOpinions> implements Attribution<Party,
         const win = max(votes.keys(), p => votes.get(p)!);
         if ((votes.get(win)! / votes.total) > this.threshold) {
             return new Counter([[win, this.nseats]]);
+        }
+        if (this.contingency === null) {
+            throw new AttributionFailure("No majority winner");
         }
         return this.contingency.attrib(votes, rest);
     }
