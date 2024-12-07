@@ -7,7 +7,7 @@ import { Ballots } from "./ballots";
  */
 export abstract class Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
     protected randomObj;
-    constructor();
+    constructor({}?);
     constructor({ randomObj }: { randomObj: RNG });
     constructor({ randomSeed }: { randomSeed: number | string });
     constructor({ randomObj, randomSeed }:
