@@ -83,11 +83,15 @@ export default class RNG {
         }
     }
     /**
+     * @param maxLen the number of elements to return, defaults to the length of the input
      * @returns an array with the same elements in random order (without replacement)
      */
-    shuffled<T>(input: Iterable<T>): T[] {
+    shuffled<T>(input: Iterable<T>, maxLen?: number): T[] {
         const copy = [...input];
-        return Array(copy.length).map(() => copy.splice(this.randRange(0, copy.length), 1)[0]);
+        if (maxLen === undefined) {
+            maxLen = copy.length;
+        }
+        return Array(maxLen).map(() => copy.splice(this.randRange(0, copy.length), 1)[0]);
     }
 }
 
