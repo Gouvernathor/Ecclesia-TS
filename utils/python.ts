@@ -13,10 +13,10 @@ export function range(end: number): number[];
 export function range(start: number, end: number): number[];
 export function range(start: number, end?: number): number[] {
     if (end === undefined) {
-        return [...Array(start).keys()];
-    } else {
-        return Array.from({ length: end - start }, (_, i) => i + start);
+        end = start;
+        start = 0;
     }
+    return Array(end - start).map((_, i) => i + start);
 }
 
 export function* enumerate<T>(array: Iterable<T>, start=0) {

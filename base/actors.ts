@@ -19,7 +19,7 @@ function normalToUniform(x: number, mu: number, sigma: number): number {
 }
 
 export function getDefaultAlignmentFactors(nopinions: number) {
-    return range(nopinions).map(i => 1 - i / nopinions);
+    return Array(nopinions).map((_, i) => 1 - i / nopinions);
 }
 
 /**
