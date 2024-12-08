@@ -70,13 +70,7 @@ export class Counter<T> extends Map<T, number> {
      * Returns a new Counter with only the positive counts.
      */
     get pos() {
-        const copy = new Counter<T>();
-        for (const [key, value] of this) {
-            if (value > 0) {
-                copy.set(key, value);
-            }
-        }
-        return copy;
+        return this.posneg(1);
     }
 
     /**
@@ -85,10 +79,14 @@ export class Counter<T> extends Map<T, number> {
      * filtered to only the now-positive counts.
      */
     get neg() {
+        return this.posneg(-1);
+    }
+
+    private posneg(mul: 1|-1): Counter<T> {
         const copy = new Counter<T>();
         for (const [key, value] of this) {
-            if (value < 0) {
-                copy.set(key, -value);
+            if (value * mul > 0) {
+                copy.set(key, value * mul);
             }
         }
         return copy;
