@@ -1,7 +1,74 @@
 import { HasOpinions } from "../base/actors";
 import { Election } from "../base/election";
+import { sum } from "../utils/python";
 import { Counter } from "../utils/python/collections";
 import { BaseElection } from "./election";
+
+// Disagreement functions
+// These may be used to implement HasOpinions.disagree
+
+export type diffFunction = (opinionsA: number[], opinionsB: number[], nopinions: number, opinmax: number) => number;
+
+/**
+ * Typically for comparing instance of the same HasOpinions subclass.
+ */
+export function symmetricDiff(
+    opinionsA: number[],
+    opinionsB: number[],
+    nopinions: number,
+    opinmax: number,
+): number {
+    return sum(opinionsA.map((opinionA, i) => Math.abs(opinionA - opinionsB[i]))) / (nopinions*2*opinmax);
+}
+
+/**
+ * The second operand is the one ponderating the difference.
+ * It's the one whose point of view is taken, the "most human" of the two.
+ */
+export function ponderedDiff(
+    opinionsA: number[],
+    opinionsB: number[],
+    nopinions: number,
+    opinmax: number,
+): number {
+    return sum(opinionsA.map((opinionA, i) => Math.abs(opinionA - opinionsB[i]) * opinionsB[i])) / (nopinions*2*(opinmax**2));
+}
+
+/**
+ * The second operand is again the "most human", the one whose point of view is taken.
+ * This simulates agreeing plainly with laws that aren't going far enough,
+ * but disagreeing with laws that go too far or that go the wrong way.
+ * For each opinion:
+ * - if A's opinion a is of the opposite sign of B's opinion b, it "goes the wrong way".
+ *   - the difference is Math.abs(a * b)
+ * - if A's opinion a is of the same sign as B's opinion b but closer to 0, it "doesn't go far enough".
+ *   - the difference is 0
+ * - otherwise, it "goes too far".
+ *   - the difference is Math.abs(a - b)
+ */
+export function fromMaxDiff(
+    opinionsA: number[],
+    opinionsB: number[],
+    nopinions: number,
+    opinmax: number,
+): number {
+    const diffs = [];
+    for (let i = 0; i < nopinions; i++) {
+        const a = opinionsA[i];
+        const b = opinionsB[i];
+        if (a * b < 0) {
+            diffs.push(Math.abs(a * b));
+        } else if (Math.abs(a) < Math.abs(b)) {
+            diffs.push(0);
+        } else {
+            diffs.push(Math.abs(a - b));
+        }
+    }
+    return sum(diffs) / (nopinions*(opinmax**2));
+}
+
+
+// Other classes
 
 /**
  * The results of a binary vote.
