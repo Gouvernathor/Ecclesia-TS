@@ -52,7 +52,7 @@ export class Counter<T> extends Map<T, number> {
     update(iterable?: Iterable<T>|Iterable<[T, number]>) {
         if (iterable) {
             for (const [item, count] of Counter.getMapEntriesFromIterable(iterable)) {
-                this.set(item, (this.get(item)||0) + count);
+                this.increment(item, count);
             }
         }
     }
@@ -60,7 +60,7 @@ export class Counter<T> extends Map<T, number> {
     subtract(iterable: Iterable<T>) {
         if (iterable) {
             for (const [item, count] of Counter.getMapEntriesFromIterable(iterable)) {
-                this.set(item, (this.get(item)||0) - count);
+                this.increment(item, -count);
             }
         }
     }
