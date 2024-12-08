@@ -25,16 +25,14 @@ export function getDefaultAlignmentFactors(nopinions: number) {
 /**
  * Returns the one-dimensional alignment of the opinions.
  *
- * Assuming the opinions parameter follows the nominal constraints with respect opinmax,
- * the return value is between 0 and 1.
- * The return value is such that if each opinion, in each member of a pool of
- * HasOpinion instances, is generated randomly following an integer uniform distribution,
- * the return value follows a uniform distribution.
- *
  * @param opinions array of opinions
  * @param opinmax maximum possible opinion value
  * @param factors ponderation for each opinion's importance in the alignment
- * @returns
+ * @returns a value such that if each opinion, in each member
+ * of a pool of HasOpinion instances, is generated randomly following an integer
+ * uniform distribution, the return value follows a uniform distribution.
+ * With the default factors, the return value is between 0 and 1, and is increasing
+ * with each separate opinion, with opinions having a decreasing importance.
  */
 function getAlignment(
     opinions: number[],
