@@ -11,5 +11,5 @@ export interface Election<Voter extends HasOpinions, Party extends HasOpinions> 
      * and returns a multi-set of elected representatives as returned
      * by the Attribution class.
      */
-    elect(pool: Collection<Voter>): Counter<Party>;
+    elect(voters: Collection<Voter>, candidates: Collection<Party>): Counter<Party>;
 }
