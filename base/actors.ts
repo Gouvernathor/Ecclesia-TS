@@ -18,35 +18,45 @@ function normalToUniform(x: number, mu: number, sigma: number): number {
     return 0.5 * (1 + math.erf((x - mu) / (sigma * SQ2)));
 }
 
-export function getDefaultAlignmentFactors(nopinions: number) {
+/**
+ * @returns factors such that the return value of the aligner function
+ * is between 0 and 1, and is increasing with each separate opinion,
+ * with opinions having a decreasing importance.
+ */
+function getDefaultAlignmentFactors(nopinions: number) {
     return Array(nopinions).map((_, i) => 1 - i / nopinions);
 }
 
 /**
- * Returns the one-dimensional alignment of the opinions.
- *
- * @param opinions array of opinions
  * @param opinmax maximum possible opinion value
  * @param factors ponderation for each opinion's importance in the alignment
- * @returns a value such that if each opinion, in each member
- * of a pool of HasOpinion instances, is generated randomly following an integer
- * uniform distribution, the return value follows a uniform distribution.
- * With the default factors, the return value is between 0 and 1, and is increasing
- * with each separate opinion, with opinions having a decreasing importance.
+ * @returns a function which turns the opinions array of a HasOpinions instance
+ * into a one-dimensional alignment value
  */
-function getAlignment(
-    opinions: number[],
+function getAligner(
     opinmax: number,
-    factors: number[] = getDefaultAlignmentFactors(opinions.length),
-): number {
-    const scapro = sum(opinions.map((opinion, i) => opinion * factors[i]));
+    factors: number[],
+): (opinions: number[]) => number {
     const rang = range(-opinmax, opinmax + 1);
     // standard deviation of one opinion taken on its own
     const one_sigma = Math.sqrt(sum(rang.map(i => i ** 2)) / rang.length);
     // using Lyapunov's central limit theorem
     const sigma = math.hypot(...factors.map(f => f * one_sigma));
 
-    return normalToUniform(scapro, 0, sigma);
+    /**
+     * Returns the one-dimensional alignment of the opinions.
+     *
+     * @param opinions array of opinions
+     * @returns a value such that if each opinion, in each member of
+     * a pool of HasOpinion instances, is generated randomly following an integer
+     * uniform distribution, the return value follows a uniform distribution.
+     * With the default factors, the return value is between 0 and 1, and is increasing
+     * with each separate opinion, with opinions having a decreasing importance.
+     */
+    return function aligner(opinions: number[]) {
+        const scapro = sum(opinions.map((opinion, i) => opinion * factors[i]));
+        return normalToUniform(scapro, 0, sigma);
+    }
 }
 
 /**
@@ -66,11 +76,15 @@ function getAlignment(
  * and each dimension can take values between -opinmax and opinmax (included).
  */
 export abstract class HasOpinions {
-    static nopinions: number;
-    static opinmax: number;
-    static opinionAlignmentFactors?: number[];
+    static readonly nopinions: number;
+    static readonly opinmax: number;
+    // can be overridden with a constant array in subclasses
+    static get opinionAlignmentFactors(): number[] {
+        return getDefaultAlignmentFactors(this.nopinions);
+    }
 
     opinions: number[];
+    private readonly aligner;
 
     /**
      * If no opinion sequence is provided, the opinions are generated following an
@@ -94,6 +108,8 @@ export abstract class HasOpinions {
             opinions = randomObj.choices(range(-cls.opinmax, cls.opinmax + 1), {k: cls.nopinions});
         }
         this.opinions = opinions;
+
+        this.aligner = getAligner(cls.opinmax, cls.opinionAlignmentFactors);
     }
 
     /**
@@ -106,18 +122,7 @@ export abstract class HasOpinions {
      * by the getDefaultAlignmentFactors function.
      */
     get alignment(): number {
-        const cls = this.constructor as typeof HasOpinions;
-        return this.getAlignment(cls.opinionAlignmentFactors);
-    }
-
-    /**
-     * This is similar to the alignment getter, but allowing a custom factors
-     * sequence to be provided.
-     * (Not sure about making it public.)
-     */
-    private getAlignment(factors?: number[]): number {
-        const cls = this.constructor as typeof HasOpinions;
-        return getAlignment(this.opinions, cls.opinmax, factors);
+        return this.aligner(this.opinions);
     }
 
     /**
