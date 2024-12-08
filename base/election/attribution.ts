@@ -18,16 +18,16 @@ export class AttributionFailure extends Error { }
  */
 export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>> {
     /**
-     * The nseats attribute should generally be set in the constructor and be fixed.
+     * The nSeats attribute should generally be set in the constructor and be fixed.
      * However, some attributions may yield variable numbers of seats, for instance
      * the federal German system.
      */
-    nseats?: number;
+    nSeats?: number;
 
     /**
      * Returns the attribution of seats to the parties based upon the votes.
      * The return value is a counter mapping each party to the number of seats
-     * it won. The return value's total() should be equal to the instance's nseats
+     * it won. The return value's total() should be equal to the instance's nSeats
      * attributes.
      *
      * If the attribution method is expected, by design, to fail under expected
@@ -109,7 +109,7 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
  * It requires a number of seats to be provided.
  */
 export abstract class RankIndexMethod<Party extends HasOpinions> extends Proportional<Party> {
-    abstract nseats: number;
+    abstract nSeats: number;
 
     /**
      * The function should be pure : it should not take into account any value
@@ -136,7 +136,7 @@ export abstract class RankIndexMethod<Party extends HasOpinions> extends Proport
 
         const seats = new Counter<Party>();
 
-        s: for (let _s = 0; _s < this.nseats; _s++) {
+        s: for (let _s = 0; _s < this.nSeats; _s++) {
             const winner = parties.pop()!;
             seats.increment(winner);
             rankIndexValues.set(winner, this.rankIndexFunction(fractions.get(winner)!, seats.get(winner)!));
