@@ -81,7 +81,7 @@ export abstract class HasOpinions {
      * the opinions, or the optional randomSeed parameter can be used to deterministically
      * seed a new RNG instance.
      */
-    constructor();
+    constructor({}?);
     constructor({ opinions }: { opinions: number[] });
     constructor({ randomObj }: { randomObj: RNG });
     constructor({ randomSeed }: { randomSeed: number | string });
