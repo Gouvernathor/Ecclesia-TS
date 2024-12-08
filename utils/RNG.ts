@@ -9,7 +9,7 @@ export default class RNG {
     /**
      * @param seed integer between 0 and 2^31 - 1 ; if not passed, generates it from Math.random()
      */
-    constructor(seed?: number|string) {
+    constructor(seed?: number | string) {
         // LCG using GCC's constants
         this.m = 0x80000000; // 2**31;
         this.a = 1103515245;
@@ -20,7 +20,7 @@ export default class RNG {
     /**
      * @param seed integer between 0 and 2^31 - 1 ; if undefined, generates it from Math.random()
      */
-    set seed(seed: number|string|undefined) {
+    set seed(seed: number | string | undefined) {
         if (seed === undefined) {
             this.state = Math.floor(Math.random() * (this.m - 1));
         } else {
@@ -61,7 +61,7 @@ export default class RNG {
      * @param k number of elements to choose
      * @param weights if provided, the probability of each element to be chosen
      */
-    choices<T>(array: T[], {k, weights}: {k: number, weights?: number[]}): T[] {
+    choices<T>(array: T[], { k, weights }: { k: number, weights?: number[] }): T[] {
         if (weights === undefined) {
             return Array(k).map(() => this.choice(array));
         } else {
@@ -97,7 +97,7 @@ export default class RNG {
 
 function hashString(str: string): number {
     let hash = 0;
-    for (let i = 0; i<str.length; i++) {
+    for (let i = 0; i < str.length; i++) {
         hash = ((hash << 5) - hash) + str.charCodeAt(i);
         hash |= 0;
     }

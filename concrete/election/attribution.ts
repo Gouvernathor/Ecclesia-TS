@@ -11,9 +11,9 @@ import RNG from "../../utils/RNG";
 abstract class Majority<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
     nSeats: number;
     abstract threshold: number;
-    abstract contingency: Attribution<Party, Simple<Party>>|null;
+    abstract contingency: Attribution<Party, Simple<Party>> | null;
 
-    constructor({nSeats}: {nSeats: number}) {
+    constructor({ nSeats }: { nSeats: number }) {
         this.nSeats = nSeats;
     }
 
@@ -47,11 +47,11 @@ export class Plurality<Party extends HasOpinions> extends Majority<Party> {
  */
 export class SuperMajority<Party extends HasOpinions> extends Majority<Party> {
     threshold: number;
-    contingency: Attribution<Party, Simple<Party>>|null;
-    constructor({nSeats, threshold, contingency = null}:
-        {nSeats: number, threshold: number, contingency: Attribution<Party, Simple<Party>>|null},
+    contingency: Attribution<Party, Simple<Party>> | null;
+    constructor({ nSeats, threshold, contingency = null }:
+        { nSeats: number, threshold: number, contingency: Attribution<Party, Simple<Party>> | null },
     ) {
-        super({nSeats});
+        super({ nSeats });
         this.threshold = threshold;
         this.contingency = contingency;
     }
@@ -140,13 +140,13 @@ export class Borda<Party extends HasOpinions> implements Attribution<Party, Orde
  */
 export class Condorcet<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
     nSeats: number;
-    contingency: Attribution<Party, Order<Party>>|null;
-    constructor({ nSeats, contingency = null }: { nSeats: number, contingency: Attribution<Party, Order<Party>>|null }) {
+    contingency: Attribution<Party, Order<Party>> | null;
+    constructor({ nSeats, contingency = null }: { nSeats: number, contingency: Attribution<Party, Order<Party>> | null }) {
         this.nSeats = nSeats;
         this.contingency = contingency;
     }
 
-    static Standoff = class Standoff extends AttributionFailure {}
+    static Standoff = class Standoff extends AttributionFailure { }
 
     attrib(votes: Order<Party>, rest = {}): Counter<Party> {
         const counts = new DefaultMap<Party, Counter<Party>>(() => new Counter());
@@ -154,7 +154,7 @@ export class Condorcet<Party extends HasOpinions> implements Attribution<Party, 
 
         for (const ballot of votes) {
             for (const [i, party1] of enumerate(ballot)) {
-                for (const party2 of ballot.slice(i+1)) {
+                for (const party2 of ballot.slice(i + 1)) {
                     counts.get(party1).increment(party2);
                 }
             }
@@ -176,7 +176,7 @@ export class Condorcet<Party extends HasOpinions> implements Attribution<Party, 
             }
             return this.contingency.attrib(votes, rest);
         }
-        const [winner, ] = win;
+        const [winner,] = win;
         return new Counter([[winner, this.nSeats]]);
     }
 }
@@ -220,10 +220,10 @@ export class AverageScore<Party extends HasOpinions> implements Attribution<Part
 export class MedianScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
     nSeats: number;
     contingency: Attribution<Party, Scores<Party>>;
-    constructor({nSeats, contingency}: {nSeats: number, contingency?: Attribution<Party, Scores<Party>>}) {
+    constructor({ nSeats, contingency }: { nSeats: number, contingency?: Attribution<Party, Scores<Party>> }) {
         this.nSeats = nSeats;
         if (contingency === undefined) {
-            contingency = new AverageScore({nSeats});
+            contingency = new AverageScore({ nSeats });
         }
         this.contingency = contingency;
     }
@@ -317,10 +317,10 @@ export const LargestRemainders = Hare;
  */
 export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Party> {
     nSeats: number;
-    constructor({nSeats, threshold, contingency = null}:
-        {nSeats: number, threshold: number, contingency?: Attribution<Party, Simple<Party>>|null},
+    constructor({ nSeats, threshold, contingency = null }:
+        { nSeats: number, threshold: number, contingency?: Attribution<Party, Simple<Party>> | null },
     ) {
-        super({threshold, contingency});
+        super({ threshold, contingency });
         this.nSeats = nSeats;
     }
 
@@ -361,11 +361,11 @@ export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Par
 export class Randomize<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
     nSeats: number;
     randomObj: RNG;
-    constructor({nSeats}: {nSeats: number});
-    constructor({nSeats, randomObj}: {nSeats: number, randomObj: RNG});
-    constructor({nSeats, randomSeed}: {nSeats: number, randomSeed: number | string});
-    constructor({nSeats, randomObj, randomSeed}:
-        {nSeats: number, randomObj?: RNG, randomSeed?: number | string},
+    constructor({ nSeats }: { nSeats: number });
+    constructor({ nSeats, randomObj }: { nSeats: number, randomObj: RNG });
+    constructor({ nSeats, randomSeed }: { nSeats: number, randomSeed: number | string });
+    constructor({ nSeats, randomObj, randomSeed }:
+        { nSeats: number, randomObj?: RNG, randomSeed?: number | string },
     ) {
         this.nSeats = nSeats;
         if (randomObj === undefined) {
@@ -375,6 +375,6 @@ export class Randomize<Party extends HasOpinions> implements Attribution<Party, 
     }
 
     attrib(votes: Simple<Party>, rest = {}): Counter<Party> {
-        return new Counter<Party>(this.randomObj.choices([...votes.keys()], {weights: [...votes.values()], k: this.nSeats}));
+        return new Counter<Party>(this.randomObj.choices([...votes.keys()], { weights: [...votes.values()], k: this.nSeats }));
     }
 }

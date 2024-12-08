@@ -49,7 +49,7 @@ export class OrderingVote<Voter extends HasOpinions, Party extends HasOpinions> 
  */
 export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Scores<Party>> {
     ngrades: number;
-    constructor({ngrades, ...rest}: {ngrades: number}) {
+    constructor({ ngrades, ...rest }: { ngrades: number }) {
         super(rest);
         this.ngrades = ngrades;
     }
@@ -87,7 +87,7 @@ export class BalancedCardinalVote<Voter extends HasOpinions, Party extends HasOp
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
-            const prefs = new Map<Party, number>(partees.map(party => [party, 1-voter.disagree(party)]));
+            const prefs = new Map<Party, number>(partees.map(party => [party, 1 - voter.disagree(party)]));
             const minpref = Math.min(...prefs.values());
             let maxpref = Math.max(...prefs.values());
 
@@ -117,7 +117,7 @@ export class BalancedCardinalVote<Voter extends HasOpinions, Party extends HasOp
  * Of you want a scores-like attribution, use BalancedCardinalVote(2) instead.
  */
 export class ApprovalVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Simple<Party>> {
-    private static cardinal = new BalancedCardinalVote({ngrades: 2});
+    private static cardinal = new BalancedCardinalVote({ ngrades: 2 });
 
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Simple<Party> {
         const scores = ApprovalVote.cardinal.vote(voters, candidates) as Scores<Party>;

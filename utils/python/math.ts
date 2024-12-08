@@ -25,5 +25,5 @@ export function erf(x: number): number {
 }
 
 export function hypot(...coordinates: number[]): number {
-    return Math.sqrt(sum(coordinates.map(c => c**2)));
+    return Math.sqrt(sum(coordinates.map(c => c ** 2)));
 }

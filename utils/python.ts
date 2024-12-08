@@ -1,6 +1,6 @@
 export * as math from "./python/math";
 
-export function sum(array: Iterable<number>, start=0): number {
+export function sum(array: Iterable<number>, start = 0): number {
     return (array instanceof Array ? array : [...array])
         .reduce((a, b) => a + b, start);
 }
@@ -19,7 +19,7 @@ export function range(start: number, end?: number): number[] {
     return Array(end - start).map((_, i) => i + start);
 }
 
-export function* enumerate<T>(array: Iterable<T>, start=0) {
+export function* enumerate<T>(array: Iterable<T>, start = 0) {
     for (const item of array) {
         yield [start++, item] as const;
     }

@@ -93,7 +93,7 @@ export abstract class HasOpinions {
      * the opinions, or the optional randomSeed parameter can be used to deterministically
      * seed a new RNG instance.
      */
-    constructor({}?);
+    constructor({ }?);
     constructor({ opinions }: { opinions: number[] });
     constructor({ randomObj }: { randomObj: RNG });
     constructor({ randomSeed }: { randomSeed: number | string });
@@ -105,7 +105,7 @@ export abstract class HasOpinions {
             if (randomObj === undefined) {
                 randomObj = new RNG(randomSeed);
             }
-            opinions = randomObj.choices(range(-cls.opinmax, cls.opinmax + 1), {k: cls.nopinions});
+            opinions = randomObj.choices(range(-cls.opinmax, cls.opinmax + 1), { k: cls.nopinions });
         }
         this.opinions = opinions;
 
@@ -116,9 +116,9 @@ export abstract class HasOpinions {
      * The objects having an opinion (typically, voters and parties) can be
      * placed on a single-dimension axis (typically left-wing to right-wing),
      * called the alignment.
-     * The opinionAlignmentFactors static attribute provides a sequence of
-     * ponderation factors for each dimentsion of the opinion vector. If it is
-     * not provided, the default one is generated from the number of opinions
+     * The opinionAlignmentFactors static property provides a sequence of
+     * ponderation factors for each dimension of the opinion vector. If it is
+     * not overridden, the default one is generated from the number of opinions
      * by the getDefaultAlignmentFactors function.
      */
     get alignment(): number {

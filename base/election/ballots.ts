@@ -6,7 +6,7 @@ import { HasOpinions } from "../actors";
  *
  * [[PS, 5], [LR: 7]] -> 5 ballots for PS, 7 for LR.
  */
-export class Simple<Party extends HasOpinions> extends Counter<Party> {}
+export class Simple<Party extends HasOpinions> extends Counter<Party> { }
 
 /**
  * A list of ballots, each ballot ordering parties by decreasing preference.
@@ -21,7 +21,7 @@ export class Simple<Party extends HasOpinions> extends Counter<Party> {}
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export class Order<Party extends HasOpinions> extends Array<Party[]> {}
+export class Order<Party extends HasOpinions> extends Array<Party[]> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -57,7 +57,7 @@ export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
         return ths;
     }
 
-    override get(key: Party): number[]|undefined {
+    override get(key: Party): number[] | undefined {
         const value = super.get(key);
         if (value === undefined && this.ngrades !== undefined) {
             return Array(this.ngrades).fill(0);

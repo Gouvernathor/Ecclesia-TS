@@ -13,7 +13,7 @@ export class BaseElection<Voter extends HasOpinions, Party extends HasOpinions, 
     constructor(
         readonly votingMethod: Voting<Voter, Party, B>,
         readonly attributionMethod: Attribution<Party, B>,
-    ) {}
+    ) { }
 
     elect(pool: Collection<Voter>, candidates: Collection<Party>): Counter<Party> {
         return this.attributionMethod.attrib(this.votingMethod.vote(pool, candidates));
@@ -26,7 +26,7 @@ export class BaseElection<Voter extends HasOpinions, Party extends HasOpinions, 
  */
 export class Sortition<Citizen extends HasOpinions> implements Election<Citizen, Citizen> {
     readonly randomObj: RNG;
-    constructor(nSeats: number, {}?);
+    constructor(nSeats: number, { }?);
     constructor(nSeats: number, { randomObj }: { randomObj: RNG });
     constructor(nSeats: number, { randomSeed }: { randomSeed: number | string });
     constructor(

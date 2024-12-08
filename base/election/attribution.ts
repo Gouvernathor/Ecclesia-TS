@@ -36,7 +36,7 @@ export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>
      *
      * The second parameter may be used to pass additional data to specific subclasses.
      */
-    attrib(votes: B, rest?: {[s: string]: any}): Counter<Party>;
+    attrib(votes: B, rest?: { [s: string]: any }): Counter<Party>;
 }
 
 /**
@@ -45,7 +45,7 @@ export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>
  */
 export abstract class Proportional<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
     threshold: number
-    contingency: Attribution<Party, Simple<Party>>|null;
+    contingency: Attribution<Party, Simple<Party>> | null;
 
     /**
      * The threshold optional parameter takes a value between 0 and 1 (defaulting to 0)
@@ -62,8 +62,8 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
      * (or not passed), the contingency will default to running the same attribution
      * without the threshold.
      */
-    constructor({ threshold=0, contingency }:
-        {threshold?: number, contingency?: Attribution<Party, Simple<Party>>|null } = {},
+    constructor({ threshold = 0, contingency }:
+        { threshold?: number, contingency?: Attribution<Party, Simple<Party>> | null } = {},
     ) {
         this.threshold = threshold;
         if (contingency === undefined) {
@@ -81,7 +81,7 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
         this.contingency = contingency;
     }
 
-    attrib(votes: Simple<Party>, rest={}): Counter<Party> {
+    attrib(votes: Simple<Party>, rest = {}): Counter<Party> {
         if (this.threshold > 0) {
             const original_votes = votes;
             const votes_threshold = this.threshold * votes.total;
@@ -101,7 +101,7 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
      * The votes are guaranteed to be above the threshold, if any.
      * The method will not be called at all if no party reached the threshold.
      */
-    abstract proportionalAttrib(votes: Simple<Party>, rest: {[s: string]: any}): Counter<Party>;
+    abstract proportionalAttrib(votes: Simple<Party>, rest: { [s: string]: any }): Counter<Party>;
 }
 
 /**
@@ -126,7 +126,7 @@ export abstract class RankIndexMethod<Party extends HasOpinions> extends Proport
      * This implementation is optimized so as to call rankIndexFunction as
      * few times as possible.
      */
-    proportionalAttrib(votes: Simple<Party>, rest={}): Counter<Party> {
+    proportionalAttrib(votes: Simple<Party>, rest = {}): Counter<Party> {
         const allvotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([p, v]) => [p, v / allvotes]));
 

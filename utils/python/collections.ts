@@ -5,7 +5,7 @@ import { sum } from "../python";
  */
 export class Counter<T> extends Map<T, number> {
     private static getMapEntriesFromIterable<T>(
-        iterable?: Iterable<T>|Iterable<[T, number]>,
+        iterable?: Iterable<T> | Iterable<[T, number]>,
     ): Iterable<[T, number]> {
         if (iterable === undefined) {
             return [];
@@ -13,7 +13,7 @@ export class Counter<T> extends Map<T, number> {
         if (iterable instanceof Map) {
             return iterable.entries();
         } else {
-            let array = ((iterable instanceof Array) ? iterable : [...iterable]) as T[]|[T, number][];
+            let array = ((iterable instanceof Array) ? iterable : [...iterable]) as T[] | [T, number][];
             if (array.length && !(array[0] instanceof Array && array[0].length === 2)) {
                 array = (array as T[]).map(item => [item, 1] as [T, number]);
             }
@@ -21,7 +21,7 @@ export class Counter<T> extends Map<T, number> {
         }
     }
 
-    constructor(iterable?: Iterable<T>|Iterable<[T, number]>) {
+    constructor(iterable?: Iterable<T> | Iterable<[T, number]>) {
         super(Counter.getMapEntriesFromIterable(iterable));
     }
 
@@ -49,7 +49,7 @@ export class Counter<T> extends Map<T, number> {
         return sum(this.values());
     }
 
-    update(iterable?: Iterable<T>|Iterable<[T, number]>) {
+    update(iterable?: Iterable<T> | Iterable<[T, number]>) {
         if (iterable) {
             for (const [item, count] of Counter.getMapEntriesFromIterable(iterable)) {
                 this.increment(item, count);
@@ -82,7 +82,7 @@ export class Counter<T> extends Map<T, number> {
         return this.posneg(-1);
     }
 
-    private posneg(mul: 1|-1): Counter<T> {
+    private posneg(mul: 1 | -1): Counter<T> {
         const copy = new Counter<T>();
         for (const [key, value] of this) {
             if (value * mul > 0) {

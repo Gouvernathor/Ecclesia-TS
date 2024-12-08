@@ -18,7 +18,7 @@ export function symmetricDiff(
     nopinions: number,
     opinmax: number,
 ): number {
-    return sum(opinionsA.map((opinionA, i) => Math.abs(opinionA - opinionsB[i]))) / (nopinions*2*opinmax);
+    return sum(opinionsA.map((opinionA, i) => Math.abs(opinionA - opinionsB[i]))) / (nopinions * 2 * opinmax);
 }
 
 /**
@@ -31,7 +31,7 @@ export function ponderedDiff(
     nopinions: number,
     opinmax: number,
 ): number {
-    return sum(opinionsA.map((opinionA, i) => Math.abs(opinionA - opinionsB[i]) * opinionsB[i])) / (nopinions*2*(opinmax**2));
+    return sum(opinionsA.map((opinionA, i) => Math.abs(opinionA - opinionsB[i]) * opinionsB[i])) / (nopinions * 2 * (opinmax ** 2));
 }
 
 /**
@@ -64,7 +64,7 @@ export function fromMaxDiff(
             diffs.push(Math.abs(a - b));
         }
     }
-    return sum(diffs) / (nopinions*(opinmax**2));
+    return sum(diffs) / (nopinions * (opinmax ** 2));
 }
 
 
@@ -78,7 +78,7 @@ export function fromMaxDiff(
  * vote.votesFor / sum(house.members.values()).
  */
 export class Vote {
-    constructor(public readonly votesFor: number, public readonly votesAgainst: number) {}
+    constructor(public readonly votesFor: number, public readonly votesAgainst: number) { }
 
     /**
      * Returns the reverse of the vote, inverting the for/against ratio.
@@ -125,12 +125,12 @@ export class Vote {
  * they would have the same election method.
  */
 class District<Voter extends HasOpinions, Party extends HasOpinions> {
-    identifier?: string|number;
+    identifier?: string | number;
     nSeats?: number;
     constructor(
         public electionMethod: Election<Voter, Party>,
         public voters: Voter[],
-        {identifier, nSeats}: {identifier?: string|number, nSeats?: number} = {},
+        { identifier, nSeats }: { identifier?: string | number, nSeats?: number } = {},
     ) {
         this.identifier = identifier;
         if (nSeats === undefined) {
@@ -160,8 +160,8 @@ export class House<Voter extends HasOpinions, Party extends HasOpinions> {
     name?: string;
     majority?: number;
     constructor(
-        districts: Iterable<District<Voter, Party>>|Map<District<Voter, Party>, Counter<Party>>,
-        {name, majority = .5}: {name?: string, majority?: number} = {},
+        districts: Iterable<District<Voter, Party>> | Map<District<Voter, Party>, Counter<Party>>,
+        { name, majority = .5 }: { name?: string, majority?: number } = {},
     ) {
         if (!(districts instanceof Map)) {
             districts = new Map([...districts].map(d => [d, new Counter()]));
@@ -189,7 +189,7 @@ export class House<Voter extends HasOpinions, Party extends HasOpinions> {
      * If all districts support providing a theoretical number of seats,
      * returns the total. Otherwise, returns undefined.
      */
-    get nSeats(): number|undefined {
+    get nSeats(): number | undefined {
         let nSeats = 0;
         for (const district of this.districts.keys()) {
             if (district.nSeats === undefined) {
