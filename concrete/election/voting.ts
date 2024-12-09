@@ -67,10 +67,8 @@ export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
             for (const party of partees) {
-                let grade = Math.floor(this.ngrades * (1 - voter.disagree(party)));
-                if (grade === this.ngrades) {
-                    grade--;
-                }
+                const grade = Math.min(this.ngrades - 1,
+                    Math.floor(this.ngrades * (1 - voter.disagree(party))));
                 scores.get(party)![grade]++;
             }
         }
@@ -97,10 +95,8 @@ export class BalancedCardinalVote<Voter extends HasOpinions, Party extends HasOp
             }
 
             for (const party of partees) {
-                let grade = Math.floor(this.ngrades * (prefs.get(party)! - minpref) / maxpref);
-                if (grade === this.ngrades) {
-                    grade--;
-                }
+                const grade = Math.min(this.ngrades - 1,
+                    Math.floor(this.ngrades * (prefs.get(party)! - minpref) / maxpref));
                 scores.get(party)![grade]++;
             }
         }
