@@ -1,10 +1,11 @@
 import { HasOpinions } from "../../base/actors";
 import { Attribution, AttributionFailure, DivisorMethod, Proportional } from "../../base/election/attribution";
-import { Order, Scores, ScoresBase, Simple } from "../../base/election/ballots";
+import { Order, Scores, Simple } from "../../base/election/ballots";
 import { divmod, enumerate, max, min } from "../../utils/python";
 import { Counter, DefaultMap } from "../../utils/python/collections";
 import { fmean, median } from "../../utils/python/statistics";
 import RNG from "../../utils/RNG";
+import { ScoresBase } from "./ballots";
 
 // Majority methods
 
