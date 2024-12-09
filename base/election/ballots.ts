@@ -46,7 +46,7 @@ export interface Scores<Party extends HasOpinions> extends ReadonlyMap<Party, nu
     get(key: Party): number[]|undefined;
 }
 
-export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> {
+export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> implements Scores<Party> {
     ngrades?: number;
 
     constructor(...parameters: any[]) {
