@@ -24,7 +24,7 @@ function normalToUniform(x: number, mu: number, sigma: number): number {
  * with opinions having a decreasing importance.
  */
 function getDefaultAlignmentFactors(nopinions: number) {
-    return Array(nopinions).map((_, i) => 1 - i / nopinions);
+    return Array.from({length: nopinions}, (_, i) => 1 - i / nopinions);
 }
 
 /**

@@ -63,10 +63,10 @@ export default class RNG {
      */
     choices<T>(array: T[], { k, weights }: { k: number, weights?: number[] }): T[] {
         if (weights === undefined) {
-            return Array(k).map(() => this.choice(array));
+            return Array.from({length: k}, () => this.choice(array));
         } else {
             const gen = this.weightedChoicesGenerator(array, weights);
-            return Array(k).map(() => gen.next().value!);
+            return Array.from({length: k}, () => gen.next().value!);
         }
     }
     /**
@@ -91,7 +91,7 @@ export default class RNG {
         if (maxLen === undefined) {
             maxLen = copy.length;
         }
-        return Array(maxLen).map(() => copy.splice(this.randRange(0, copy.length), 1)[0]);
+        return Array.from({length: maxLen}, () => copy.splice(this.randRange(0, copy.length), 1)[0]);
     }
 }
 

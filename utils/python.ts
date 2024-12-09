@@ -16,7 +16,7 @@ export function range(start: number, end?: number): number[] {
         end = start;
         start = 0;
     }
-    return Array(end - start).map((_, i) => i + start);
+    return Array.from({length: end - start}, (_, i) => i + start);
 }
 
 export function* enumerate<T>(array: Iterable<T>, start = 0) {
