@@ -1,9 +1,17 @@
 import { sum } from "../python";
 
+export interface ReadonlyCounter<T> extends ReadonlyMap<T, number> {
+    get(key: T): number;
+    elements(): Iterable<T>;
+    total: number;
+    pos: Counter<T>;
+    neg: Counter<T>;
+}
+
 /**
  * T must not be a 2-tuple.
  */
-export class Counter<T> extends Map<T, number> {
+export class Counter<T> extends Map<T, number> implements ReadonlyCounter<T> {
     private static getMapEntriesFromIterable<T>(
         iterable?: Iterable<T> | Iterable<[T, number]>,
     ): Iterable<[T, number]> {

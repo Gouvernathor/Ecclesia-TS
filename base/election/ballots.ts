@@ -1,4 +1,4 @@
-import { Counter } from "../../utils/python/collections";
+import { ReadonlyCounter } from "../../utils/python/collections";
 import { HasOpinions } from "../actors";
 
 /**
@@ -6,7 +6,7 @@ import { HasOpinions } from "../actors";
  *
  * [[PS, 5], [LR: 7]] -> 5 ballots for PS, 7 for LR.
  */
-export class Simple<Party extends HasOpinions> extends Counter<Party> { }
+export interface Simple<Party extends HasOpinions> extends ReadonlyCounter<Party> { }
 
 /**
  * A list of ballots, each ballot ordering parties by decreasing preference.
@@ -21,7 +21,7 @@ export class Simple<Party extends HasOpinions> extends Counter<Party> { }
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export class Order<Party extends HasOpinions> extends Array<Party[]> { }
+export interface Order<Party extends HasOpinions> extends Readonly<Party[][]> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -41,7 +41,12 @@ export class Order<Party extends HasOpinions> extends Array<Party[]> { }
  * Otherwise, the ngrades attribute will not be set and the get method may return
  * undefined for unlisted parties.
  */
-export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
+export interface Scores<Party extends HasOpinions> extends ReadonlyMap<Party, number[]> {
+    readonly ngrades?: number;
+    get(key: Party): number[]|undefined;
+}
+
+export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> {
     ngrades?: number;
 
     constructor(...parameters: any[]) {
@@ -52,7 +57,7 @@ export class Scores<Party extends HasOpinions> extends Map<Party, number[]> {
     }
 
     static fromGrades<Party extends HasOpinions>(ngrades: number): Scores<Party> {
-        const ths = new Scores<Party>();
+        const ths = new ScoresBase<Party>();
         ths.ngrades = ngrades;
         return ths;
     }

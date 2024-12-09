@@ -1,7 +1,8 @@
 import { HasOpinions } from "../../base/actors";
-import { Order, Scores, Simple } from "../../base/election/ballots";
+import { Order, Scores, ScoresBase, Simple } from "../../base/election/ballots";
 import { Voting } from "../../base/election/voting";
 import { min } from "../../utils/python";
+import { Counter } from "../../utils/python/collections";
 
 /**
  * The most basic and widespread voting system : each voter casts one ballot for
@@ -9,7 +10,7 @@ import { min } from "../../utils/python";
  */
 export class SingleVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Simple<Party>> {
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Simple<Party> {
-        const scores = Simple.fromkeys(candidates, 0);
+        const scores = Counter.fromkeys(candidates, 0);
         const partees = this.randomObj.shuffled(candidates);
         for (const voter of voters) {
             // find the party with which disagreement is minimal
@@ -25,7 +26,7 @@ export class SingleVote<Voter extends HasOpinions, Party extends HasOpinions> ex
  */
 export class OrderingVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Order<Party>> {
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Order<Party> {
-        const order = new Order<Party>();
+        const order: Party[][] = [];
         const partees = this.randomObj.shuffled(candidates);
         for (const voter of voters) {
             order.push(partees.slice()
@@ -60,7 +61,7 @@ export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> 
      * low ngrades values.
      */
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Scores<Party> {
-        const scores = Scores.fromGrades<Party>(this.ngrades);
+        const scores = ScoresBase.fromGrades<Party>(this.ngrades);
         const partees = this.randomObj.shuffled(candidates);
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
@@ -82,7 +83,7 @@ export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> 
  */
 export class BalancedCardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends CardinalVote<Voter, Party> {
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Scores<Party> {
-        const scores = Scores.fromGrades<Party>(this.ngrades);
+        const scores = ScoresBase.fromGrades<Party>(this.ngrades);
         const partees = this.randomObj.shuffled(candidates);
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
@@ -121,7 +122,7 @@ export class ApprovalVote<Voter extends HasOpinions, Party extends HasOpinions> 
 
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Simple<Party> {
         const scores = ApprovalVote.cardinal.vote(voters, candidates) as Scores<Party>;
-        const approvals = new Simple<Party>();
+        const approvals = new Counter<Party>();
         for (const [party, [_disapp, app]] of scores) {
             approvals.increment(party, app);
         }

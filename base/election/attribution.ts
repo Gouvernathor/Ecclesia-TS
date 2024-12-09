@@ -85,7 +85,7 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
         if (this.threshold > 0) {
             const original_votes = votes;
             const votes_threshold = this.threshold * votes.total;
-            votes = new Simple<Party>([...votes.entries()].filter(([_, v]) => v >= votes_threshold));
+            votes = new Counter<Party>([...votes.entries()].filter(([_, v]) => v >= votes_threshold));
             if (votes.size === 0) {
                 if (this.contingency === null) {
                     throw new AttributionFailure("No party reached the threshold");

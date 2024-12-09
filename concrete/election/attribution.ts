@@ -1,6 +1,6 @@
 import { HasOpinions } from "../../base/actors";
 import { Attribution, AttributionFailure, DivisorMethod, Proportional } from "../../base/election/attribution";
-import { Order, Scores, Simple } from "../../base/election/ballots";
+import { Order, Scores, ScoresBase, Simple } from "../../base/election/ballots";
 import { divmod, enumerate, max, min } from "../../utils/python";
 import { Counter, DefaultMap } from "../../utils/python/collections";
 import { fmean, median } from "../../utils/python/statistics";
@@ -246,7 +246,7 @@ export class MedianScore<Party extends HasOpinions> implements Attribution<Party
         }
 
         winners.unshift(winner);
-        const trimmedResults = new Scores<Party>(winners.map(party => [party, votes.get(party)!]));
+        const trimmedResults = new ScoresBase<Party>(winners.map(party => [party, votes.get(party)!]));
         return this.contingency.attrib(trimmedResults, rest);
     }
 }
