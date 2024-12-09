@@ -1,0 +1,56 @@
+{
+  "name": "ecclesia",
+  "version": "1.1.0",
+  "description": "Framework for political and electoral simulations",
+  "type": "module",
+  "exports": {
+    "./base/*": {
+      "import": {
+        "types": "./dist/base/*.d.ts",
+        "default": "./dist/base/*.js"
+      },
+      "require": {
+        "types": "./dist/base/*.d.cts",
+        "default": "./dist/base/*.cjs"
+      }
+    },
+    "./concrete/*": {
+      "import": {
+        "types": "./dist/concrete/*.d.ts",
+        "default": "./dist/concrete/*.js"
+      },
+      "require": {
+        "types": "./dist/concrete/*.d.cts",
+        "default": "./dist/concrete/*.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gouvernathor/Ecclesia-TS.git"
+  },
+  "keywords": [
+    "election",
+    "politics",
+    "parliament",
+    "simulation"
+  ],
+  "author": "Gouvernathor",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gouvernathor/Ecclesia-TS/issues"
+  },
+  "homepage": "https://github.com/Gouvernathor/Ecclesia-TS#readme",
+  "funding": "https://ko-fi.com/gouvernathor",
+  "devDependencies": {
+    "typescript": "*",
+    "tsup": "^8.3.5"
+  }
+}
