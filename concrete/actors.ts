@@ -2,6 +2,7 @@ import { HasOpinions } from "../base/actors";
 import { Election } from "../base/election";
 import { sum } from "../utils/python";
 import { Counter } from "../utils/python/collections";
+import { Collection } from "../utils/python/collections/abc";
 import { BaseElection } from "./election";
 
 // Disagreement functions

@@ -4,6 +4,7 @@ import { Attribution } from "../base/election/attribution";
 import { Ballots } from "../base/election/ballots";
 import { Voting } from "../base/election/voting";
 import { Counter } from "../utils/python/collections";
+import { Collection } from "../utils/python/collections/abc";
 import RNG from "../utils/RNG";
 
 /**

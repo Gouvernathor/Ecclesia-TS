@@ -1,4 +1,5 @@
 import { Counter } from "../utils/python/collections";
+import { Collection } from "../utils/python/collections/abc";
 import { HasOpinions } from "./actors";
 
 /**

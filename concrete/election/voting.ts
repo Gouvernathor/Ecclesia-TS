@@ -3,6 +3,7 @@ import { Order, Scores, ScoresBase, Simple } from "../../base/election/ballots";
 import { Voting } from "../../base/election/voting";
 import { min } from "../../utils/python";
 import { Counter } from "../../utils/python/collections";
+import { Collection } from "../../utils/python/collections/abc";
 
 /**
  * The most basic and widespread voting system : each voter casts one ballot for
