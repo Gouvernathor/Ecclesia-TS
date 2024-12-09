@@ -21,7 +21,7 @@ export interface Simple<Party extends HasOpinions> extends ReadonlyCounter<Party
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export interface Order<Party extends HasOpinions> extends Readonly<Party[][]> { }
+export interface Order<Party extends HasOpinions> extends Readonly<Readonly<Party[]>[]> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -41,9 +41,9 @@ export interface Order<Party extends HasOpinions> extends Readonly<Party[][]> { 
  * Otherwise, the ngrades attribute will not be set and the get method may return
  * undefined for unlisted parties.
  */
-export interface Scores<Party extends HasOpinions> extends ReadonlyMap<Party, number[]> {
+export interface Scores<Party extends HasOpinions> extends ReadonlyMap<Party, Readonly<number[]>> {
     readonly ngrades?: number;
-    get(key: Party): number[]|undefined;
+    get(key: Party): Readonly<number[]>|undefined;
 }
 
 export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> implements Scores<Party> {
@@ -56,7 +56,7 @@ export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> 
         }
     }
 
-    static fromGrades<Party extends HasOpinions>(ngrades: number): Scores<Party> {
+    static fromGrades<Party extends HasOpinions>(ngrades: number): ScoresBase<Party> {
         const ths = new ScoresBase<Party>();
         ths.ngrades = ngrades;
         return ths;
