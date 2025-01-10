@@ -1,4 +1,4 @@
-import { ReadonlyCounter } from "../../utils/python/collections";
+import { ReadonlyCounter } from "@gouvernathor/python/collections";
 
 /**
  * A counter, mapping each party to its number of ballots.

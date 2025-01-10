@@ -1,4 +1,5 @@
-import { math, range, sum } from "../utils/python";
+import { range, sum } from "@gouvernathor/python";
+import * as math from "@gouvernathor/python/math";
 import RNG from "../utils/RNG";
 
 const SQ2 = Math.sqrt(2);

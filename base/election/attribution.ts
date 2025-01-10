@@ -1,4 +1,4 @@
-import { Counter } from "../../utils/python/collections";
+import { Counter } from "@gouvernathor/python/collections";
 import { Ballots, Simple } from "./ballots";
 
 /**

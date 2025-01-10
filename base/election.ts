@@ -1,5 +1,5 @@
-import { Counter } from "../utils/python/collections";
-import { Collection } from "../utils/python/collections/abc";
+import { Counter } from "@gouvernathor/python/collections";
+import { Collection } from "@gouvernathor/python/collections/abc";
 import { HasOpinions } from "./actors";
 
 /**

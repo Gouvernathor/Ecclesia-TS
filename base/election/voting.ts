@@ -1,4 +1,4 @@
-import { Collection } from "../../utils/python/collections/abc";
+import { Collection } from "@gouvernathor/python/collections/abc";
 import RNG from "../../utils/RNG";
 import { HasOpinions } from "../actors";
 import { Ballots } from "./ballots";

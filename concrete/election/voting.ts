@@ -1,9 +1,9 @@
 import { HasOpinions } from "../../base/actors";
 import { Order, Scores, Simple } from "../../base/election/ballots";
 import { Voting } from "../../base/election/voting";
-import { min } from "../../utils/python";
-import { Counter } from "../../utils/python/collections";
-import { Collection } from "../../utils/python/collections/abc";
+import { min } from "@gouvernathor/python";
+import { Counter } from "@gouvernathor/python/collections";
+import { Collection } from "@gouvernathor/python/collections/abc";
 import { ScoresBase } from "./ballots";
 
 /**
