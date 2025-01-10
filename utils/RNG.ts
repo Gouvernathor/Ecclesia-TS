@@ -58,7 +58,7 @@ export default class RNG {
     /**
      * @returns one of the elements
      */
-    choice<T>(array: T[]) {
+    choice<T>(array: ReadonlyArray<T>) {
         return array[this.randRange(0, array.length)];
     }
     /**
@@ -67,7 +67,7 @@ export default class RNG {
      * @param k number of elements to choose
      * @param weights if provided, the probability of each element to be chosen
      */
-    choices<T>(array: T[], { k, weights }: { k: number, weights?: number[] }): T[] {
+    choices<T>(array: ReadonlyArray<T>, { k, weights }: { k: number, weights?: ReadonlyArray<number> }): T[] {
         if (weights === undefined) {
             return Array.from({length: k}, () => this.choice(array));
         } else {
@@ -79,7 +79,7 @@ export default class RNG {
      * Warning: this generator is infinite.
      * It reseeds at every generation.
      */
-    *weightedChoicesGenerator<T>(array: T[], weights: number[]) {
+    *weightedChoicesGenerator<T>(array: ReadonlyArray<T>, weights: ReadonlyArray<number>) {
         const cumWeights = weights.map((w, i) => weights.slice(0, i + 1).reduce((a, b) => a + b, 0));
         const maxCumWeight = cumWeights[cumWeights.length - 1];
         while (true) {
