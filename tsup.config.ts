@@ -5,7 +5,6 @@ export default defineConfig({
     entry: ["base/**/*.ts", "concrete/**/*.ts"],
     format: ["cjs", "esm"],
     dts: true,
-    splitting: false,
     sourcemap: true,
     clean: true,
 });
