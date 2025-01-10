@@ -52,7 +52,7 @@ export class OrderingVote<Voter extends HasOpinions, Party extends HasOpinions> 
  */
 export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Scores<Party>> {
     ngrades: number;
-    constructor({ ngrades, ...rest }: { ngrades: number }) {
+    constructor({ ngrades, ...rest }: { ngrades: number } & any) { // typing disabled because typescript badly supports overloading inheritance
         super(rest);
         this.ngrades = ngrades;
     }
