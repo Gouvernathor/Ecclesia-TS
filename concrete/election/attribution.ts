@@ -1,4 +1,3 @@
-import { HasOpinions } from "../../base/actors";
 import { Attribution, AttributionFailure, DivisorMethod, Proportional } from "../../base/election/attribution";
 import { Order, Scores, Simple } from "../../base/election/ballots";
 import { divmod, enumerate, max, min } from "../../utils/python";
@@ -9,7 +8,7 @@ import { ScoresBase } from "./ballots";
 
 // Majority methods
 
-abstract class Majority<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
+abstract class Majority<Party> implements Attribution<Party, Simple<Party>> {
     nSeats: number;
     abstract threshold: number;
     abstract contingency: Attribution<Party, Simple<Party>> | null;
@@ -34,7 +33,7 @@ abstract class Majority<Party extends HasOpinions> implements Attribution<Party,
  * Attribution method where the party with the most votes wins all the seats.
  * No threshold.
  */
-export class Plurality<Party extends HasOpinions> extends Majority<Party> {
+export class Plurality<Party> extends Majority<Party> {
     threshold = 0;
     contingency = null;
 }
@@ -46,7 +45,7 @@ export class Plurality<Party extends HasOpinions> extends Majority<Party> {
  * If no party reaches the threshold and no contingency is provided,
  * an AttributionFailure is thrown.
  */
-export class SuperMajority<Party extends HasOpinions> extends Majority<Party> {
+export class SuperMajority<Party> extends Majority<Party> {
     threshold: number;
     contingency: Attribution<Party, Simple<Party>> | null;
     constructor({ nSeats, threshold, contingency = null }:
@@ -69,7 +68,7 @@ export class SuperMajority<Party extends HasOpinions> extends Majority<Party> {
  *
  * Ballots not ranking all candidates are supported.
  */
-export class InstantRunoff<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
+export class InstantRunoff<Party> implements Attribution<Party, Order<Party>> {
     nSeats: number;
     constructor({ nSeats }: { nSeats: number }) {
         this.nSeats = nSeats;
@@ -110,7 +109,7 @@ export class InstantRunoff<Party extends HasOpinions> implements Attribution<Par
  * and unranked candidates get 0 points.
  * So, ballots not ranking all candidates are supported.
  */
-export class Borda<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
+export class Borda<Party> implements Attribution<Party, Order<Party>> {
     nSeats: number;
     constructor({ nSeats }: { nSeats: number }) {
         this.nSeats = nSeats;
@@ -139,7 +138,7 @@ export class Borda<Party extends HasOpinions> implements Attribution<Party, Orde
  * If none is provided, a Condorcet.Standoff exception is raised
  * (itself a subclass of AttributionFailure).
  */
-export class Condorcet<Party extends HasOpinions> implements Attribution<Party, Order<Party>> {
+export class Condorcet<Party> implements Attribution<Party, Order<Party>> {
     nSeats: number;
     contingency: Attribution<Party, Order<Party>> | null;
     constructor({ nSeats, contingency = null }: { nSeats: number, contingency: Attribution<Party, Order<Party>> | null }) {
@@ -190,7 +189,7 @@ export class Condorcet<Party extends HasOpinions> implements Attribution<Party, 
  *
  * Supports tallies where some parties were not graded by everyone.
  */
-export class AverageScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
+export class AverageScore<Party> implements Attribution<Party, Scores<Party>> {
     nSeats: number;
     constructor({ nSeats }: { nSeats: number }) {
         this.nSeats = nSeats;
@@ -218,7 +217,7 @@ export class AverageScore<Party extends HasOpinions> implements Attribution<Part
  *
  * Supports tallies where some parties were not graded by everyone.
  */
-export class MedianScore<Party extends HasOpinions> implements Attribution<Party, Scores<Party>> {
+export class MedianScore<Party> implements Attribution<Party, Scores<Party>> {
     nSeats: number;
     contingency: Attribution<Party, Scores<Party>>;
     constructor({ nSeats, contingency }: { nSeats: number, contingency?: Attribution<Party, Scores<Party>> }) {
@@ -255,7 +254,7 @@ export class MedianScore<Party extends HasOpinions> implements Attribution<Party
 
 // Proportional methods
 
-export class DHondt<Party extends HasOpinions> extends DivisorMethod<Party> {
+export class DHondt<Party> extends DivisorMethod<Party> {
     nSeats: number;
     constructor({ nSeats, ...rest }: { nSeats: number }) {
         super(rest);
@@ -269,7 +268,7 @@ export class DHondt<Party extends HasOpinions> extends DivisorMethod<Party> {
 
 export const HighestAverages = DHondt;
 
-export class Webster<Party extends HasOpinions> extends DivisorMethod<Party> {
+export class Webster<Party> extends DivisorMethod<Party> {
     nSeats: number;
     constructor({ nSeats, ...rest }: { nSeats: number }) {
         super(rest);
@@ -282,7 +281,7 @@ export class Webster<Party extends HasOpinions> extends DivisorMethod<Party> {
     }
 }
 
-export class Hare<Party extends HasOpinions> extends Proportional<Party> {
+export class Hare<Party> extends Proportional<Party> {
     nSeats: number;
     constructor({ nSeats, ...rest }: { nSeats: number }) {
         super(rest);
@@ -316,7 +315,7 @@ export const LargestRemainders = Hare;
  * (for example when sharing representatives between US states) to be less or
  * equal to the number of states, a threshold of 0 can be passed.
  */
-export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Party> {
+export class HuntingtonHill<Party> extends DivisorMethod<Party> {
     nSeats: number;
     constructor({ nSeats, threshold, contingency = null }:
         { nSeats: number, threshold: number, contingency?: Attribution<Party, Simple<Party>> | null },
@@ -359,7 +358,7 @@ export class HuntingtonHill<Party extends HasOpinions> extends DivisorMethod<Par
  * (One ballot per seat to fill, and assuming there's
  * enough ballots that the picking is with replacement.)
  */
-export class Randomize<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
+export class Randomize<Party> implements Attribution<Party, Simple<Party>> {
     nSeats: number;
     randomObj: RNG;
     constructor({ nSeats }: { nSeats: number });

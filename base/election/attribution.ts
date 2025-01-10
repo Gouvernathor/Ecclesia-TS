@@ -1,5 +1,4 @@
 import { Counter } from "../../utils/python/collections";
-import { HasOpinions } from "../actors";
 import { Ballots, Simple } from "./ballots";
 
 /**
@@ -16,7 +15,7 @@ export class AttributionFailure extends Error { }
 /**
  * Manages how the results from the ballots determine the allocation of seats.
  */
-export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>> {
+export interface Attribution<Party, B extends Ballots<Party>> {
     /**
      * The nSeats attribute should generally be set in the constructor and be fixed.
      * However, some attributions may yield variable numbers of seats, for instance
@@ -43,7 +42,7 @@ export interface Attribution<Party extends HasOpinions, B extends Ballots<Party>
  * Abstract base class for proportional attributions,
  * with an optional electoral threshold and contingency attribution.
  */
-export abstract class Proportional<Party extends HasOpinions> implements Attribution<Party, Simple<Party>> {
+export abstract class Proportional<Party> implements Attribution<Party, Simple<Party>> {
     threshold: number
     contingency: Attribution<Party, Simple<Party>> | null;
 
@@ -108,7 +107,7 @@ export abstract class Proportional<Party extends HasOpinions> implements Attribu
  * Abstract base class for rank-index methods - a family of proportional attribution methods.
  * It requires a number of seats to be provided.
  */
-export abstract class RankIndexMethod<Party extends HasOpinions> extends Proportional<Party> {
+export abstract class RankIndexMethod<Party> extends Proportional<Party> {
     abstract nSeats: number;
 
     /**
@@ -156,7 +155,7 @@ export abstract class RankIndexMethod<Party extends HasOpinions> extends Proport
 /**
  * Abstract base class for divisor methods - one kind of rank-index attribution.
  */
-export abstract class DivisorMethod<Party extends HasOpinions> extends RankIndexMethod<Party> {
+export abstract class DivisorMethod<Party> extends RankIndexMethod<Party> {
     /**
      * The method should be pure.
      * @param k the number of seats already allocated to a party

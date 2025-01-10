@@ -1,7 +1,6 @@
-import { HasOpinions } from "../../base/actors";
 import { Scores } from "../../base/election/ballots";
 
-export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> implements Scores<Party> {
+export class ScoresBase<Party> extends Map<Party, number[]> implements Scores<Party> {
     ngrades?: number;
 
     constructor(...parameters: any[]) {
@@ -11,7 +10,7 @@ export class ScoresBase<Party extends HasOpinions> extends Map<Party, number[]> 
         }
     }
 
-    static fromGrades<Party extends HasOpinions>(ngrades: number): ScoresBase<Party> {
+    static fromGrades<Party>(ngrades: number): ScoresBase<Party> {
         const ths = new ScoresBase<Party>();
         ths.ngrades = ngrades;
         return ths;

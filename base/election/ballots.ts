@@ -1,12 +1,11 @@
 import { ReadonlyCounter } from "../../utils/python/collections";
-import { HasOpinions } from "../actors";
 
 /**
  * A counter, mapping each party to its number of ballots.
  *
  * [[PS, 5], [LR: 7]] -> 5 ballots for PS, 7 for LR.
  */
-export interface Simple<Party extends HasOpinions> extends ReadonlyCounter<Party> { }
+export interface Simple<Party> extends ReadonlyCounter<Party> { }
 
 /**
  * A list of ballots, each ballot ordering parties by decreasing preference.
@@ -21,7 +20,7 @@ export interface Simple<Party extends HasOpinions> extends ReadonlyCounter<Party
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export interface Order<Party extends HasOpinions> extends Readonly<Readonly<Party[]>[]> { }
+export interface Order<Party> extends Readonly<Readonly<Party[]>[]> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -41,9 +40,9 @@ export interface Order<Party extends HasOpinions> extends Readonly<Readonly<Part
  * Otherwise, the ngrades attribute will not be set and the get method may return
  * undefined for unlisted parties.
  */
-export interface Scores<Party extends HasOpinions> extends ReadonlyMap<Party, Readonly<number[]>> {
+export interface Scores<Party> extends ReadonlyMap<Party, Readonly<number[]>> {
     readonly ngrades?: number;
     get(key: Party): Readonly<number[]>|undefined;
 }
 
-export type Ballots<Party extends HasOpinions> = Simple<Party> | Order<Party> | Scores<Party>;
+export type Ballots<Party> = Simple<Party> | Order<Party> | Scores<Party>;
