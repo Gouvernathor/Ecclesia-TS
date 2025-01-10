@@ -9,9 +9,10 @@ export function divmod(a: number, b: number): [number, number] {
     return [Math.floor(a / b), a % b];
 }
 
-export function range(end: number): number[];
-export function range(start: number, end: number): number[];
-export function range(start: number, end?: number): number[] {
+// TODO: implement as a class implementing ReadonlyArray<number>
+export function range(end: number): ReadonlyArray<number>;
+export function range(start: number, end: number): ReadonlyArray<number>;
+export function range(start: number, end?: number): ReadonlyArray<number> {
     if (end === undefined) {
         end = start;
         start = 0;
@@ -19,9 +20,9 @@ export function range(start: number, end?: number): number[] {
     return Array.from({length: end - start}, (_, i) => i + start);
 }
 
-export function* enumerate<T>(array: Iterable<T>, start = 0) {
+export function* enumerate<T>(array: Iterable<T>, start = 0): Iterator<[number, T]> {
     for (const item of array) {
-        yield [start++, item] as const;
+        yield [start++, item];
     }
 }
 
