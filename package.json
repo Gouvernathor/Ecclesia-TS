@@ -1,6 +1,6 @@
 {
   "name": "ecclesia",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Framework for political and electoral simulations",
   "type": "module",
   "exports": {
