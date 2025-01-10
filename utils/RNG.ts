@@ -46,7 +46,13 @@ export default class RNG {
     /**
      * @returns a number in [[min, max[[
      */
-    randRange(min: number, max: number) {
+    randRange(max: number): number;
+    randRange(min: number, max: number): number;
+    randRange(min: number, max?: number): number {
+        if (max === undefined) {
+            max = min;
+            min = 0;
+        }
         return min + Math.floor(this.random() * (max - min));
     }
     /**
