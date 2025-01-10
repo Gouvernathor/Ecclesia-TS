@@ -20,7 +20,7 @@ export function range(start: number, end?: number): ReadonlyArray<number> {
     return Array.from({length: end - start}, (_, i) => i + start);
 }
 
-export function* enumerate<T>(array: Iterable<T>, start = 0): Iterator<[number, T]> {
+export function* enumerate<T>(array: Iterable<T>, start = 0): Iterable<[number, T]> {
     for (const item of array) {
         yield [start++, item];
     }
