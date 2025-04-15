@@ -20,7 +20,7 @@ export interface Simple<Party> extends ReadonlyCounter<Party> { }
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export interface Order<Party> extends Readonly<Readonly<Party[]>[]> { }
+export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -40,9 +40,9 @@ export interface Order<Party> extends Readonly<Readonly<Party[]>[]> { }
  * Otherwise, the ngrades attribute will not be set and the get method may return
  * undefined for unlisted parties.
  */
-export interface Scores<Party> extends ReadonlyMap<Party, Readonly<number[]>> {
+export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
     readonly ngrades?: number;
-    get(key: Party): Readonly<number[]>|undefined;
+    get(key: Party): ReadonlyArray<number>|undefined;
 }
 
 export type Ballots<Party> = Simple<Party> | Order<Party> | Scores<Party>;
