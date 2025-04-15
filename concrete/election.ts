@@ -5,7 +5,7 @@ import { Ballots } from "../base/election/ballots";
 import { Voting } from "../base/election/voting";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
-import RNG from "../utils/RNG";
+import RNG from "@gouvernathor/rng";
 
 /**
  * Implements the most basic elections : combining a voting method and an attribution method.

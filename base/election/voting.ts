@@ -1,5 +1,5 @@
 import { Collection } from "@gouvernathor/python/collections/abc";
-import RNG from "../../utils/RNG";
+import RNG from "@gouvernathor/rng";
 import { HasOpinions } from "../actors";
 import { Ballots } from "./ballots";
 

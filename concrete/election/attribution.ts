@@ -3,7 +3,7 @@ import { Order, Scores, Simple } from "../../base/election/ballots";
 import { divmod, enumerate, max, min } from "@gouvernathor/python";
 import { Counter, DefaultMap } from "@gouvernathor/python/collections";
 import { fmean, median } from "@gouvernathor/python/statistics";
-import RNG from "../../utils/RNG";
+import RNG from "@gouvernathor/rng";
 import { ScoresBase } from "./ballots";
 
 // Majority methods

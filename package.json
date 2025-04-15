@@ -54,6 +54,7 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@gouvernathor/python": "^1.0.3"
+    "@gouvernathor/python": "^1.0.3",
+    "@gouvernathor/rng": "^1.2.1"
   }
 }
