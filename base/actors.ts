@@ -2,8 +2,6 @@ import { range, sum } from "@gouvernathor/python";
 import * as math from "@gouvernathor/python/math";
 import RNG from "@gouvernathor/rng";
 
-const SQ2 = Math.sqrt(2);
-
 /**
  * Converts a normal distribution to an uniform distribution.
  *
@@ -16,7 +14,7 @@ const SQ2 = Math.sqrt(2);
  * @param sigma standard deviation of the normal distribution
  */
 function normalToUniform(x: number, mu: number, sigma: number): number {
-    return 0.5 * (1 + math.erf((x - mu) / (sigma * SQ2)));
+    return 0.5 * (1 + math.erf((x - mu) / (sigma * Math.SQRT2)));
 }
 
 /**
