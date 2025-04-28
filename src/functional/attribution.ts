@@ -497,6 +497,7 @@ export function hare<Party>(
 export const largestRemaindersProportional = hare;
 export const hamilton = hare;
 
+// FIXME
 export function huntingtonHill<Party>(
     { nSeats, threshold, contingency = null }: {
         nSeats: number,
