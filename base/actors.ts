@@ -5,13 +5,13 @@ import RNG from "@gouvernathor/rng";
 /**
  * Converts a normal distribution to an uniform distribution.
  *
- * Returns a value following an uniform distribution between 0 and 1n
- * such that the higher the value of x, the higher the return value.
  * (This function is on its own so that the code can be checked by stats people.)
  *
  * @param x generated from a normal distribution
  * @param mu mean value of the normal distribution
  * @param sigma standard deviation of the normal distribution
+ * @returns a value following an uniform distribution between 0 and 1,
+ * such that the higher the value of x, the higher the return value.
  */
 function normalToUniform(x: number, mu: number, sigma: number): number {
     return 0.5 * (1 + math.erf((x - mu) / (sigma * Math.SQRT2)));
