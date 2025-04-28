@@ -1,4 +1,4 @@
-import { Scores } from "../../base/election/ballots";
+import { Scores } from "../../ballots";
 
 export class ScoresBase<Party> extends Map<Party, number[]> implements Scores<Party> {
     ngrades?: number;

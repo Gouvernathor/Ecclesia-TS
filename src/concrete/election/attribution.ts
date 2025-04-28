@@ -1,5 +1,5 @@
 import { Attribution, AttributionFailure, DivisorMethod, Proportional } from "../../base/election/attribution";
-import { Order, Scores, Simple } from "../../base/election/ballots";
+import { Order, Scores, Simple } from "../../ballots";
 import { divmod, enumerate, max, min } from "@gouvernathor/python";
 import { Counter, DefaultMap } from "@gouvernathor/python/collections";
 import { fmean, median } from "@gouvernathor/python/statistics";

@@ -45,4 +45,5 @@ export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>>
     get(key: Party): ReadonlyArray<number>|undefined;
 }
 
+
 export type Ballots<Party> = Simple<Party> | Order<Party> | Scores<Party>;

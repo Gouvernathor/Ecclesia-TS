@@ -1,5 +1,5 @@
 import { Counter } from "@gouvernathor/python/collections";
-import { Ballots, Simple } from "./ballots";
+import { Ballots, Simple } from "../../ballots";
 
 /**
  * Thrown when an attribution fails to attribute seats.
