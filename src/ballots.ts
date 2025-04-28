@@ -52,7 +52,7 @@ export interface Scores<Party> extends MehScores<Party> {
     get(key: Party): ReadonlyArray<number>;
 }
 
-namespace Scores {
+export namespace Scores {
     function get<Party>(this: Scores<Party>, key: Party): ReadonlyArray<number> {
         const value = this.get(key);
         if (value === undefined) {

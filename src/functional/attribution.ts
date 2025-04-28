@@ -1,5 +1,8 @@
-import { Counter } from "@gouvernathor/python/collections";
-import { Ballots, Simple } from "../ballots";
+import { Counter, DefaultMap } from "@gouvernathor/python/collections";
+import { Ballots, Order, Scores, Simple } from "../ballots";
+import { divmod, enumerate, max, min } from "@gouvernathor/python";
+import { fmean, median } from "@gouvernathor/python/statistics";
+import RNG from "@gouvernathor/rng";
 
 /**
  * To be thrown when an attribution fails to attribute seats,
@@ -31,7 +34,8 @@ export type Attribution<Party, B extends Ballots<Party>> =
     (votes: B, rest?: Record<string, any>) => Counter<Party>;
 
 /**
- * Most attributions should generally implement this interface, and have a fixed number of seats.
+ * Most attributions should generally implement this interface,
+ * which reflects that the number of seats they allocate is always the same.
  *
  * However, some attributions may yield variable numbers of seats,
  * for instance the pre-2024 federal German system.
@@ -39,14 +43,11 @@ export type Attribution<Party, B extends Ballots<Party>> =
 export type HasNSeats = { readonly nSeats: number };
 
 
-/*
-partial factory methods
-(methods that take a function, optionally other stuff, and return an attribution)
- */
-
 /**
  * Transforms a standard proportional attribution method into one that requires a certain threshold
  * (percentage of the total votes) to be reached by the parties in order to receive seats.
+ * Mostly useful for proportional attribution methods -
+ * but works for any simple-ballot-based attribution method.
  *
  * Replaces the Proportional class implementation.
  *
@@ -94,7 +95,7 @@ export function addThresholdToSimpleAttribution<Party>(
             }
         }
         return attribution(votes, rest);
-    }
+    };
     return attrib;
 }
 
@@ -147,7 +148,7 @@ export function proportionalFromRankIndexFunction<Party>(
         }
 
         return seats;
-    }
+    };
     attrib.nSeats = nSeats;
     return attrib;
 }
@@ -158,6 +159,12 @@ export function proportionalFromRankIndexFunction<Party>(
  * @returns A value that should be increasing as k rises
  */
 type DivisorFunction = (k: number) => number;
+
+function rankIndexFunctionFromDivisorFunction(
+    divisorFunction: DivisorFunction
+): RankIndexFunction {
+    return (t, a) => t / divisorFunction(a);
+}
 
 /**
  * A function creating a divisor method -
@@ -171,6 +178,385 @@ export function proportionalFromDivisorFunction<Party>(
 ): Attribution<Party, Simple<Party>> & HasNSeats {
     return proportionalFromRankIndexFunction({
         nSeats,
-        rankIndexFunction: (t, a) => t / divisorFunction(a),
+        rankIndexFunction: rankIndexFunctionFromDivisorFunction(divisorFunction),
     });
+}
+
+
+// Majority methods
+
+// TODO: inline, no point if no inheritance (and change the exception message)
+function majority<Party>(
+    { nSeats, threshold, contingency }: {
+        nSeats: number,
+        threshold: number,
+        contingency: Attribution<Party, Simple<Party>> | null,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+        const win = max(votes.keys(), p => votes.get(p)!);
+
+        if ((votes.get(win)! / votes.total) > threshold) {
+            return new Counter([[win, nSeats]]);
+        }
+        if (contingency === null) {
+            throw new AttributionFailure("No majority winner");
+        }
+        return contingency(votes, rest);
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+
+/**
+ * Creates an attribution method in which
+ * the party with the most votes wins all the seats.
+ */
+export function plurality<Party>(
+    { nSeats }: {
+        nSeats: number,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    return majority<Party>({
+        nSeats,
+        threshold: 0,
+        contingency: null,
+    });
+}
+
+/**
+ * Creates an attribution method in which a candidate needs to reach
+ * a certain percentage of the votes in order to win all the seats.
+ *
+ * If not party reaches the threshold, the contingency attribution method is called,
+ * or if no contingency is provided, an AttributionFailure error is thrown.
+ */
+export function superMajority<Party>(
+    { nSeats, threshold, contingency = null }: {
+        nSeats: number,
+        threshold: number,
+        contingency?: Attribution<Party, Simple<Party>> | null,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    return majority<Party>({
+        nSeats,
+        threshold,
+        contingency,
+    });
+}
+
+
+// Ordering-based methods
+
+/**
+ * Creates an attribution method in which the party with the least votes is eliminated,
+ * and its votes are redistributed to the other parties according to the voters' preferences.
+ * Repeats until a party reaches a majority of the remaining votes, winning all the seats.
+ *
+ * The ballots are not required to rank all the candidates.
+ */
+export function instantRunoff<Party>(
+    { nSeats }: {
+        nSeats: number
+    }
+): Attribution<Party, Order<Party>> & HasNSeats {
+    const attrib = (votes: Order<Party>, rest = {}): Counter<Party> => {
+        const blacklisted = new Set<Party>();
+
+        const nParties = new Set(votes.flat()).size;
+        for (let pn = 0; pn < nParties; pn++) {
+            const firstPlaces = new Counter<Party>();
+            for (const ballot of votes) {
+                for (const party of ballot) {
+                    if (!blacklisted.has(party)) {
+                        firstPlaces.increment(party);
+                        break;
+                    }
+                }
+            }
+
+            const total = firstPlaces.total;
+            for (const [party, score] of firstPlaces) {
+                if (score / total > .5) {
+                    return new Counter([[party, nSeats]]);
+                }
+            }
+            blacklisted.add(min(firstPlaces.keys(), p => firstPlaces.get(p)!));
+        }
+        throw new Error("Should not happen");
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+
+/**
+ * Creates an attribution method in which each party receives points according
+ * to the position it occupies on each ballot, and the party with the most points wins all the seats.
+ *
+ * Uses the Modified Borda Count, in which the least-ranked candidate gets 1 point,
+ * and unranked candidates get 0 points.
+ * So, the ballots are not required to rank all the candidates.
+ */
+export function bordaCount<Party>(
+    { nSeats }: {
+        nSeats: number
+    }
+): Attribution<Party, Order<Party>> & HasNSeats {
+    const attrib = (votes: Order<Party>, rest = {}): Counter<Party> => {
+        const scores = new Counter<Party>();
+        for (const ballot of votes) {
+            for (const [i, party] of enumerate(ballot.slice().reverse(), 1)) {
+                scores.increment(party, i);
+            }
+        }
+        return new Counter([[max(scores.keys(), p => scores.get(p)!), nSeats]]);
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+
+/**
+ * Creates an attribution method in which each party is matched against each other party,
+ * and the party winning each of its matchups wins all the seats.
+ * If no party wins against all others, the attribution fails.
+ *
+ * Doesn't support candidates with equal ranks, due to the Order type format.
+ * This implementation also doesn't support incomplete ballots.
+ *
+ * @param contingency An optional contingency attribution method to use in case of a standoff.
+ * If not provided (or null), the attribution will fail with a condorcet.Standoff error,
+ * which is a subclass of AttributionFailure.
+ */
+export function condorcet<Party>(
+    { nSeats, contingency = null }: {
+        nSeats: number,
+        contingency?: Attribution<Party, Order<Party>> | null,
+    }
+): Attribution<Party, Order<Party>> & HasNSeats {
+    const attrib = (votes: Order<Party>, rest = {}): Counter<Party> => {
+        const counts = new DefaultMap<Party, Counter<Party>>(() => new Counter());
+        const majority= votes.length / 2;
+
+        for (const ballot of votes) {
+            for (const [i, party1] of enumerate(ballot)) {
+                for (const party2 of ballot.slice(i + 1)) {
+                    counts.get(party1)!.increment(party2);
+                }
+            }
+        }
+
+        const win = new Set(counts.keys());
+        for (const [party, partyCounter] of counts) {
+            for (const value of partyCounter.pos.values()) {
+                if (value > majority) {
+                    win.delete(party);
+                    break;
+                }
+            }
+        }
+
+        if (win.size !== 1) {
+            if (win.size !== 0) {
+                throw new Error("Bad attribution");
+            }
+            if (contingency === null) {
+                throw new condorcet.Standoff("No Condorcet winner");
+            }
+            return contingency(votes, rest);
+        }
+        const [winner] = win;
+        return new Counter([[winner, nSeats]]);
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+condorcet.Standoff = class extends AttributionFailure {};
+
+
+// Score-based methods
+
+/**
+ * Creates an attribution method in which all the seats go to the candidate with the highest average score.
+ *
+ * The ballots are not required to grade all the candidates.
+ */
+export function averageScore<Party>(
+    { nSeats }: {
+        nSeats: number
+    }
+): Attribution<Party, Scores<Party>> & HasNSeats {
+    const attrib = (votes: Scores<Party>, rest = {}): Counter<Party> => {
+        const counts = new DefaultMap<Party, number[]>(() => []);
+        for (const [party, grades] of votes) {
+            for (const [grade, qty] of enumerate(grades)) {
+                counts.get(party).push(...Array(qty).fill(grade));
+            }
+        }
+
+        return new Counter([[max(counts.keys(), party => fmean(counts.get(party)!)), nSeats]]);
+    }
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+
+/**
+ * Creates an attribution method in which all the seats go to the candidate with the highest median score.
+ *
+ * If there is a tie, the contingency method is called on the candidates that are tied.
+ * The default contingency is to take the maximum average score.
+ *
+ * The ballots are not required to grade all the candidates.
+ */
+export function medianScore<Party>(
+    { nSeats, contingency }: {
+        nSeats: number,
+        contingency?: Attribution<Party, Scores<Party>>,
+    }
+): Attribution<Party, Scores<Party>> & HasNSeats {
+    if (contingency === undefined) {
+        contingency = averageScore({ nSeats });
+    }
+
+    const attrib = (votes: Scores<Party>, rest = {}): Counter<Party> => {
+        const counts = new DefaultMap<Party, number[]>(() => []);
+        for (const [party, grades] of votes) {
+            for (const [grade, qty] of enumerate(grades)) {
+                counts.get(party).push(...Array(qty).fill(grade));
+            }
+        }
+
+        const medians = new Map([...counts.entries()]
+            .map(([party, partigrades]) => [party, median(partigrades)]));
+
+        const winScore = Math.max(...medians.values());
+        const [winner, ...winners] = [...medians.keys()].filter(p => medians.get(p) === winScore);
+
+        if (winners.length === 0) { // no tie
+            return new Counter([[winner, nSeats]]);
+        }
+
+        winners.unshift(winner);
+        const trimmedResults = Scores.fromEntries(winners.map(party => [party, counts.get(party)!]));
+        return contingency(trimmedResults, rest);
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+
+
+// Proportional methods
+
+export function dHondt<Party>(
+    { nSeats }: {
+        nSeats: number,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    return proportionalFromDivisorFunction<Party>({
+        nSeats,
+        divisorFunction: k => k + 1,
+    });
+}
+export const highestAveragesProportional = dHondt;
+export const jefferson = dHondt;
+
+export function webster<Party>(
+    { nSeats }: {
+        nSeats: number,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    return proportionalFromDivisorFunction<Party>({
+        nSeats,
+        divisorFunction: k => 2 * k + 1, // int math is better than k + .5
+    });
+}
+export const sainteLague = webster;
+
+export function hare<Party>(
+    { nSeats }: {
+        nSeats: number,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+        const seats = new Counter<Party>();
+        const remainders = new Map<Party, number>();
+        const sumVotes = votes.total;
+
+        for (const [party, scores] of votes) {
+            const [i, r] = divmod(scores * nSeats, sumVotes);
+            seats.set(party, i);
+            remainders.set(party, r);
+        }
+
+        seats.update([...remainders.keys()]
+            .sort((a, b) => remainders.get(b)! - remainders.get(a)!)
+            .slice(0, nSeats - seats.total));
+        return seats;
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
+}
+export const largestRemaindersProportional = hare;
+export const hamilton = hare;
+
+export function huntingtonHill<Party>(
+    { nSeats, threshold, contingency = null }: {
+        nSeats: number,
+        threshold: number,
+        contingency?: Attribution<Party, Simple<Party>> | null,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    const divisorFunction = (k: number) => Math.sqrt(k * (k + 1));
+    const baseRankIndexFunction = rankIndexFunctionFromDivisorFunction(divisorFunction);
+    const rankIndexFunction = (t: number, a: number) => {
+        if (a <= 0) {
+            return Infinity;
+        }
+        return baseRankIndexFunction(t, a);
+    };
+
+    return proportionalFromRankIndexFunction({
+        nSeats,
+        rankIndexFunction,
+    });
+
+    // const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    //     const originalVotes = votes;
+    //     const thresholdVotes = threshold * votes.total;
+    //     votes = new Counter<Party>([...votes.entries()].filter(([_, score]) => score >= thresholdVotes));
+
+    //     if (votes.size === 0) {
+    //         if (contingency === null) {
+    //             throw new AttributionFailure("No party reached the threshold");
+    //         }
+    //         return contingency(originalVotes, rest);
+    //     }
+    //     return proportionalFromDivisorFunction<Party>({
+    //         nSeats,
+    //         divisorFunction,
+    //     })(votes, rest);
+    // }
+}
+
+
+// Random-based attribution method
+
+export function randomize<Party>({ nSeats }: { nSeats: number }): Attribution<Party, Simple<Party>> & HasNSeats;
+export function randomize<Party>({ nSeats, randomObj }: { nSeats: number, randomObj: RNG }): Attribution<Party, Simple<Party>> & HasNSeats;
+export function randomize<Party>({ nSeats, randomSeed }: { nSeats: number, randomSeed: number | string }): Attribution<Party, Simple<Party>> & HasNSeats;
+export function randomize<Party>(
+    { nSeats, randomObj, randomSeed }: {
+        nSeats: number,
+        randomObj?: RNG,
+        randomSeed?: number | string,
+    }
+): Attribution<Party, Simple<Party>> & HasNSeats {
+    if (randomObj === undefined) {
+        randomObj = new RNG(randomSeed);
+    }
+
+    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+        return new Counter(randomObj.choices([...votes.keys()], { weights: [...votes.values()], k: nSeats }));
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
 }
