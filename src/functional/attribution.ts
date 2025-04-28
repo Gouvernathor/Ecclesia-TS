@@ -1,8 +1,8 @@
 import { Counter, DefaultMap } from "@gouvernathor/python/collections";
-import { Ballots, Order, Scores, Simple } from "../ballots";
 import { divmod, enumerate, max, min } from "@gouvernathor/python";
 import { fmean, median } from "@gouvernathor/python/statistics";
 import RNG from "@gouvernathor/rng";
+import { Ballots, Order, Scores, Simple } from "../ballots";
 
 /**
  * To be thrown when an attribution fails to attribute seats,
@@ -16,12 +16,14 @@ import RNG from "@gouvernathor/rng";
 export class AttributionFailure extends Error { }
 
 /**
- * A function to manage how the results from the ballots translate into an allocation of seats.
+ * A function to manage how the results from the ballots
+ * translate into an allocation of seats.
  *
  * If the attribution method is expected, by design, to fail under expected conditions,
  * such as a majority threshold not being reached,
  * this method should raise an AttributionFailure error.
  *
+ * @param votes The ballots.
  * @param rest This parameter, ignored in most cases,
  * forces the attributions taking more required or optional parameters
  * to take them as an options object.
@@ -30,8 +32,9 @@ export class AttributionFailure extends Error { }
  * It is a Counter mapping each party to the number of seats it won.
  * The return value's total() should be equal to the nSeats attributes - if any.
  */
-export type Attribution<Party, B extends Ballots<Party>> =
-    (votes: B, rest?: Record<string, any>) => Counter<Party>;
+export interface Attribution<Party, B extends Ballots<Party>> {
+    (votes: B, rest?: Record<string, any>): Counter<Party>;
+}
 
 /**
  * Most attributions should generally implement this interface,
@@ -40,7 +43,7 @@ export type Attribution<Party, B extends Ballots<Party>> =
  * However, some attributions may yield variable numbers of seats,
  * for instance the pre-2024 federal German system.
  */
-export type HasNSeats = { readonly nSeats: number };
+export interface HasNSeats { readonly nSeats: number };
 
 
 /**
@@ -108,7 +111,9 @@ export function addThresholdToSimpleAttribution<Party>(
  * @returns A value that should be increasing as t rises, and decreasing as a rises.
  * The higher the return value, the more likely the candidate is to receive another seat.
  */
-export type RankIndexFunction = (t: number, a: number) => number;
+export interface RankIndexFunction {
+    (t: number, a: number): number;
+};
 
 /**
  * A function creating a fixed-seats, proportional, rank-index attribution method
@@ -158,7 +163,9 @@ export function proportionalFromRankIndexFunction<Party>(
  * @param k The number of seats already allocated to a party
  * @returns A value that should be increasing as k rises
  */
-type DivisorFunction = (k: number) => number;
+export interface DivisorFunction {
+    (k: number): number;
+};
 
 function rankIndexFunctionFromDivisorFunction(
     divisorFunction: DivisorFunction
