@@ -77,7 +77,7 @@ export class InstantRunoff<Party> implements Attribution<Party, Order<Party>> {
     attrib(votes: Order<Party>, rest = {}): Counter<Party> {
         const blacklisted = new Set<Party>();
 
-        const nparties = new Set([].flat()).size;
+        const nparties = new Set(votes.flat()).size;
         for (let _i = 0; _i < nparties; _i++) {
             const first_places = new Counter<Party>();
             for (const ballot of votes) {
