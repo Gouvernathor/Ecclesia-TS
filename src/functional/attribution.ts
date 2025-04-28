@@ -57,15 +57,15 @@ partial factory methods
  * an AttributionFailure error will be raised.
  * If undefined (or nothing is passed), the contingency will default to running
  * the same attribution method without the threshold.
- * @param proportionalAttrib The votes passed to this attribution method are guaranteed to be above the threshold,
+ * @param attribution The votes passed to this attribution method are guaranteed to be above the threshold,
  * except if the contingency is undefined and no party reached the threshold
  * (in that case, all parties will be passed).
  */
-export function addThresholdToProportional<Party>(
-    { threshold, contingency, proportionalAttrib }: {
+export function addThresholdToSimpleAttribution<Party>(
+    { threshold, contingency, attribution }: {
         threshold: number,
         contingency?: Attribution<Party, Simple<Party>> | null,
-        proportionalAttrib: Attribution<Party, Simple<Party>>,
+        attribution: Attribution<Party, Simple<Party>>,
     }
 ): Attribution<Party, Simple<Party>> {
     // const threshold_ = threshold;
@@ -78,7 +78,7 @@ export function addThresholdToProportional<Party>(
         //         threshold = threshold_;
         //     }
         // };
-        contingency = proportionalAttrib;
+        contingency = attribution;
     }
 
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
@@ -93,7 +93,7 @@ export function addThresholdToProportional<Party>(
                 return contingency(original_votes, rest);
             }
         }
-        return proportionalAttrib(votes, rest);
+        return attribution(votes, rest);
     }
     return attrib;
 }
