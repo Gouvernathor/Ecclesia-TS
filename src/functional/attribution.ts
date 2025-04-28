@@ -103,6 +103,19 @@ export function addThresholdToSimpleAttribution<Party>(
 }
 
 /**
+ * An attribution method that allocates seats proportionally
+ * to the number of votes received by each party.
+ */
+export interface Proportional<Party> extends Attribution<Party, Simple<Party>> {};
+
+// TODO: doesn't it always implement HasNSeats ?
+/**
+ * An specific kind of proportional attribution method,
+ * based on a rank-index function, and which
+ */
+export interface RankIndexMethod<Party> extends Proportional<Party> {};
+
+/**
  * A function that should be pure : it should not take into account
  * any value other than the arguments passed to it.
  *
@@ -128,7 +141,7 @@ export function proportionalFromRankIndexFunction<Party>(
         nSeats: number,
         rankIndexFunction: RankIndexFunction,
     }
-): Attribution<Party, Simple<Party>> & HasNSeats {
+): RankIndexMethod<Party> & HasNSeats {
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
         const allVotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([party, v]) => [party, v / allVotes]));
@@ -158,6 +171,8 @@ export function proportionalFromRankIndexFunction<Party>(
     return attrib;
 }
 
+export interface DivisorMethod<Party> extends RankIndexMethod<Party> {};
+
 /**
  * A function that should be pure.
  * @param k The number of seats already allocated to a party
@@ -182,7 +197,7 @@ export function proportionalFromDivisorFunction<Party>(
         nSeats: number,
         divisorFunction: DivisorFunction,
     }
-): Attribution<Party, Simple<Party>> & HasNSeats {
+): DivisorMethod<Party> & HasNSeats {
     return proportionalFromRankIndexFunction({
         nSeats,
         rankIndexFunction: rankIndexFunctionFromDivisorFunction(divisorFunction),
@@ -449,7 +464,7 @@ export function dHondt<Party>(
     { nSeats }: {
         nSeats: number,
     }
-): Attribution<Party, Simple<Party>> & HasNSeats {
+): DivisorMethod<Party> & HasNSeats {
     return proportionalFromDivisorFunction<Party>({
         nSeats,
         divisorFunction: k => k + 1,
@@ -462,7 +477,7 @@ export function webster<Party>(
     { nSeats }: {
         nSeats: number,
     }
-): Attribution<Party, Simple<Party>> & HasNSeats {
+): DivisorMethod<Party> & HasNSeats {
     return proportionalFromDivisorFunction<Party>({
         nSeats,
         divisorFunction: k => 2 * k + 1, // int math is better than k + .5
@@ -474,7 +489,7 @@ export function hare<Party>(
     { nSeats }: {
         nSeats: number,
     }
-): Attribution<Party, Simple<Party>> & HasNSeats {
+): Proportional<Party> & HasNSeats {
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
         const seats = new Counter<Party>();
         const remainders = new Map<Party, number>();
@@ -504,7 +519,7 @@ export function huntingtonHill<Party>(
         threshold: number,
         contingency?: Attribution<Party, Simple<Party>> | null,
     }
-): Attribution<Party, Simple<Party>> & HasNSeats {
+): DivisorMethod<Party> & HasNSeats {
     const divisorFunction = (k: number) => Math.sqrt(k * (k + 1));
     const baseRankIndexFunction = rankIndexFunctionFromDivisorFunction(divisorFunction);
     const rankIndexFunction = (t: number, a: number) => {
