@@ -192,43 +192,27 @@ export function proportionalFromDivisorFunction<Party>(
 
 // Majority methods
 
-// TODO: inline, no point if no inheritance (and change the exception message)
-function majority<Party>(
-    { nSeats, threshold, contingency }: {
-        nSeats: number,
-        threshold: number,
-        contingency: Attribution<Party, Simple<Party>> | null,
-    }
-): Attribution<Party, Simple<Party>> & HasNSeats {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
-        const win = max(votes.keys(), p => votes.get(p)!);
-
-        if ((votes.get(win)! / votes.total) > threshold) {
-            return new Counter([[win, nSeats]]);
-        }
-        if (contingency === null) {
-            throw new AttributionFailure("No majority winner");
-        }
-        return contingency(votes, rest);
-    };
-    attrib.nSeats = nSeats;
-    return attrib;
-}
-
 /**
  * Creates an attribution method in which
  * the party with the most votes wins all the seats.
+ *
+ * Will throw an AttributionFailure error if no party wins any vote.
  */
 export function plurality<Party>(
     { nSeats }: {
         nSeats: number,
     }
 ): Attribution<Party, Simple<Party>> & HasNSeats {
-    return majority<Party>({
-        nSeats,
-        threshold: 0,
-        contingency: null,
-    });
+    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+        const win = max(votes.keys(), p => votes.get(p)!);
+
+        if (votes.get(win)! > 0) {
+            return new Counter([[win, nSeats]]);
+        }
+        throw new AttributionFailure("No party won any vote");
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
 }
 
 /**
@@ -245,11 +229,19 @@ export function superMajority<Party>(
         contingency?: Attribution<Party, Simple<Party>> | null,
     }
 ): Attribution<Party, Simple<Party>> & HasNSeats {
-    return majority<Party>({
-        nSeats,
-        threshold,
-        contingency,
-    });
+    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+        const win = max(votes.keys(), p => votes.get(p)!);
+
+        if ((votes.get(win)! / votes.total) > threshold) {
+            return new Counter([[win, nSeats]]);
+        }
+        if (contingency === null) {
+            throw new AttributionFailure("No party reached the threshold");
+        }
+        return contingency(votes, rest);
+    };
+    attrib.nSeats = nSeats;
+    return attrib;
 }
 
 
