@@ -68,17 +68,17 @@ export function addThresholdToProportional<Party>(
         proportionalAttrib: Attribution<Party, Simple<Party>>,
     }
 ): Attribution<Party, Simple<Party>> {
-    const threshold_ = threshold;
+    // const threshold_ = threshold;
     if (contingency === undefined) {
-        contingency = (votes: Simple<Party>, rest) => {
-            // FIXME: just call proportionalAttrib directly ?
-            threshold = 0;
-            try {
-                return attrib(votes, rest);
-            } finally {
-                threshold = threshold_;
-            }
-        };
+        // contingency = (votes: Simple<Party>, rest) => {
+        //     threshold = 0;
+        //     try {
+        //         return attrib(votes, rest);
+        //     } finally {
+        //         threshold = threshold_;
+        //     }
+        // };
+        contingency = proportionalAttrib;
     }
 
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
