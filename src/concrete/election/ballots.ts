@@ -1,6 +1,6 @@
-import { Scores } from "../../ballots";
+import { MehScores } from "../../ballots";
 
-export class ScoresBase<Party> extends Map<Party, number[]> implements Scores<Party> {
+export class ScoresBase<Party> extends Map<Party, number[]> implements MehScores<Party> {
     ngrades?: number;
 
     constructor(...parameters: any[]) {

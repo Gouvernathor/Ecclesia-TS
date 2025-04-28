@@ -1,5 +1,5 @@
 import { Counter } from "@gouvernathor/python/collections";
-import { Ballots, Simple } from "../../ballots";
+import { MehBallots, Simple } from "../../ballots";
 
 /**
  * Thrown when an attribution fails to attribute seats.
@@ -15,7 +15,7 @@ export class AttributionFailure extends Error { }
 /**
  * Manages how the results from the ballots determine the allocation of seats.
  */
-export interface Attribution<Party, B extends Ballots<Party>> {
+export interface Attribution<Party, B extends MehBallots<Party>> {
     /**
      * The nSeats attribute should generally be set in the constructor and be fixed.
      * However, some attributions may yield variable numbers of seats, for instance

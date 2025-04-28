@@ -1,7 +1,7 @@
 import { HasOpinions } from "../base/actors";
 import { Election } from "../base/election";
 import { Attribution } from "../base/election/attribution";
-import { Ballots } from "../ballots";
+import { MehBallots } from "../ballots";
 import { Voting } from "../base/election/voting";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
@@ -10,7 +10,7 @@ import RNG from "@gouvernathor/rng";
 /**
  * Implements the most basic elections : combining a voting method and an attribution method.
  */
-export class BaseElection<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> implements Election<Voter, Party> {
+export class BaseElection<Voter extends HasOpinions, Party extends HasOpinions, B extends MehBallots<Party>> implements Election<Voter, Party> {
     constructor(
         readonly votingMethod: Voting<Voter, Party, B>,
         readonly attributionMethod: Attribution<Party, B>,

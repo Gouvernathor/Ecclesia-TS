@@ -1,5 +1,5 @@
 import { Attribution, AttributionFailure, DivisorMethod, Proportional } from "../../base/election/attribution";
-import { Order, Scores, Simple } from "../../ballots";
+import { Order, MehScores, Simple } from "../../ballots";
 import { divmod, enumerate, max, min } from "@gouvernathor/python";
 import { Counter, DefaultMap } from "@gouvernathor/python/collections";
 import { fmean, median } from "@gouvernathor/python/statistics";
@@ -189,13 +189,13 @@ export class Condorcet<Party> implements Attribution<Party, Order<Party>> {
  *
  * Supports tallies where some parties were not graded by everyone.
  */
-export class AverageScore<Party> implements Attribution<Party, Scores<Party>> {
+export class AverageScore<Party> implements Attribution<Party, MehScores<Party>> {
     nSeats: number;
     constructor({ nSeats }: { nSeats: number }) {
         this.nSeats = nSeats;
     }
 
-    attrib(votes: Scores<Party>, rest = {}): Counter<Party> {
+    attrib(votes: MehScores<Party>, rest = {}): Counter<Party> {
         // const ngrades = votes.ngrades ?? votes.values().next().value.length;
 
         const counts = new DefaultMap<Party, number[]>(() => []);
@@ -217,10 +217,10 @@ export class AverageScore<Party> implements Attribution<Party, Scores<Party>> {
  *
  * Supports tallies where some parties were not graded by everyone.
  */
-export class MedianScore<Party> implements Attribution<Party, Scores<Party>> {
+export class MedianScore<Party> implements Attribution<Party, MehScores<Party>> {
     nSeats: number;
-    contingency: Attribution<Party, Scores<Party>>;
-    constructor({ nSeats, contingency }: { nSeats: number, contingency?: Attribution<Party, Scores<Party>> }) {
+    contingency: Attribution<Party, MehScores<Party>>;
+    constructor({ nSeats, contingency }: { nSeats: number, contingency?: Attribution<Party, MehScores<Party>> }) {
         this.nSeats = nSeats;
         if (contingency === undefined) {
             contingency = new AverageScore({ nSeats });
@@ -228,7 +228,7 @@ export class MedianScore<Party> implements Attribution<Party, Scores<Party>> {
         this.contingency = contingency;
     }
 
-    attrib(votes: Scores<Party>, rest = {}): Counter<Party> {
+    attrib(votes: MehScores<Party>, rest = {}): Counter<Party> {
         const counts = new DefaultMap<Party, number[]>(() => []);
         for (const [party, grades] of votes) {
             for (const [grade, qty] of enumerate(grades)) {

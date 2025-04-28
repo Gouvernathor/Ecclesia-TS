@@ -1,12 +1,12 @@
 import { Collection } from "@gouvernathor/python/collections/abc";
 import RNG from "@gouvernathor/rng";
 import { HasOpinions } from "../actors";
-import { Ballots } from "../../ballots";
+import { MehBallots } from "../../ballots";
 
 /**
  * This represents the rules for citizens to cast ballots.
  */
-export abstract class Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
+export abstract class Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends MehBallots<Party>> {
     protected randomObj;
     constructor({ }?);
     constructor({ randomObj }: { randomObj: RNG });

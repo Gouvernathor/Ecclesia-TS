@@ -1,5 +1,5 @@
 import { HasOpinions } from "../../base/actors";
-import { Order, Scores, Simple } from "../../ballots";
+import { Order, MehScores, Simple } from "../../ballots";
 import { Voting } from "../../base/election/voting";
 import { min } from "@gouvernathor/python";
 import { Counter } from "@gouvernathor/python/collections";
@@ -50,7 +50,7 @@ export class OrderingVote<Voter extends HasOpinions, Party extends HasOpinions> 
  * The latter is more akin to OrderingVote, so I made the former the default,
  * but it causes issues for lower grades so ApprovalVote uses the latter.
  */
-export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, Scores<Party>> {
+export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends Voting<Voter, Party, MehScores<Party>> {
     ngrades: number;
     constructor({ ngrades, ...rest }: { ngrades: number } & any) { // typing disabled because typescript badly supports overloading inheritance
         super(rest);
@@ -62,7 +62,7 @@ export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> 
      * This may yield situations where every party is graded 0, especially with
      * low ngrades values.
      */
-    override vote(voters: Collection<Voter>, candidates: Collection<Party>): Scores<Party> {
+    override vote(voters: Collection<Voter>, candidates: Collection<Party>): MehScores<Party> {
         const scores = ScoresBase.fromGrades<Party>(this.ngrades);
         const partees = this.randomObj.shuffled(candidates);
 
@@ -82,7 +82,7 @@ export class CardinalVote<Voter extends HasOpinions, Party extends HasOpinions> 
  * Alternative implementation of CardinalVote.
  */
 export class BalancedCardinalVote<Voter extends HasOpinions, Party extends HasOpinions> extends CardinalVote<Voter, Party> {
-    override vote(voters: Collection<Voter>, candidates: Collection<Party>): Scores<Party> {
+    override vote(voters: Collection<Voter>, candidates: Collection<Party>): MehScores<Party> {
         const scores = ScoresBase.fromGrades<Party>(this.ngrades);
         const partees = this.randomObj.shuffled(candidates);
 
@@ -119,7 +119,7 @@ export class ApprovalVote<Voter extends HasOpinions, Party extends HasOpinions> 
     private static cardinal = new BalancedCardinalVote({ ngrades: 2 });
 
     override vote(voters: Collection<Voter>, candidates: Collection<Party>): Simple<Party> {
-        const scores = ApprovalVote.cardinal.vote(voters, candidates) as Scores<Party>;
+        const scores = ApprovalVote.cardinal.vote(voters, candidates) as MehScores<Party>;
         const approvals = new Counter<Party>();
         for (const [party, [_disapp, app]] of scores) {
             approvals.increment(party, app);

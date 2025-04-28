@@ -40,10 +40,47 @@ export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
  * Otherwise, the ngrades attribute will not be set and the get method may return
  * undefined for unlisted parties.
  */
-export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
+export interface MehScores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
     readonly ngrades?: number;
     get(key: Party): ReadonlyArray<number>|undefined;
 }
+/**
+ * Better version of scores
+ */
+export interface Scores<Party> extends MehScores<Party> {
+    readonly ngrades: number;
+    get(key: Party): ReadonlyArray<number>;
+}
+
+namespace Scores {
+    function get<Party>(this: Scores<Party>, key: Party): ReadonlyArray<number> {
+        const value = this.get(key);
+        if (value === undefined) {
+            return Array(this.ngrades).fill(0);
+        }
+        return value!;
+    }
+
+    export function fromEntries<Party>(
+        elements: readonly [Party, readonly number[]][],
+    ): Scores<Party> {
+        if (elements.length === 0) {
+            throw new Error("Use the fromGrades method to create an empty Scores instance");
+        }
+        const ths = new Map(elements) as MehScores<Party> & { ngrades?: number };
+        ths.ngrades = elements[0][1].length;
+        ths.get = get.bind(ths as any);
+        return ths as Scores<Party>;
+    }
+
+    export function fromGrades<Party>(ngrades: number): Scores<Party> {
+        const ths = new Map() as MehScores<Party> & { ngrades?: number };
+        ths.ngrades = ngrades;
+        ths.get = get.bind(ths as any);
+        return ths as Scores<Party>;
+    }
+}
 
 
+export type MehBallots<Party> = Simple<Party> | Order<Party> | MehScores<Party>;
 export type Ballots<Party> = Simple<Party> | Order<Party> | Scores<Party>;
