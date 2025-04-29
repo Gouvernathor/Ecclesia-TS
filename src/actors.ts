@@ -1,6 +1,6 @@
 import { range, sum } from "@gouvernathor/python";
 import * as math from "@gouvernathor/python/math";
-import { createRandomObj, RandomObjParam } from "./utils";
+import { createRandomObj, RandomObjParam, type Tuple } from "./utils";
 
 /**
  * Converts a normal distribution to an uniform distribution.
@@ -59,6 +59,16 @@ function getAligner(
  * is between 0 and 1, and is increasing with each separate opinion,
  * with opinions having a decreasing importance.
  */
-function getDefaultAlignmentFactors(nOpinions: number) {
-    return Array.from({length: nOpinions}, (_, i) => 1 - i / nOpinions);
+function getDefaultAlignmentFactors<N extends number>(nOpinions: N) {
+    return Array.from({length: nOpinions}, (_, i) => 1 - i / nOpinions) as Tuple<N, number>;
 }
+
+/**
+ * A set of opinions represented as a multi-dimensional vector of integers,
+ * with each dimension (each vector member) representing one subject on which
+ * an opinion is held.
+ * The value in each dimension can be symmetrically positive or negative.
+ * Values close to 0 represent neutrality or indecision.
+ * The type parameter should be a number giving the number of opinions.
+ */
+export type OpinionsArray<N extends number> = Tuple<number, N>;
