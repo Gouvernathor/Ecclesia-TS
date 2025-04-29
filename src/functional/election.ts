@@ -1,6 +1,5 @@
 import { Counter } from "@gouvernathor/python/collections";
 import { type Collection } from "@gouvernathor/python/collections/abc";
-import { type AgreeAble } from "../actors";
 import { type Ballots } from "../ballots";
 import { type Voting } from "./voting";
 import { type Attribution } from "./attribution";
@@ -13,7 +12,7 @@ import { createRandomObj, type RandomObjParam } from "../utils";
  * @param voters A pool of voters such as taken by the Voting functions.
  * @returns A multi-set (a Counter) of elected representatives as returned by an Attribution.
  */
-export interface Election<Voter extends AgreeAble, Party extends AgreeAble> {
+export interface Election<Voter, Party> {
     (voters: Collection<Voter>, candidates: Collection<Party>): Counter<Party>;
 }
 
@@ -21,7 +20,7 @@ export interface Election<Voter extends AgreeAble, Party extends AgreeAble> {
 /**
  * Implements the most basic elections : combining a voting method and an attribution method.
  */
-export function standardElection<Voter extends AgreeAble, Party extends AgreeAble, B extends Ballots<Party>>(
+export function standardElection<Voter, Party, B extends Ballots<Party>>(
     { votingMethod, attributionMethod }: {
         votingMethod: Voting<Voter, Party, B>,
         attributionMethod: Attribution<Party, B>,
@@ -41,7 +40,7 @@ export function standardElection<Voter extends AgreeAble, Party extends AgreeAbl
  * Returns elements from the pool picked without replacement,
  * so the pool must be at least nSeats in size.
  */
-export function sortition<Citizen extends AgreeAble>(
+export function sortition<Citizen>(
     { nSeats, ...randomParam }: {
         nSeats: number,
     } & RandomObjParam

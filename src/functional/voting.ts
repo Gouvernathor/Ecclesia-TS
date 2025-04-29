@@ -2,10 +2,13 @@ import { min } from "@gouvernathor/python";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
-import { AgreeAble } from "../actors";
 import { Ballots, Order, Scores, Simple } from "../ballots";
 
-export interface Voting<Voter extends AgreeAble, Party extends AgreeAble, B extends Ballots<Party>> {
+export interface DisagreementFunction<T, U> {
+    (t: T, u: U): number;
+}
+
+export interface Voting<Voter, Party, B extends Ballots<Party>> {
     (voters: Collection<Voter>, candidates: Collection<Party>): B;
 }
 
@@ -25,7 +28,7 @@ export interface Voting<Voter extends AgreeAble, Party extends AgreeAble, B exte
  * If you want the generator to be seeded only once with a given seed, and reused afterwards,
  * seed it yourself and pass it as a random object to this function.
  */
-export function toShuffledVote<Voter extends AgreeAble, Party extends AgreeAble, B extends Ballots<Party>>(
+export function toShuffledVote<Voter, Party, B extends Ballots<Party>>(
     { voting, ...rest }: {
         voting: Voting<Voter, Party, B>,
     } & RandomObjParam,
@@ -44,15 +47,17 @@ export function toShuffledVote<Voter extends AgreeAble, Party extends AgreeAble,
  * The most basic and widespread voting system : each voter casts one ballot for
  * one of the available candidates, or (not implemented here) for none of them.
  */
-export function singleVote<Voter extends AgreeAble, Party extends AgreeAble>(
-    {} = {}
+export function singleVote<Voter, Party>(
+    { disagree }: {
+        disagree: DisagreementFunction<Voter, Party>,
+    }
 ): Voting<Voter, Party, Simple<Party>> {
     return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
         const scores = Counter.fromkeys(candidates, 0);
         for (const voter of voters) {
             // find the party with which disagreement is minimal
             // add it a ballot
-            scores.increment(min(candidates, party => voter.disagree(party)));
+            scores.increment(min(candidates, party => disagree(voter, party)));
         }
         return scores;
     }
@@ -61,14 +66,16 @@ export function singleVote<Voter extends AgreeAble, Party extends AgreeAble>(
 /**
  * Each voter ranks all, or (not implemented here) some, of the candidates.
  */
-export function orderingVote<Voter extends AgreeAble, Party extends AgreeAble>(
-    {} = {}
+export function orderingVote<Voter, Party>(
+    { disagree }: {
+        disagree: DisagreementFunction<Voter, Party>,
+    }
 ): Voting<Voter, Party, Order<Party>> {
     return (voters: Collection<Voter>,candidates: Collection<Party>): Order<Party> => {
         const order: Party[][] = [];
         for (const voter of voters) {
             order.push([...candidates]
-                .sort((a, b) => voter.disagree(a) - voter.disagree(b)));
+                .sort((a, b) => disagree(voter, a) - disagree(voter, b)));
         }
         return order;
     }
@@ -90,9 +97,10 @@ export function orderingVote<Voter extends AgreeAble, Party extends AgreeAble>(
  * proportional to the raw disagreement. This may yield situations
  * where every party is graded 0, especially with low ngrades values.
  */
-export function cardinalVote<Voter extends AgreeAble, Party extends AgreeAble>(
-    { nGrades }: {
-        nGrades: number
+export function cardinalVote<Voter, Party>(
+    { nGrades, disagree }: {
+        nGrades: number,
+        disagree: DisagreementFunction<Voter, Party>,
     }
 ): Voting<Voter, Party, Scores<Party>> {
     return (voters: Collection<Voter>, candidates: Collection<Party>) => {
@@ -102,7 +110,7 @@ export function cardinalVote<Voter extends AgreeAble, Party extends AgreeAble>(
         for (const voter of voters) {
             for (const party of candidates) {
                 const grade = Math.min(nGrades - 1,
-                    Math.floor(nGrades) * (1 - voter.disagree(party)));
+                    Math.floor(nGrades) * (1 - disagree(voter, party)));
                 (scores.get(party) as number[])[grade]++;
             }
         }
@@ -113,9 +121,10 @@ export function cardinalVote<Voter extends AgreeAble, Party extends AgreeAble>(
 /**
  * Alternative implementation of CardinalVote.
  */
-export function balancedCardinalVote<Voter extends AgreeAble, Party extends AgreeAble>(
-    { nGrades }: {
-        nGrades: number
+export function balancedCardinalVote<Voter, Party>(
+    { nGrades, disagree }: {
+        nGrades: number,
+        disagree: DisagreementFunction<Voter, Party>,
     }
 ): Voting<Voter, Party, Scores<Party>> {
     return (voters: Collection<Voter>, candidates: Collection<Party>) => {
@@ -123,7 +132,7 @@ export function balancedCardinalVote<Voter extends AgreeAble, Party extends Agre
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
-            const prefs = new Map(Array.from(candidates, party => [party, 1 - voter.disagree(party)]));
+            const prefs = new Map(Array.from(candidates, party => [party, 1 - disagree(voter, party)]));
             const minPref = Math.min(...prefs.values());
             let maxPref = Math.max(...prefs.values());
 
@@ -150,11 +159,14 @@ export function balancedCardinalVote<Voter extends AgreeAble, Party extends Agre
  * That's why the format it returns is not the same as with the cardinal vote.
  * If you want a scores-like attribution, use balancedCardinalVote({ nGrades: 2 }) instead.
  */
-export function approvalVote<Voter extends AgreeAble, Party extends AgreeAble>(
-    {} = {}
+export function approvalVote<Voter, Party>(
+    { disagree }: {
+        disagree: DisagreementFunction<Voter, Party>,
+    }
 ): Voting<Voter, Party, Simple<Party>> {
+    const cardinal = balancedCardinalVote({ nGrades: 2, disagree });
     return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
-        const scores = approvalVote.cardinal(voters, candidates) as Scores<Party>;
+        const scores = cardinal(voters, candidates) as Scores<Party>;
         const approvals = new Counter<Party>();
         for (const [party, [_disapproval, approval]] of scores) {
             approvals.increment(party, approval);
@@ -162,4 +174,3 @@ export function approvalVote<Voter extends AgreeAble, Party extends AgreeAble>(
         return approvals;
     }
 }
-approvalVote.cardinal = balancedCardinalVote({ nGrades: 2 });
