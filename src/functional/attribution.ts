@@ -474,7 +474,7 @@ export function medianScore<Party>(
 
 // Proportional methods
 
-export function dHondt<Party>(
+export function jefferson<Party>(
     { nSeats }: {
         nSeats: number,
     }
@@ -484,8 +484,8 @@ export function dHondt<Party>(
         divisorFunction: k => k + 1,
     });
 }
-export const highestAveragesProportional = dHondt;
-export const jefferson = dHondt;
+export const dHondt = jefferson;
+export const highestAveragesProportional = jefferson;
 
 export function webster<Party>(
     { nSeats }: {
@@ -499,7 +499,7 @@ export function webster<Party>(
 }
 export const sainteLague = webster;
 
-export function hare<Party>(
+export function hamilton<Party>(
     { nSeats }: {
         nSeats: number,
     }
@@ -523,8 +523,8 @@ export function hare<Party>(
     attrib.nSeats = nSeats;
     return attrib;
 }
-export const largestRemaindersProportional = hare;
-export const hamilton = hare;
+export const hareLargestRemainders = hamilton;
+export const largestRemaindersProportional = hamilton;
 
 /**
  * This attribution method required some creativity and tweaks,
