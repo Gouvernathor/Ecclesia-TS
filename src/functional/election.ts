@@ -1,44 +1,53 @@
 import { Counter } from "@gouvernathor/python/collections";
-import { Collection } from "@gouvernathor/python/collections/abc";
-import RNG from "@gouvernathor/rng";
+import { type Collection } from "@gouvernathor/python/collections/abc";
+import { type HasOpinions } from "../actors";
+import { type Ballots } from "../ballots";
+import { type Voting } from "./voting";
+import { type Attribution } from "./attribution";
+import { createRandomObj, type RandomObjParam } from "../utils";
 
-type HasOpinions = any; // placeholder
-type Ballots<Party> = any; // placeholder
-type Voting<Voter, Party, B> = any; // placeholder
-type Attribution<Party, B> = any; // placeholder
+/**
+ * A function to go from a set of opinionated voters
+ * to the elected representatives, the number of seats for each candidate.
+ *
+ * @param voters A pool of voters such as taken by the Voting functions.
+ * @returns A multi-set (a Counter) of elected representatives as returned by an Attribution.
+ */
+export interface Election<Voter extends HasOpinions, Party extends HasOpinions> {
+    (voters: Collection<Voter>, candidates: Collection<Party>): Counter<Party>;
+}
 
-export type Election<Voter extends HasOpinions, Party extends HasOpinions> =
-    (voters: Collection<Voter>, candidates: Collection<Party>) => Counter<Party>;
 
-export function BaseElection<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>>(
-    votingMethod: Voting<Voter, Party, B>,
-    attributionMethod: Attribution<Party, B>,
+/**
+ * Implements the most basic elections : combining a voting method and an attribution method.
+ */
+export function standardElection<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>>(
+    { votingMethod, attributionMethod }: {
+        votingMethod: Voting<Voter, Party, B>,
+        attributionMethod: Attribution<Party, B>,
+    }
 ): Election<Voter, Party> {
-    return (voters: Collection<Voter>, candidates: Collection<Party>) => {
-        return attributionMethod.attrib(votingMethod.vote(voters, candidates));
+    return (pool: Collection<Voter>, candidates: Collection<Party>): Counter<Party> => {
+        return attributionMethod(votingMethod(pool, candidates));
     };
 }
 
-export function Sortition<Citizen extends HasOpinions>(
-    nSeats: number,
-    {}?,
-): Election<Citizen, Citizen>;
-export function Sortition<Citizen extends HasOpinions>(
-    nSeats: number,
-    { randomObj }: { randomObj: RNG },
-): Election<Citizen, Citizen>;
-export function Sortition<Citizen extends HasOpinions>(
-    nSeats: number,
-    { randomSeed }: { randomSeed: number | string },
-): Election<Citizen, Citizen>;
-export function Sortition<Citizen extends HasOpinions>(
-    nSeats: number,
-    { randomObj, randomSeed }: { randomObj?: RNG, randomSeed?: number | string } = {},
+/**
+ * Implements a selection by lottery, directly among the population.
+ * Adds the supplementary constraint that the voter type and the candidate type must be the same.
+ *
+ * The pool of candidates and the pool of citizens must be the same.
+ * (Implementation detail : this is not enforced, and the pool of candidates is ignored.)
+ * Returns elements from the pool picked without replacement,
+ * so the pool must be at least nSeats in size.
+ */
+export function sortition<Citizen extends HasOpinions>(
+    { nSeats, ...randomParam }: {
+        nSeats: number,
+    } & RandomObjParam
 ): Election<Citizen, Citizen> {
-    if (randomObj === undefined) {
-        randomObj = new RNG(randomSeed);
-    }
-    return (voters: Collection<Citizen>, candidates?: any) => {
-        return new Counter(randomObj.shuffled(voters, nSeats));
+    return (citizens: Collection<Citizen>): Counter<Citizen> => {
+        const randomObj = createRandomObj(randomParam);
+        return new Counter(randomObj.shuffled(citizens, nSeats));
     };
 }
