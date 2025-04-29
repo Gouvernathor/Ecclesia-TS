@@ -1,7 +1,7 @@
 import { Counter, DefaultMap } from "@gouvernathor/python/collections";
 import { divmod, enumerate, max, min } from "@gouvernathor/python";
 import { fmean, median } from "@gouvernathor/python/statistics";
-import { Ballots, Order, Scores, Simple } from "../ballots";
+import { Ballots, Order, Scores, Simple } from "./ballots";
 import { createRandomObj, RandomObjParam } from "../utils";
 
 /**

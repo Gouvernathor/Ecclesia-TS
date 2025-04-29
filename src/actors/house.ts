@@ -1,8 +1,8 @@
 import { Counter } from "@gouvernathor/python/collections";
-import { Election } from "../functional/election";
+import { Election } from "../election";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { Vote } from "./vote";
-import { DisagreementFunction } from "../functional/voting";
+import { DisagreementFunction } from "../election/voting";
 
 /**
  * An electoral district relating to a House.

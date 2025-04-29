@@ -1,9 +1,9 @@
 import { Counter } from "@gouvernathor/python/collections";
 import { type Collection } from "@gouvernathor/python/collections/abc";
-import { type Ballots } from "../ballots";
-import { type Voting } from "./voting";
-import { type Attribution } from "./attribution";
-import { createRandomObj, type RandomObjParam } from "../utils";
+import { type Ballots } from "./election/ballots";
+import { type Voting } from "./election/voting";
+import { type Attribution } from "./election/attribution";
+import { createRandomObj, type RandomObjParam } from "./utils";
 
 /**
  * A function to go from a set of opinionated voters

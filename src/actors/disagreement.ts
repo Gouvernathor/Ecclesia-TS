@@ -1,5 +1,5 @@
 import { sum } from "@gouvernathor/python";
-import { DisagreementFunction } from "../functional/voting";
+import { DisagreementFunction } from "../election/voting";
 import { OpinionsArray, OpinionsArrayManager } from "./opinionsArray";
 
 // shorthand type aliases
