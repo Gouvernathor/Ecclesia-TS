@@ -26,8 +26,12 @@ export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpini
 }
 
 
-// concrete implementations (no random shuffling !)
+// concrete implementations (no random shuffling included !)
 
+/**
+ * The most basic and widespread voting system : each voter casts one ballot for
+ * one of the available candidates, or (not implemented here) for none of them.
+ */
 export function singleVote<Voter extends HasOpinions, Party extends HasOpinions>(
     voters: Collection<Voter>,
     candidates: Collection<Party>,
@@ -41,6 +45,9 @@ export function singleVote<Voter extends HasOpinions, Party extends HasOpinions>
     return scores;
 }
 
+/**
+ * Each voter ranks all, or (not implemented here) some, of the candidates.
+ */
 export function orderingVote<Voter extends HasOpinions, Party extends HasOpinions>(
     voters: Collection<Voter>,
     candidates: Collection<Party>,
@@ -53,12 +60,29 @@ export function orderingVote<Voter extends HasOpinions, Party extends HasOpinion
     return order;
 }
 
+/**
+ * Each voter gives a note (or grade) to each candidate.
+ * The number of grades must be provided to the constructor.
+ *
+ * This one is not as straightforward as the two previous ones, even setting
+ * strategic voting aside.
+ * What is to be considered to be the range of grades to cover ?
+ * From nazis to angels, or from the worst present candidate to the best ?
+ * The answer lies only in the minds of the voters.
+ * The latter is more akin to OrderingVote, so I made the former the default,
+ * but it causes issues for lower grades so ApprovalVote uses the latter.
+ *
+ * In this implementation, each voter gives a grade to each party
+ * proportional to the raw disagreement. This may yield situations
+ * where every party is graded 0, especially with low ngrades values.
+ */
 export function cardinalVoteFromNGrades<Voter extends HasOpinions, Party extends HasOpinions>(
     nGrades: number,
 ): Voting<Voter, Party, Scores<Party>> {
     return (voters: Collection<Voter>, candidates: Collection<Party>) => {
         const scores = Scores.fromGrades<Party>(nGrades);
 
+        // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
             for (const party of candidates) {
                 const grade = Math.min(nGrades - 1,
@@ -70,6 +94,9 @@ export function cardinalVoteFromNGrades<Voter extends HasOpinions, Party extends
     };
 }
 
+/**
+ * Alternative implementation of CardinalVote.
+ */
 export function balancedCardinalVoteFromNGrades<Voter extends HasOpinions, Party extends HasOpinions>(
     nGrades: number,
 ): Voting<Voter, Party, Scores<Party>> {
@@ -96,6 +123,15 @@ export function balancedCardinalVoteFromNGrades<Voter extends HasOpinions, Party
     };
 }
 
+/**
+ * Each voter approves or disapproves each of the candidates
+ *
+ * Technically a special case of grading vote where grades are 0 and 1,
+ * but it makes it open to additional attribution methods
+ * (proportional ones for example).
+ * That's why the format it returns is not the same as with the cardinal vote.
+ * If you want a scores-like attribution, use balancedCardinalVoteFromNGrades(2) instead.
+ */
 export function approvalVote<Voter extends HasOpinions, Party extends HasOpinions>(
     voters: Collection<Voter>,
     candidates: Collection<Party>,
