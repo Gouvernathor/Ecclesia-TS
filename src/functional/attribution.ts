@@ -35,7 +35,8 @@ export class AttributionFailure extends Error { }
 export interface Attribution<Party, B extends Ballots<Party>> {
     (votes: B, rest?: Record<string, any>): Counter<Party>;
 }
-// TODO: remove the rest parameter : if someone needs more options, they can always create a factory function
+// TODO: for all attributions where it can make sense to start with some apportionned seats,
+// add an option to pass some.
 
 /**
  * Most attributions should generally implement this interface,
