@@ -1,7 +1,7 @@
 import { min } from "@gouvernathor/python";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
-import RNG from "@gouvernathor/rng";
+import { createRandomObj } from "../utils";
 import { Ballots, Order, Scores, Simple } from "../ballots";
 
 type HasOpinions = {disagree(other: HasOpinions): any}; // placeholder
@@ -10,22 +10,9 @@ export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B 
     (voters: Collection<Voter>, candidates: Collection<Party>): B;
 }
 
-// TODO: move to utils and exclude from the exports
-// also harmonize all random management seeding moments, across attribution/election/voting
-function createRandomObj({}?): RNG;
-function createRandomObj({ randomObj }: { randomObj: RNG }): RNG;
-function createRandomObj({ randomSeed }: { randomSeed: number | string }): RNG;
-function createRandomObj({ randomObj, randomSeed }:
-    { randomObj?: RNG, randomSeed?: number | string } = {},
-): RNG {
-    if (randomObj === undefined) {
-        randomObj = new RNG(randomSeed);
-    }
-    return randomObj;
-}
-
 
 // if passed a key, the resulting voting method will be pure/stable
+// TODO harmonize all random management seeding moments, across attribution/election/voting
 export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>>(
     { voting, ...rest }: {
         voting: Voting<Voter, Party, B>,
