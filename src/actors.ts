@@ -72,3 +72,27 @@ function getAligner<N extends number>(
 function getDefaultAlignmentFactors<N extends number>(nOpinions: N) {
     return Array.from({length: nOpinions}, (_, i) => 1 - i / nOpinions) as Tuple<N, number>;
 }
+
+interface OpinionsArrayManager<N extends number> {
+    aligner: Aligner<N>;
+    generator(p?: RandomObjParam): OpinionsArray<N>;
+}
+
+export function createOpinionsArrayFunctions<N extends number>(
+    {
+        nOpinions, opinMax,
+        opinionAlignmentFactors = getDefaultAlignmentFactors(nOpinions)
+    }: {
+        nOpinions: N, opinMax: number,
+        opinionAlignmentFactors?: ReadonlyTuple<N, number>,
+    }
+): OpinionsArrayManager<N> {
+    const aligner = getAligner<N>(opinMax, opinionAlignmentFactors);
+    const generator = (randomParam?: RandomObjParam) =>
+        createRandomObj(randomParam)
+            .choices(range(-opinMax, opinMax+1), { k: nOpinions }) as OpinionsArray<N>;
+    return {
+        aligner,
+        generator,
+    };
+}
