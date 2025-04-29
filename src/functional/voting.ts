@@ -11,6 +11,7 @@ export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B 
 }
 
 // TODO: move to utils and exclude from the exports
+// also harmonize all random management seeding moments, across attribution/election/voting
 function createRandomObj({}?): RNG;
 function createRandomObj({ randomObj }: { randomObj: RNG }): RNG;
 function createRandomObj({ randomSeed }: { randomSeed: number | string }): RNG;
