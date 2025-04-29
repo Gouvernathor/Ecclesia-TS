@@ -23,7 +23,10 @@ function normalToUniform(x: number, mu: number, sigma: number): number {
  * an opinion is held.
  * The value in each dimension can be symmetrically positive or negative.
  * Values close to 0 represent neutrality or indecision.
- * The type parameter should be a number giving the number of opinions.
+ * The type parameter should be a number giving the number of opinions,
+ * of elements in the array.
+ * The range of values in the array is from -opinMax to +opinMax,
+ * inclusive, as provided to the OpinionsArrayManager object.
  */
 export type OpinionsArray<N extends number> = Tuple<number, N>;
 
@@ -73,11 +76,49 @@ function getDefaultAlignmentFactors<N extends number>(nOpinions: N) {
     return Array.from({length: nOpinions}, (_, i) => 1 - i / nOpinions) as Tuple<N, number>;
 }
 
+/**
+ * This holds the parameters for the opinions arrays : their length,
+ * their range of values, and how to align them to one dimension.
+ *
+ * It can be seen as a metaclass for the opinions arrays, except that
+ * they are real arrays instead of a custom type, so this is a normal class.
+ *
+ * There should generally be only one instance of this class per system,
+ * and all opinions arrays should share the same parameters -
+ * at least the same length and value range.
+ * In any case, disagreement should not pe supported between subclasses
+ * of different nOpinions or opinMax values.
+ *
+ * Other than being a repository for the meta parameters,
+ * this class provides :
+ * - a balanced single-dimensional alignment for all opinions arrays
+ * - a random generator for the opinions arrays
+ */
 export class OpinionsArrayManager<N extends number> {
+    /**
+     * The number of opinions in each array, equal to the type parameter,
+     * provided for runtime access.
+     */
     readonly nOpinions: N;
+    /**
+     * The maximum possible value of each opinion in the array.
+     */
     readonly opinMax: number;
     readonly opinionAlignmentFactors: ReadonlyTuple<N, number>;
+
+    /**
+     * This function takes an opinions array and returns a single value
+     * representing the alignment of this set of opinions in a single axis.
+     * If using the default opinion alignment factors, the alignment is between 0 and 1.
+     */
     readonly aligner: Aligner<N>;
+    /**
+     * A random generator for the opinions arrays.
+     * You can pass a random object generator, or a seed that will be used
+     * to initialize a random object.
+     *
+     * Each opinion value in the array will be generated following a uniform law.
+     */
     readonly generator: (p?: RandomObjParam) => OpinionsArray<N>;
 
     constructor({
