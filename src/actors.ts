@@ -1,6 +1,6 @@
 import { range, sum } from "@gouvernathor/python";
 import * as math from "@gouvernathor/python/math";
-import { createRandomObj, RandomObjParam, type Tuple } from "./utils";
+import { createRandomObj, type RandomObjParam, type ReadonlyTuple, type Tuple } from "./utils";
 
 /**
  * Converts a normal distribution to an uniform distribution.
@@ -18,6 +18,16 @@ function normalToUniform(x: number, mu: number, sigma: number): number {
 }
 
 /**
+ * A set of opinions represented as a multi-dimensional vector of integers,
+ * with each dimension (each vector member) representing one subject on which
+ * an opinion is held.
+ * The value in each dimension can be symmetrically positive or negative.
+ * Values close to 0 represent neutrality or indecision.
+ * The type parameter should be a number giving the number of opinions.
+ */
+export type OpinionsArray<N extends number> = Tuple<number, N>;
+
+/**
  * Returns a one-dimensional alignment of the opinions.
  *
  * @param opinions array of opinions
@@ -28,8 +38,8 @@ function normalToUniform(x: number, mu: number, sigma: number): number {
  * and is increasing with each separate opinion,
  * with opinions having a decreasing importance as the array goes.
  */
-interface Aligner {
-    (opinions: readonly number[]): number;
+export interface Aligner<N extends number> {
+    (opinions: Readonly<OpinionsArray<N>>): number;
 }
 
 /**
@@ -38,10 +48,10 @@ interface Aligner {
  * @returns an aligner function to turns the opinions array
  * into a one-dimensional alignment value.
  */
-function getAligner(
+function getAligner<N extends number>(
     opinMax: number,
-    factors: readonly number[],
-): Aligner {
+    factors: readonly number[], // not Tuple because annoying to cast and internal function
+): Aligner<N> {
     const rang = range(-opinMax, opinMax+1);
     // standard deviation of one opinion taken on its own
     const oneSigma = Math.sqrt(sum(rang.map(i => i ** 2)) / rang.length);
@@ -49,7 +59,7 @@ function getAligner(
     const sigma = math.hypot(...factors.map(f => f * oneSigma));
 
     return (opinions) => {
-        const scapro = sum(opinions.map((opinion, i) => opinion * factors[i]));
+        const scapro = sum((<number[]><any>opinions).map((opinion, i) => opinion * factors[i]));
         return normalToUniform(scapro, 0, sigma);
     };
 }
@@ -62,13 +72,3 @@ function getAligner(
 function getDefaultAlignmentFactors<N extends number>(nOpinions: N) {
     return Array.from({length: nOpinions}, (_, i) => 1 - i / nOpinions) as Tuple<N, number>;
 }
-
-/**
- * A set of opinions represented as a multi-dimensional vector of integers,
- * with each dimension (each vector member) representing one subject on which
- * an opinion is held.
- * The value in each dimension can be symmetrically positive or negative.
- * Values close to 0 represent neutrality or indecision.
- * The type parameter should be a number giving the number of opinions.
- */
-export type OpinionsArray<N extends number> = Tuple<number, N>;
