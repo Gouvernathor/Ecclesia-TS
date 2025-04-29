@@ -1,8 +1,8 @@
 import RNG from "@gouvernathor/rng";
 
-export function createRandomObj({}?): RNG;
-export function createRandomObj({ randomObj }: { randomObj: RNG }): RNG;
-export function createRandomObj({ randomSeed }: { randomSeed: number | string }): RNG;
+export type RandomObjParam = undefined | {randomObj: RNG} | {randomSeed: number|string};
+
+export function createRandomObj(param: RandomObjParam): RNG;
 export function createRandomObj({ randomObj, randomSeed }:
     { randomObj?: RNG, randomSeed?: number | string } = {},
 ): RNG {

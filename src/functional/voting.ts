@@ -1,7 +1,7 @@
 import { min } from "@gouvernathor/python";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
-import { createRandomObj } from "../utils";
+import { createRandomObj, type RandomObjParam } from "../utils";
 import { Ballots, Order, Scores, Simple } from "../ballots";
 
 type HasOpinions = {disagree(other: HasOpinions): any}; // placeholder
@@ -11,12 +11,23 @@ export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B 
 }
 
 
-// if passed a key, the resulting voting method will be pure/stable
 // TODO harmonize all random management seeding moments, across attribution/election/voting
+/**
+ * Turns a voting method into one in which the candidates are shuffled randomly
+ * before being given to the actual voting method passed to this function.
+ *
+ * If a RNG instance is passed (through options), it will be used directly,
+ * without reseeding, at each call of the voting method.
+ *
+ * If a seed is passed, the random object is reseeded
+ * with the same seed at each call of the voting method,
+ * making the resulting function return the same values for the same parameters
+ * (assuming the passed base voting method does).
+ */
 export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>>(
     { voting, ...rest }: {
         voting: Voting<Voter, Party, B>,
-    } & Record<string, any>,
+    } & RandomObjParam,
 ): Voting<Voter, Party, B> {
     return (voters: Collection<Voter>, candidates: Collection<Party>) => {
         const randomObj = createRandomObj(rest);
