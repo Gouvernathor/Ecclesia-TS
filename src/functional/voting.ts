@@ -33,31 +33,33 @@ export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpini
  * one of the available candidates, or (not implemented here) for none of them.
  */
 export function singleVote<Voter extends HasOpinions, Party extends HasOpinions>(
-    voters: Collection<Voter>,
-    candidates: Collection<Party>,
-): Simple<Party> {
-    const scores = Counter.fromkeys(candidates, 0);
-    for (const voter of voters) {
-        // find the party with which disagreement is minimal
-        // add it a ballot
-        scores.increment(min(candidates, party => voter.disagree(party)));
+    {} = {}
+): Voting<Voter, Party, Simple<Party>> {
+    return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
+        const scores = Counter.fromkeys(candidates, 0);
+        for (const voter of voters) {
+            // find the party with which disagreement is minimal
+            // add it a ballot
+            scores.increment(min(candidates, party => voter.disagree(party)));
+        }
+        return scores;
     }
-    return scores;
 }
 
 /**
  * Each voter ranks all, or (not implemented here) some, of the candidates.
  */
 export function orderingVote<Voter extends HasOpinions, Party extends HasOpinions>(
-    voters: Collection<Voter>,
-    candidates: Collection<Party>,
-): Order<Party> {
-    const order: Party[][] = [];
-    for (const voter of voters) {
-        order.push([...candidates]
-            .sort((a, b) => voter.disagree(a) - voter.disagree(b)));
+    {} = {}
+): Voting<Voter, Party, Order<Party>> {
+    return (voters: Collection<Voter>,candidates: Collection<Party>): Order<Party> => {
+        const order: Party[][] = [];
+        for (const voter of voters) {
+            order.push([...candidates]
+                .sort((a, b) => voter.disagree(a) - voter.disagree(b)));
+        }
+        return order;
     }
-    return order;
 }
 
 /**
@@ -76,8 +78,10 @@ export function orderingVote<Voter extends HasOpinions, Party extends HasOpinion
  * proportional to the raw disagreement. This may yield situations
  * where every party is graded 0, especially with low ngrades values.
  */
-export function cardinalVoteFromNGrades<Voter extends HasOpinions, Party extends HasOpinions>(
-    nGrades: number,
+export function cardinalVote<Voter extends HasOpinions, Party extends HasOpinions>(
+    { nGrades }: {
+        nGrades: number
+    }
 ): Voting<Voter, Party, Scores<Party>> {
     return (voters: Collection<Voter>, candidates: Collection<Party>) => {
         const scores = Scores.fromGrades<Party>(nGrades);
@@ -97,8 +101,10 @@ export function cardinalVoteFromNGrades<Voter extends HasOpinions, Party extends
 /**
  * Alternative implementation of CardinalVote.
  */
-export function balancedCardinalVoteFromNGrades<Voter extends HasOpinions, Party extends HasOpinions>(
-    nGrades: number,
+export function balancedCardinalVote<Voter extends HasOpinions, Party extends HasOpinions>(
+    { nGrades }: {
+        nGrades: number
+    }
 ): Voting<Voter, Party, Scores<Party>> {
     return (voters: Collection<Voter>, candidates: Collection<Party>) => {
         const scores = Scores.fromGrades<Party>(nGrades);
@@ -130,17 +136,18 @@ export function balancedCardinalVoteFromNGrades<Voter extends HasOpinions, Party
  * but it makes it open to additional attribution methods
  * (proportional ones for example).
  * That's why the format it returns is not the same as with the cardinal vote.
- * If you want a scores-like attribution, use balancedCardinalVoteFromNGrades(2) instead.
+ * If you want a scores-like attribution, use balancedCardinalVote({ nGrades: 2 }) instead.
  */
 export function approvalVote<Voter extends HasOpinions, Party extends HasOpinions>(
-    voters: Collection<Voter>,
-    candidates: Collection<Party>,
-): Simple<Party> {
-    const scores = approvalVote.cardinal(voters, candidates) as Scores<Party>;
-    const approvals = new Counter<Party>();
-    for (const [party, [_disapproval, approval]] of scores) {
-        approvals.increment(party, approval);
+    {} = {}
+): Voting<Voter, Party, Simple<Party>> {
+    return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
+        const scores = approvalVote.cardinal(voters, candidates) as Scores<Party>;
+        const approvals = new Counter<Party>();
+        for (const [party, [_disapproval, approval]] of scores) {
+            approvals.increment(party, approval);
+        }
+        return approvals;
     }
-    return approvals;
 }
-approvalVote.cardinal = balancedCardinalVoteFromNGrades(2);
+approvalVote.cardinal = balancedCardinalVote({ nGrades: 2 });
