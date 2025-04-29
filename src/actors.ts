@@ -1,1 +1,1 @@
-export type HasOpinions = {disagree(other: HasOpinions): any}; // placeholder
+export type AgreeAble = {disagree(other: AgreeAble): any}; // placeholder

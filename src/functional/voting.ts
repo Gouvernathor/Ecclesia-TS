@@ -2,10 +2,10 @@ import { min } from "@gouvernathor/python";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
-import { HasOpinions } from "../actors";
+import { AgreeAble } from "../actors";
 import { Ballots, Order, Scores, Simple } from "../ballots";
 
-export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
+export interface Voting<Voter extends AgreeAble, Party extends AgreeAble, B extends Ballots<Party>> {
     (voters: Collection<Voter>, candidates: Collection<Party>): B;
 }
 
@@ -25,7 +25,7 @@ export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B 
  * If you want the generator to be seeded only once with a given seed, and reused afterwards,
  * seed it yourself and pass it as a random object to this function.
  */
-export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>>(
+export function toShuffledVote<Voter extends AgreeAble, Party extends AgreeAble, B extends Ballots<Party>>(
     { voting, ...rest }: {
         voting: Voting<Voter, Party, B>,
     } & RandomObjParam,
@@ -44,7 +44,7 @@ export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpini
  * The most basic and widespread voting system : each voter casts one ballot for
  * one of the available candidates, or (not implemented here) for none of them.
  */
-export function singleVote<Voter extends HasOpinions, Party extends HasOpinions>(
+export function singleVote<Voter extends AgreeAble, Party extends AgreeAble>(
     {} = {}
 ): Voting<Voter, Party, Simple<Party>> {
     return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
@@ -61,7 +61,7 @@ export function singleVote<Voter extends HasOpinions, Party extends HasOpinions>
 /**
  * Each voter ranks all, or (not implemented here) some, of the candidates.
  */
-export function orderingVote<Voter extends HasOpinions, Party extends HasOpinions>(
+export function orderingVote<Voter extends AgreeAble, Party extends AgreeAble>(
     {} = {}
 ): Voting<Voter, Party, Order<Party>> {
     return (voters: Collection<Voter>,candidates: Collection<Party>): Order<Party> => {
@@ -90,7 +90,7 @@ export function orderingVote<Voter extends HasOpinions, Party extends HasOpinion
  * proportional to the raw disagreement. This may yield situations
  * where every party is graded 0, especially with low ngrades values.
  */
-export function cardinalVote<Voter extends HasOpinions, Party extends HasOpinions>(
+export function cardinalVote<Voter extends AgreeAble, Party extends AgreeAble>(
     { nGrades }: {
         nGrades: number
     }
@@ -113,7 +113,7 @@ export function cardinalVote<Voter extends HasOpinions, Party extends HasOpinion
 /**
  * Alternative implementation of CardinalVote.
  */
-export function balancedCardinalVote<Voter extends HasOpinions, Party extends HasOpinions>(
+export function balancedCardinalVote<Voter extends AgreeAble, Party extends AgreeAble>(
     { nGrades }: {
         nGrades: number
     }
@@ -150,7 +150,7 @@ export function balancedCardinalVote<Voter extends HasOpinions, Party extends Ha
  * That's why the format it returns is not the same as with the cardinal vote.
  * If you want a scores-like attribution, use balancedCardinalVote({ nGrades: 2 }) instead.
  */
-export function approvalVote<Voter extends HasOpinions, Party extends HasOpinions>(
+export function approvalVote<Voter extends AgreeAble, Party extends AgreeAble>(
     {} = {}
 ): Voting<Voter, Party, Simple<Party>> {
     return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
