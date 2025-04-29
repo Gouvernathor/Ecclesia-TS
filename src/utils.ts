@@ -11,3 +11,20 @@ export function createRandomObj({ randomObj, randomSeed }:
     }
     return randomObj;
 }
+
+
+// https://stackoverflow.com/a/71700658
+
+/**
+ * Mutable tuple of a single element type and a given length.
+ */
+export type Tuple<
+  T,
+  N extends number,
+  R extends T[] = [],
+> = R['length'] extends N ? R : Tuple<T, N, [T, ...R]>;
+
+/**
+ * Immutable version of Tuple.
+ */
+export type ReadonlyTuple<T, N extends number> = Readonly<Tuple<T, N>>;
