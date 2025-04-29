@@ -17,6 +17,10 @@ export function createRandomObj({ randomObj, randomSeed }:
 
 /**
  * Mutable tuple of a single element type and a given length.
+ *
+ * Warning: due to limitations in TypeScript, when N is unknown/generic,
+ * the typing system does not recognize that the type extends array.
+ * Using methods such as map will require a (double) cast first to any then to T[].
  */
 export type Tuple<
   T,
@@ -26,5 +30,9 @@ export type Tuple<
 
 /**
  * Immutable version of Tuple.
+ *
+ * Warning: due to limitations in TypeScript, when N is unknown/generic,
+ * the typing system does not recognize that the type extends readonly array.
+ * Using methods such as map will require a (double) cast first to any then to readonly T[].
  */
 export type ReadonlyTuple<T, N extends number> = Readonly<Tuple<T, N>>;
