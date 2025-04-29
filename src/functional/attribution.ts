@@ -486,7 +486,6 @@ export function jefferson<Party>(
     });
 }
 export const dHondt = jefferson;
-export const highestAveragesProportional = jefferson;
 
 export function webster<Party>(
     { nSeats }: {
@@ -525,7 +524,6 @@ export function hamilton<Party>(
     return attrib;
 }
 export const hareLargestRemainders = hamilton;
-export const largestRemaindersProportional = hamilton;
 
 /**
  * This attribution method required some creativity and tweaks,
@@ -595,6 +593,32 @@ export function huntingtonHill<Party>(
     }) as Attribution<Party, Simple<Party>> & { nSeats?: number };
     attrib.nSeats = nSeats;
     return attrib;
+}
+
+/**
+ * Creates a highest-averages proportional attribution method.
+ *
+ * The exact method used is an implementation detail and may change between versions.
+ */
+export function highestAverages<Party>(
+    { nSeats }: {
+        nSeats: number,
+    }
+): DivisorMethod<Party> & HasNSeats {
+    return webster({ nSeats });
+}
+
+/**
+ * Creates a largest-remainders proportional attribution method.
+ *
+ * Implementation detail: the quota used is the Hare/Hamilton quota.
+ */
+export function largestRemainders<Party>(
+    { nSeats }: {
+        nSeats: number,
+    }
+): DivisorMethod<Party> & HasNSeats {
+    return hamilton({ nSeats });
 }
 
 
