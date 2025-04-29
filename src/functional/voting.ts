@@ -23,6 +23,8 @@ export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B 
  * with the same seed at each call of the voting method,
  * making the resulting function return the same values for the same parameters
  * (assuming the passed base voting method does).
+ * If you want the generator to be seeded only once with a given seed, and reused afterwards,
+ * seed it yourself and pass it as a random object to this function.
  */
 export function toShuffledVote<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>>(
     { voting, ...rest }: {

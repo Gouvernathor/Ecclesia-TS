@@ -1,8 +1,8 @@
 import { Counter, DefaultMap } from "@gouvernathor/python/collections";
 import { divmod, enumerate, max, min } from "@gouvernathor/python";
 import { fmean, median } from "@gouvernathor/python/statistics";
-import RNG from "@gouvernathor/rng";
 import { Ballots, Order, Scores, Simple } from "../ballots";
+import { createRandomObj, RandomObjParam } from "../utils";
 
 /**
  * To be thrown when an attribution fails to attribute seats,
@@ -624,21 +624,24 @@ export function largestRemainders<Party>(
 
 // Random-based attribution method
 
-export function randomize<Party>({ nSeats }: { nSeats: number }): Attribution<Party, Simple<Party>> & HasNSeats;
-export function randomize<Party>({ nSeats, randomObj }: { nSeats: number, randomObj: RNG }): Attribution<Party, Simple<Party>> & HasNSeats;
-export function randomize<Party>({ nSeats, randomSeed }: { nSeats: number, randomSeed: number | string }): Attribution<Party, Simple<Party>> & HasNSeats;
+/**
+ * Randomized attribution.
+ * Everyone votes, then one ballot is selected at random.
+ * (One ballot per seat to fill, and assuming there's
+ * enough ballots that the picking is with replacement.)
+ *
+ * The randomization is based on the given parameters. If a RNG object
+ * is passed, it is used without reseeding across all calls of the attribution.
+ * If a seed is passed, the random object is reseeded
+ * at each call of the attribution.
+ */
 export function randomize<Party>(
-    { nSeats, randomObj, randomSeed }: {
+    { nSeats, ...randomParam }: {
         nSeats: number,
-        randomObj?: RNG,
-        randomSeed?: number | string,
-    }
+    } & RandomObjParam
 ): Attribution<Party, Simple<Party>> & HasNSeats {
-    if (randomObj === undefined) {
-        randomObj = new RNG(randomSeed);
-    }
-
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+        const randomObj = createRandomObj(randomParam);
         return new Counter(randomObj.choices([...votes.keys()], { weights: [...votes.values()], k: nSeats }));
     };
     attrib.nSeats = nSeats;
