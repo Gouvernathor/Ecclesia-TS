@@ -35,6 +35,7 @@ export class AttributionFailure extends Error { }
 export interface Attribution<Party, B extends Ballots<Party>> {
     (votes: B, rest?: Record<string, any>): Counter<Party>;
 }
+// TODO: remove the rest parameter : if someone needs more options, they can always create a factory function
 
 /**
  * Most attributions should generally implement this interface,
@@ -54,6 +55,13 @@ export interface HasNSeats { readonly nSeats: number };
  *
  * Replaces the Proportional class implementation.
  *
+ * If the attribution implements a certain type
+ * that extends Attribution<Party, Simple<Party>>
+ * without adding any new method or property,
+ * such as Proportional,
+ * and if the contingency implements the same type, null, or undefined / not passed,
+ * then it can be considered that the returned value implements that type too.
+ *
  * @param threshold The threshold, between 0 and 1
  * @param contingency The fallback attribution in case the threshold is not reached by any party.
  * It takes an Attribution, or undefined (the default), or null.
@@ -66,10 +74,10 @@ export interface HasNSeats { readonly nSeats: number };
  * (in that case, all parties will be passed).
  */
 export function addThresholdToSimpleAttribution<Party>(
-    { threshold, contingency, attribution }: {
+    { threshold, attribution, contingency }: {
         threshold: number,
-        contingency?: Attribution<Party, Simple<Party>> | null,
         attribution: Attribution<Party, Simple<Party>>,
+        contingency?: Attribution<Party, Simple<Party>> | null,
     }
 ): Attribution<Party, Simple<Party>> {
     // const threshold_ = threshold;
