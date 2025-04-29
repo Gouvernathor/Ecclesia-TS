@@ -2,9 +2,8 @@ import { min } from "@gouvernathor/python";
 import { Counter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
+import { HasOpinions } from "../actors";
 import { Ballots, Order, Scores, Simple } from "../ballots";
-
-type HasOpinions = {disagree(other: HasOpinions): any}; // placeholder
 
 export interface Voting<Voter extends HasOpinions, Party extends HasOpinions, B extends Ballots<Party>> {
     (voters: Collection<Voter>, candidates: Collection<Party>): B;
