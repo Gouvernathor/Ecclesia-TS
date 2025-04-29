@@ -6,7 +6,7 @@
         "noImplicitOverride": true,
         "noImplicitReturns": true,
 
-        "rootDir": "src",
+        "rootDirs": ["src", "tsup.config.ts"],
         "outDir": "out",
         "sourceMap": true,
     },
