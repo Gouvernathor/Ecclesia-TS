@@ -156,14 +156,20 @@ export function proportionalFromRankIndexFunction<Party>(
 
         const rankIndexValues = new Map([...fractions.entries()].map(([party, f]) => [party, rankIndexFunction(f, 0)]));
 
+        // the parties, sorted by increasing rankIndex value
         const parties = [...votes.keys()].sort((a, b) => rankIndexValues.get(a)! - rankIndexValues.get(b)!);
 
         const seats = new Counter<Party>();
 
         s: for (let sn = 0; sn < nSeats; sn++) {
+            // take the most deserving party
             const winner = parties.pop()!;
+            // give it a seat
             seats.increment(winner);
+            // update the rankIndex value of the party
             rankIndexValues.set(winner, rankIndexFunction(fractions.get(winner)!, seats.get(winner)!));
+
+            // insert it in its (new) place in the sorted list of parties
             for (let pn = 0; pn < parties.length; pn++) {
                 if (rankIndexValues.get(parties[pn])! >= rankIndexValues.get(winner)!) {
                     parties.splice(pn, 0, winner);
