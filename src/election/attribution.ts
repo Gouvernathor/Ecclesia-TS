@@ -47,7 +47,7 @@ export interface HasNSeats {
 }
 
 
-// legacy exports, to be removed in 3.0.0
+// 2.0.x exports
 
 export {
     addThresholdToSimpleAttribution,
