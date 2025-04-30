@@ -45,10 +45,45 @@ export interface Attribution<Party, B extends Ballots<Party>> {
 export interface HasNSeats { readonly nSeats: number };
 
 
-export * from "./attribution/transform";
-export * from "./attribution/proportionalBase";
-export * from "./attribution/majorityFactory";
-export * from "./attribution/orderingFactory";
-export * from "./attribution/scoreFactory";
-export * from "./attribution/proportionalFactory";
-export * from "./attribution/randomFactory";
+// legacy exports, to be removed in 3.0.0
+
+export {
+    addThresholdToSimpleAttribution,
+} from "./attribution/transform";
+export {
+    Proportional,
+    RankIndexMethod,
+    RankIndexFunction,
+    proportionalFromRankIndexFunction,
+    DivisorMethod,
+    DivisorFunction,
+    rankIndexFunctionFromDivisorFunction,
+    proportionalFromDivisorFunction,
+} from "./attribution/proportionalBase";
+export {
+    plurality,
+    superMajority,
+} from "./attribution/majorityFactory";
+export {
+    instantRunoff,
+    bordaCount,
+    condorcet,
+} from "./attribution/orderingFactory";
+export {
+    averageScore,
+    medianScore,
+} from "./attribution/scoreFactory";
+export {
+    jefferson,
+    dHondt,
+    webster,
+    sainteLague,
+    hamilton,
+    hareLargestRemainders,
+    huntingtonHill,
+    highestAverages,
+    largestRemainders,
+} from "./attribution/proportionalFactory";
+export {
+    randomize,
+} from "./attribution/randomFactory";
