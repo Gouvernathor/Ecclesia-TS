@@ -1,4 +1,4 @@
-import { Counter } from "@gouvernathor/python/collections";
+import { type Counter } from "@gouvernathor/python/collections";
 import { type Ballots } from "./ballots";
 
 /**

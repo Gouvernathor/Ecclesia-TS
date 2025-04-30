@@ -1,9 +1,9 @@
-import { Counter } from "@gouvernathor/python/collections";
-import { Attribution, HasNSeats } from "../attribution";
-import { addThresholdToSimpleAttribution } from "../attribution/transform";
-import { DivisorMethod, Proportional, proportionalFromDivisorFunction, proportionalFromRankIndexFunction, rankIndexFunctionFromDivisorFunction, RankIndexMethod } from "./proportionalBase";
-import { Simple } from "../ballots";
 import { divmod } from "@gouvernathor/python";
+import { Counter } from "@gouvernathor/python/collections";
+import { type Simple } from "../ballots";
+import { type Attribution, type HasNSeats } from "../attribution";
+import { addThresholdToSimpleAttribution } from "../attribution/transform";
+import { type DivisorMethod, type Proportional, proportionalFromDivisorFunction, proportionalFromRankIndexFunction, rankIndexFunctionFromDivisorFunction, type RankIndexMethod } from "./proportionalBase";
 
 export function jefferson<Party>(
     { nSeats }: {
