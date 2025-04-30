@@ -1,27 +1,37 @@
 {
   "name": "ecclesia",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Framework for political and electoral simulations",
   "type": "module",
   "exports": {
-    "./base/*": {
+    "./election": {
       "import": {
-        "types": "./dist/base/*.d.ts",
-        "default": "./dist/base/*.js"
+        "types": "./dist/election.d.ts",
+        "default": "./dist/election.js"
       },
       "require": {
-        "types": "./dist/base/*.d.cts",
-        "default": "./dist/base/*.cjs"
+        "types": "./dist/election.d.cts",
+        "default": "./dist/election.cjs"
       }
     },
-    "./concrete/*": {
+    "./election/*": {
       "import": {
-        "types": "./dist/concrete/*.d.ts",
-        "default": "./dist/concrete/*.js"
+        "types": "./dist/election/*.d.ts",
+        "default": "./dist/election/*.js"
       },
       "require": {
-        "types": "./dist/concrete/*.d.cts",
-        "default": "./dist/concrete/*.cjs"
+        "types": "./dist/election/*.d.cts",
+        "default": "./dist/election/*.cjs"
+      }
+    },
+    "./actors/*": {
+      "import": {
+        "types": "./dist/actors/*.d.ts",
+        "default": "./dist/actors/*.js"
+      },
+      "require": {
+        "types": "./dist/actors/*.d.cts",
+        "default": "./dist/actors/*.cjs"
       }
     }
   },
