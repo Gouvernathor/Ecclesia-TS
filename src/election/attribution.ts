@@ -1,9 +1,5 @@
-import { Counter, DefaultMap } from "@gouvernathor/python/collections";
-import { divmod, enumerate, max, min } from "@gouvernathor/python";
-import { fmean, median } from "@gouvernathor/python/statistics";
-import { Ballots, Order, Scores, Simple } from "./ballots";
-import { createRandomObj, RandomObjParam } from "../utils";
-import { addThresholdToSimpleAttribution } from "./attribution/transform";
+import { Counter } from "@gouvernathor/python/collections";
+import { type Ballots } from "./ballots";
 
 /**
  * To be thrown when an attribution fails to attribute seats,
