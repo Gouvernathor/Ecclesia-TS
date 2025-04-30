@@ -1,6 +1,6 @@
 import { Counter } from "@gouvernathor/python/collections";
-import { Simple } from "../ballots";
-import { Attribution, HasNSeats } from "../attribution";
+import { type Simple } from "../ballots";
+import { type Attribution, type HasNSeats } from "../attribution";
 
 /**
  * An attribution method that allocates seats proportionally
