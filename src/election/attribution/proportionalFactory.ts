@@ -130,23 +130,11 @@ export function huntingtonHill<Party>(
  *
  * The exact method used is an implementation detail and may change between versions.
  */
-export function highestAverages<Party>(
-    { nSeats }: {
-        nSeats: number,
-    }
-): DivisorMethod<Party> & HasNSeats {
-    return webster({ nSeats });
-}
+export const highestAverages = webster;
 
 /**
  * Creates a largest-remainders proportional attribution method.
  *
  * Implementation detail: the quota used is the Hare/Hamilton quota.
  */
-export function largestRemainders<Party>(
-    { nSeats }: {
-        nSeats: number,
-    }
-): DivisorMethod<Party> & HasNSeats {
-    return hamilton({ nSeats });
-}
+export const largestRemainders = hamilton;
