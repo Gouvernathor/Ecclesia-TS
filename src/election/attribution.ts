@@ -42,7 +42,9 @@ export interface Attribution<Party, B extends Ballots<Party>> {
  * However, some attributions may yield variable numbers of seats,
  * for instance the pre-2024 federal German system.
  */
-export interface HasNSeats { readonly nSeats: number };
+export interface HasNSeats {
+    readonly nSeats: number;
+}
 
 
 // legacy exports, to be removed in 3.0.0
