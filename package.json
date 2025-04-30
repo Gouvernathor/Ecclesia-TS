@@ -14,24 +14,75 @@
         "default": "./dist/election.cjs"
       }
     },
-    "./election/*": {
+    "./election/ballots": {
       "import": {
-        "types": "./dist/election/*.d.ts",
-        "default": "./dist/election/*.js"
+        "types": "./dist/election/ballots.d.ts",
+        "default": "./dist/election/ballots.js"
       },
       "require": {
-        "types": "./dist/election/*.d.cts",
-        "default": "./dist/election/*.cjs"
+        "types": "./dist/election/ballots.d.cts",
+        "default": "./dist/election/ballots.cjs"
       }
     },
-    "./actors/*": {
+    "./election/attribution": {
       "import": {
-        "types": "./dist/actors/*.d.ts",
-        "default": "./dist/actors/*.js"
+        "types": "./dist/election/attribution.d.ts",
+        "default": "./dist/election/attribution.js"
       },
       "require": {
-        "types": "./dist/actors/*.d.cts",
-        "default": "./dist/actors/*.cjs"
+        "types": "./dist/election/attribution.d.cts",
+        "default": "./dist/election/attribution.cjs"
+      }
+    },
+    "./election/voting": {
+      "import": {
+        "types": "./dist/election/voting.d.ts",
+        "default": "./dist/election/voting.js"
+      },
+      "require": {
+        "types": "./dist/election/voting.d.cts",
+        "default": "./dist/election/voting.cjs"
+      }
+    },
+
+    "./actors/opinionsArray": {
+      "import": {
+        "types": "./dist/actors/opinionsArray.d.ts",
+        "default": "./dist/actors/opinionsArray.js"
+      },
+      "require": {
+        "types": "./dist/actors/opinionsArray.d.cts",
+        "default": "./dist/actors/opinionsArray.cjs"
+      }
+    },
+    "./actors/disagreement": {
+      "import": {
+        "types": "./dist/actors/disagreement.d.ts",
+        "default": "./dist/actors/disagreement.js"
+      },
+      "require": {
+        "types": "./dist/actors/disagreement.d.cts",
+        "default": "./dist/actors/disagreement.cjs"
+      }
+    },
+    "./actors/vote": {
+      "import": {
+        "types": "./dist/actors/vote.d.ts",
+        "default": "./dist/actors/vote.js"
+      },
+      "require": {
+        "types": "./dist/actors/vote.d.cts",
+        "default": "./dist/actors/vote.cjs"
+      }
+    },
+    "./actors/house": {
+      "import": {
+        "types": "./dist/actors/house.d.ts",
+        "default": "./dist/actors/house.js"
+      },
+      "require": {
+        "types": "./dist/actors/house.d.cts",
+        "default": "./dist/actors/house.cjs"
       }
     }
   },
