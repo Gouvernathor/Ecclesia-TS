@@ -51,12 +51,12 @@ export {
     addThresholdToSimpleAttribution,
 } from "./attribution/transform";
 export {
-    Proportional,
-    RankIndexMethod,
-    RankIndexFunction,
+    type Proportional,
+    type RankIndexMethod,
+    type RankIndexFunction,
     proportionalFromRankIndexFunction,
-    DivisorMethod,
-    DivisorFunction,
+    type DivisorMethod,
+    type DivisorFunction,
     rankIndexFunctionFromDivisorFunction,
     proportionalFromDivisorFunction,
 } from "./attribution/proportionalBase";
