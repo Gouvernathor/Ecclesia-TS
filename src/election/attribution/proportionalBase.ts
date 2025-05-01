@@ -86,7 +86,11 @@ export interface DivisorMethod<Party> extends RankIndexMethod<Party> {};
  */
 export interface DivisorFunction {
     (k: number): number;
-};
+}
+
+export function stationaryDivisorFunction(r: number): DivisorFunction {
+    return (k: number) => k + r;
+}
 
 export function rankIndexFunctionFromDivisorFunction(
     divisorFunction: DivisorFunction
