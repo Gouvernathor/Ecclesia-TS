@@ -25,11 +25,11 @@ export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
  *
- * [[PS, [0, 2, 5, 9, 1]], ] -> PS received the worst grade 0, the best grade 1 time and so on.
+ * [[PS, [0, 2, 5, 9, 1]], ] -> PS received the worst grade 0 times, the best grade 1 time and so on.
  *
- * result.get(x).length is constant, equal to the number of grades of the voting method.
+ * result.get(p).length is constant, equal to the number of grades of the voting method.
  *
- * If the voter must grade all the candidates, then sum(result.get(x)) is constant
+ * If the voter must grade all the candidates, then sum(result.get(p)) is constant
  * and equal to the number of voters.
  *
  * Any party not mapped will be assumed to have
