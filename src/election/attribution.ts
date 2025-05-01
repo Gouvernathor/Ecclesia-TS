@@ -89,3 +89,10 @@ export {
 export {
     randomize,
 } from "./attribution/randomFactory";
+
+
+// 2.1.x exports
+
+export {
+    boundedRankIndexMethod,
+} from "./attribution/proportionalBase";
