@@ -3,8 +3,9 @@ import { Counter } from "@gouvernathor/python/collections";
 import { type Simple } from "../ballots";
 import { type Attribution, type HasNSeats } from "../attribution";
 import { addThresholdToSimpleAttribution } from "../attribution/transform";
-import { type DivisorMethod, type Proportional, proportionalFromDivisorFunction, proportionalFromRankIndexFunction, rankIndexFunctionFromDivisorFunction, type RankIndexMethod } from "./proportionalBase";
+import { type DivisorFunction, type DivisorMethod, type Proportional, proportionalFromDivisorFunction, proportionalFromRankIndexFunction, rankIndexFunctionFromDivisorFunction, type RankIndexMethod, stationaryDivisorFunction } from "./proportionalBase";
 
+const divisor1 = stationaryDivisorFunction(1);
 export function jefferson<Party>(
     { nSeats }: {
         nSeats: number,
@@ -12,11 +13,12 @@ export function jefferson<Party>(
 ): DivisorMethod<Party> & HasNSeats {
     return proportionalFromDivisorFunction<Party>({
         nSeats,
-        divisorFunction: k => k + 1,
+        divisorFunction: divisor1,
     });
 }
 export const dHondt = jefferson;
 
+const divisorPoint5: DivisorFunction = k => 2 * k + 1; // int math is better than k + .5
 export function webster<Party>(
     { nSeats }: {
         nSeats: number,
@@ -24,7 +26,7 @@ export function webster<Party>(
 ): DivisorMethod<Party> & HasNSeats {
     return proportionalFromDivisorFunction<Party>({
         nSeats,
-        divisorFunction: k => 2 * k + 1, // int math is better than k + .5
+        divisorFunction: divisorPoint5,
     });
 }
 export const sainteLague = webster;
@@ -55,6 +57,13 @@ export function hamilton<Party>(
 }
 export const hareLargestRemainders = hamilton;
 
+const huntingtonHillBaseRankIndexFunction = rankIndexFunctionFromDivisorFunction((k: number) => Math.sqrt(k * (k + 1)));
+const huntingtonHillRankIndexFunction = (t: number, a: number) => {
+    if (a <= 0) {
+        return Infinity;
+    }
+    return huntingtonHillBaseRankIndexFunction(t, a);
+};
 /**
  * This attribution method required some creativity and tweaks,
  * since the standard divisor won't work without an initial seats value,
@@ -104,21 +113,12 @@ export function huntingtonHill<Party>(
         contingency?: Attribution<Party, Simple<Party>> | null,
     }
 ) {
-    const divisorFunction = (k: number) => Math.sqrt(k * (k + 1));
-    const baseRankIndexFunction = rankIndexFunctionFromDivisorFunction(divisorFunction);
-    const rankIndexFunction = (t: number, a: number) => {
-        if (a <= 0) {
-            return Infinity;
-        }
-        return baseRankIndexFunction(t, a);
-    };
-
     const attrib = addThresholdToSimpleAttribution({
         threshold,
         contingency,
         attribution: proportionalFromRankIndexFunction({
             nSeats,
-            rankIndexFunction,
+            rankIndexFunction: huntingtonHillRankIndexFunction,
         }),
     }) as Attribution<Party, Simple<Party>> & { nSeats?: number };
     attrib.nSeats = nSeats;
