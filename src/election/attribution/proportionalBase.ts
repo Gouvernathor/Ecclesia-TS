@@ -77,7 +77,7 @@ export function proportionalFromRankIndexFunction<Party>(
     return attrib;
 }
 
-export interface DivisorMethod<Party> extends RankIndexMethod<Party> {};
+export interface DivisorMethod<Party> extends RankIndexMethod<Party> {}
 
 /**
  * A function that should be pure.
