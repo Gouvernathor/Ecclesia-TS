@@ -1,6 +1,6 @@
 import { Counter } from "@gouvernathor/python/collections";
-import { Simple } from "../ballots";
-import { Attribution, AttributionFailure } from "../attribution";
+import { type Simple } from "../ballots";
+import { type Attribution, AttributionFailure } from "../attribution";
 
 /**
  * Transforms a standard proportional attribution method into one that requires a certain threshold
