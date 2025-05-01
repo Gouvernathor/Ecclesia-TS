@@ -24,6 +24,10 @@ export class AttributionFailure extends Error { }
  * @param rest This parameter, ignored in most cases,
  * forces the attributions taking more required or optional parameters
  * to take them as an options object.
+ * Attribution transforms (functions that take an attribution method and return another one)
+ * should generally let that parameter pass through
+ * so as to avoid breaking features in the wrapped attributions.
+ * Attributions should avoid taking other parameters, for the same reason.
  *
  * @returns The attribution of seats to the parties based upon the votes.
  * It is a Counter mapping each party to the number of seats it won.
