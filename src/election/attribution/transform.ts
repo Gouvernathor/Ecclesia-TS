@@ -29,25 +29,12 @@ import { type Attribution, AttributionFailure } from "../attribution";
  * (in that case, all parties will be passed).
  */
 export function addThresholdToSimpleAttribution<Party>(
-    { threshold, attribution, contingency }: {
+    { threshold, attribution, contingency = attribution }: {
         threshold: number,
         attribution: Attribution<Party, Simple<Party>>,
         contingency?: Attribution<Party, Simple<Party>> | null,
     }
 ): Attribution<Party, Simple<Party>> {
-    // const threshold_ = threshold;
-    if (contingency === undefined) {
-        // contingency = (votes: Simple<Party>, rest) => {
-        //     threshold = 0;
-        //     try {
-        //         return attrib(votes, rest);
-        //     } finally {
-        //         threshold = threshold_;
-        //     }
-        // };
-        contingency = attribution;
-    }
-
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
         if (threshold > 0) {
             const original_votes = votes;

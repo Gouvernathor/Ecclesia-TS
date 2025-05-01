@@ -57,7 +57,7 @@ export function hamilton<Party>(
 }
 export const hareLargestRemainders = hamilton;
 
-const huntingtonHillBaseRankIndexFunction = rankIndexFunctionFromDivisorFunction((k: number) => Math.sqrt(k * (k + 1)));
+const huntingtonHillBaseRankIndexFunction = rankIndexFunctionFromDivisorFunction(k => Math.sqrt(k * (k + 1)));
 const huntingtonHillRankIndexFunction = (t: number, a: number) => {
     if (a <= 0) {
         return Infinity;
