@@ -113,7 +113,7 @@ export class House<Voter, Party> {
      */
     vote<T>(
         target: T,
-        {  disagree }: { disagree: DisagreementFunction<Party, T> },
+        { disagree }: { disagree: DisagreementFunction<Party, T> },
     ): Vote {
         let votesFor = 0;
         let votesAgainst = 0;
