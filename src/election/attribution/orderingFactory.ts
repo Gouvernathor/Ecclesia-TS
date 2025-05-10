@@ -125,4 +125,4 @@ export function condorcet<Party>(
     attrib.nSeats = nSeats;
     return attrib;
 }
-condorcet.Standoff = class extends AttributionFailure {};
+condorcet.Standoff = class CondorcetStandoff extends AttributionFailure {};
