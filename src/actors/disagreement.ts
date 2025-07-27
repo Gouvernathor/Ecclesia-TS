@@ -13,7 +13,7 @@ export function symmetricDiff<N extends number>(
     { nOpinions, opinMax }: OpinParams<N>,
 ): DiffFunction<N> {
     return (a, b) =>
-        sum((<number[]><any>a).map((oa, i) => Math.abs(oa - (<number[]><any>b)[i]))) / (nOpinions * 2 * opinMax);
+        sum((<number[]><any>a).map((oa, i) => Math.abs(oa - (<number[]><any>b)[i]!))) / (nOpinions * 2 * opinMax);
 }
 
 /**
@@ -24,7 +24,7 @@ export function ponderedDiff<N extends number>(
     { nOpinions, opinMax }: OpinParams<N>,
 ): DiffFunction<N> {
     return (a, b) =>
-        sum((<number[]><any>a).map((oa, i) => Math.abs(oa - (<number[]><any>b)[i]) * (<number[]><any>b)[i])) / (nOpinions * 2 * (opinMax ** 2));
+        sum((<number[]><any>a).map((oa, i) => Math.abs(oa - (<number[]><any>b)[i]!) * (<number[]><any>b)[i]!)) / (nOpinions * 2 * (opinMax ** 2));
 }
 
 /**
@@ -46,8 +46,8 @@ export function fromMaxDiff<N extends number>(
     return (a, b) => {
         let diffSum = 0;
         for (let i = 0; i < nOpinions; i++) {
-            const ao = (<number[]><any>a)[i];
-            const bo = (<number[]><any>b)[i];
+            const ao = (<number[]><any>a)[i]!;
+            const bo = (<number[]><any>b)[i]!;
             if (ao * bo < 0) {
                 diffSum += Math.abs(ao * bo);
             } else if (Math.abs(ao) < Math.abs(bo)) {

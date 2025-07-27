@@ -62,7 +62,7 @@ function getAligner<N extends number>(
     const sigma = math.hypot(...factors.map(f => f * oneSigma));
 
     return (opinions) => {
-        const scapro = sum((<number[]><any>opinions).map((opinion, i) => opinion * factors[i]));
+        const scapro = sum((<number[]><any>opinions).map((opinion, i) => opinion * factors[i]!));
         return normalToUniform(scapro, 0, sigma);
     };
 }

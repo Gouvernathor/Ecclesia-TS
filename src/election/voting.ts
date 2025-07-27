@@ -111,7 +111,7 @@ export function cardinalVote<Voter, Party>(
             for (const party of candidates) {
                 const grade = Math.min(nGrades - 1,
                     Math.floor(nGrades) * (1 - disagree(voter, party)));
-                (scores.get(party) as number[])[grade]++;
+                (scores.get(party) as number[])[grade]!++;
             }
         }
         return scores;
@@ -143,7 +143,7 @@ export function balancedCardinalVote<Voter, Party>(
             for (const party of candidates) {
                 const grade = Math.min(nGrades - 1,
                     Math.floor(nGrades * (prefs.get(party)! - minPref) / maxPref));
-                (scores.get(party) as number[])[grade]++;
+                (scores.get(party) as number[])[grade]!++;
             }
         }
         return scores;

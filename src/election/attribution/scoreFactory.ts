@@ -61,10 +61,10 @@ export function medianScore<Party>(
         const [winner, ...winners] = [...medians.keys()].filter(p => medians.get(p) === winScore);
 
         if (winners.length === 0) { // no tie
-            return new Counter([[winner, nSeats]]);
+            return new Counter([[winner!, nSeats]]);
         }
 
-        winners.unshift(winner);
+        winners.unshift(winner!);
         const trimmedResults = Scores.fromEntries(winners.map(party => [party, counts.get(party)!]));
         return contingency(trimmedResults, rest);
     };

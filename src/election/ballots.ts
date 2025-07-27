@@ -56,7 +56,7 @@ export namespace Scores {
             throw new Error("Use the fromGrades method to create an empty Scores instance");
         }
         const ths = new Map(elements) as Partial<Scores<Party>> & { ngrades?: number };
-        ths.ngrades = elements[0][1].length;
+        ths.ngrades = elements[0]![1].length;
         ths.get = get.bind(ths as any);
         return ths as Scores<Party>;
     }

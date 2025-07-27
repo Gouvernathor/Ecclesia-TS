@@ -120,7 +120,7 @@ export function condorcet<Party>(
             return contingency(votes, rest);
         }
         const [winner] = win;
-        return new Counter([[winner, nSeats]]);
+        return new Counter([[winner!, nSeats]]);
     };
     attrib.nSeats = nSeats;
     return attrib;
