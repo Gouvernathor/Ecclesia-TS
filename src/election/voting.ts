@@ -33,7 +33,7 @@ export function toShuffledVote<Voter, Party, B extends Ballots<Party>>(
         voting: Voting<Voter, Party, B>,
     } & RandomObjParam,
 ): Voting<Voter, Party, B> {
-    return (voters: Collection<Voter>, candidates: Collection<Party>) => {
+    return (voters, candidates) => {
         const randomObj = createRandomObj(rest);
         const partees = randomObj.shuffled(candidates);
         return voting(voters, partees);
@@ -52,7 +52,7 @@ export function singleVote<Voter, Party>(
         disagree: DisagreementFunction<Voter, Party>,
     }
 ): Voting<Voter, Party, Simple<Party>> {
-    return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
+    return (voters, candidates) => {
         const scores = Counter.fromkeys(candidates, 0);
         for (const voter of voters) {
             // find the party with which disagreement is minimal
@@ -71,7 +71,7 @@ export function orderingVote<Voter, Party>(
         disagree: DisagreementFunction<Voter, Party>,
     }
 ): Voting<Voter, Party, Order<Party>> {
-    return (voters: Collection<Voter>,candidates: Collection<Party>): Order<Party> => {
+    return (voters, candidates) => {
         const order: Party[][] = [];
         for (const voter of voters) {
             order.push([...candidates]
@@ -103,7 +103,7 @@ export function cardinalVote<Voter, Party>(
         disagree: DisagreementFunction<Voter, Party>,
     }
 ): Voting<Voter, Party, Scores<Party>> {
-    return (voters: Collection<Voter>, candidates: Collection<Party>) => {
+    return (voters, candidates) => {
         const scores = Scores.fromGrades<Party>(nGrades);
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
@@ -127,7 +127,7 @@ export function balancedCardinalVote<Voter, Party>(
         disagree: DisagreementFunction<Voter, Party>,
     }
 ): Voting<Voter, Party, Scores<Party>> {
-    return (voters: Collection<Voter>, candidates: Collection<Party>) => {
+    return (voters, candidates) => {
         const scores = Scores.fromGrades<Party>(nGrades);
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
@@ -165,8 +165,8 @@ export function approvalVote<Voter, Party>(
     }
 ): Voting<Voter, Party, Simple<Party>> {
     const cardinal = balancedCardinalVote({ nGrades: 2, disagree });
-    return (voters: Collection<Voter>,candidates: Collection<Party>): Simple<Party> => {
-        const scores = cardinal(voters, candidates) as Scores<Party>;
+    return (voters, candidates) => {
+        const scores = cardinal(voters, candidates);
         const approvals = new Counter<Party>();
         for (const [party, [_disapproval, approval]] of scores) {
             approvals.increment(party, approval);
