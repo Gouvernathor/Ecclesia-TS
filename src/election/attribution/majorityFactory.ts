@@ -14,7 +14,7 @@ export function plurality<Party>(
         nSeats: number,
     }
 ): Attribution<Party, Simple<Party>> & HasNSeats {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
         const win = max(votes.keys(), p => votes.get(p)!);
 
         if (votes.get(win)! > 0) {

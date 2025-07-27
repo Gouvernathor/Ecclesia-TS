@@ -36,7 +36,7 @@ export function hamilton<Party>(
         nSeats: number,
     }
 ): Proportional<Party> & HasNSeats {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
         const seats = new Counter<Party>();
         const remainders = new Map<Party, number>();
         const sumVotes = votes.total;

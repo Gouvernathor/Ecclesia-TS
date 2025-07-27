@@ -14,7 +14,7 @@ export function averageScore<Party>(
         nSeats: number
     }
 ): Attribution<Party, Scores<Party>> & HasNSeats {
-    const attrib = (votes: Scores<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Scores<Party>, _rest = {}): Counter<Party> => {
         const counts = new DefaultMap<Party, number[]>(() => []);
         for (const [party, grades] of votes) {
             for (const [grade, qty] of enumerate(grades)) {

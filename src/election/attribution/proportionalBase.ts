@@ -43,7 +43,7 @@ export function proportionalFromRankIndexFunction<Party>(
         rankIndexFunction: RankIndexFunction,
     }
 ): RankIndexMethod<Party> & HasNSeats {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
         const allVotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([party, v]) => [party, v / allVotes]));
 
@@ -105,7 +105,7 @@ export function boundedRankIndexMethod<Party>(
         metric?: DisproportionMetric<Party>,
     }
 ): RankIndexMethod<Party> {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
         const allVotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([party, v]) => [party, v / allVotes]));
 

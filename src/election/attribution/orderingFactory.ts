@@ -15,7 +15,7 @@ export function instantRunoff<Party>(
         nSeats: number
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
-    const attrib = (votes: Order<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Order<Party>, _rest = {}): Counter<Party> => {
         const blacklisted = new Set<Party>();
 
         const nParties = new Set(votes.flat()).size;
@@ -57,7 +57,7 @@ export function bordaCount<Party>(
         nSeats: number
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
-    const attrib = (votes: Order<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Order<Party>, _rest = {}): Counter<Party> => {
         const scores = new Counter<Party>();
         for (const ballot of votes) {
             for (const [i, party] of enumerate(ballot.slice().reverse(), 1)) {

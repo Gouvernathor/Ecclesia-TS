@@ -19,7 +19,7 @@ export function randomize<Party>(
         nSeats: number,
     } & RandomObjParam
 ): Attribution<Party, Simple<Party>> & HasNSeats {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
         const randomObj = createRandomObj(randomParam);
         return new Counter(randomObj.choices([...votes.keys()], { weights: [...votes.values()], k: nSeats }));
     };
