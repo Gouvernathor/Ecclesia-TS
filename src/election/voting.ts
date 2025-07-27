@@ -60,7 +60,7 @@ export function singleVote<Voter, Party>(
             scores.increment(min(candidates, party => disagree(voter, party)));
         }
         return scores;
-    }
+    };
 }
 
 /**
@@ -78,7 +78,7 @@ export function orderingVote<Voter, Party>(
                 .sort((a, b) => disagree(voter, a) - disagree(voter, b)));
         }
         return order;
-    }
+    };
 }
 
 /**
@@ -172,5 +172,5 @@ export function approvalVote<Voter, Party>(
             approvals.increment(party, approval);
         }
         return approvals;
-    }
+    };
 }
