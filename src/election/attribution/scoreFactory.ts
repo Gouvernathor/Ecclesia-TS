@@ -54,8 +54,8 @@ export function medianScore<Party>(
             }
         }
 
-        const medians = new Map([...counts.entries()]
-            .map(([party, partigrades]) => [party, median(partigrades)]));
+        const medians = new Map(Array.from(counts.entries(),
+            ([party, partigrades]) => [party, median(partigrades)]));
 
         const winScore = Math.max(...medians.values());
         const [winner, ...winners] = [...medians.keys()].filter(p => medians.get(p) === winScore);
