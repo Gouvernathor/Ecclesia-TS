@@ -25,13 +25,15 @@ export class District<Voter, Party> {
         public voters: Voter[],
         { identifier, nSeats }: { identifier?: string | number, nSeats?: number } = {},
     ) {
-        this.identifier = identifier;
+        if (identifier !== undefined)
+            this.identifier = identifier;
         // if (nSeats === undefined) {
         //     try {
         //         nSeats = (electionMethod as BaseElection<Voter, Party, any>).attributionMethod.nSeats;
         //     } catch (e) { }
         // }
-        this.nSeats = nSeats;
+        if (nSeats !== undefined)
+            this.nSeats = nSeats;
     }
 
     election(candidates: Collection<Party>): Counter<Party> {
@@ -60,7 +62,8 @@ export class House<Voter, Party> {
             districts = new Map([...districts].map(d => [d, new Counter()]));
         }
         this.districts = districts as Map<District<Voter, Party>, Counter<Party>>;
-        this.name = name;
+        if (name !== undefined)
+            this.name = name;
         this.majority = majority;
     }
 
