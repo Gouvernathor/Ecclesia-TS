@@ -40,7 +40,7 @@ A voting method is a function which transforms a pool of voters and a pool of ca
 
 **This library does not simulate individual ballots by individual voters, but only a global tally of ballots (plural).**
 For instance, the ballot for a classic FPTP election is not the same as the ballot for approval voting, but the tally is the same : a number of ballot for each candidate.
-(There are other types of tallies, for instance for score voting or rank voting.
+(There are other types of tallies, for instance for score voting or rank voting.)
 If you want to simulate individual voter choices, you will need to program the function yourself.
 However if you tally your ballots into a tally format supported by this library, you will still be able to use our attribution methods for the second part of the election.
 
