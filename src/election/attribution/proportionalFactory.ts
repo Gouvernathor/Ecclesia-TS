@@ -1,5 +1,5 @@
 import { divmod } from "@gouvernathor/python";
-import { Counter } from "@gouvernathor/python/collections";
+import { NumberCounter, type Counter } from "@gouvernathor/python/collections";
 import { type Simple } from "../ballots";
 import { type Attribution, type HasNSeats } from "../attribution";
 import { addThresholdToSimpleAttribution } from "../attribution/transform";
@@ -36,8 +36,8 @@ export function hamilton<Party>(
         nSeats: number,
     }
 ): Proportional<Party> & HasNSeats {
-    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
-        const seats = new Counter<Party>();
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party, number> => {
+        const seats = NumberCounter.fromEntries<Party>([]);
         const remainders = new Map<Party, number>();
         const sumVotes = votes.total;
 
@@ -47,7 +47,7 @@ export function hamilton<Party>(
             remainders.set(party, r);
         }
 
-        seats.update([...remainders.keys()]
+        seats.add([...remainders.keys()]
             .sort((a, b) => remainders.get(b)! - remainders.get(a)!)
             .slice(0, nSeats - seats.total));
         return seats;

@@ -1,5 +1,5 @@
 import { min } from "@gouvernathor/python";
-import { Counter } from "@gouvernathor/python/collections";
+import { NumberCounter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
 import { Ballots, Order, Scores, Simple } from "./ballots";
@@ -53,13 +53,8 @@ export function singleVote<Voter, Party>(
     }
 ): Voting<Voter, Party, Simple<Party>> {
     return (voters, candidates) => {
-        const scores = Counter.fromkeys(candidates, 0);
-        for (const voter of voters) {
-            // find the party with which disagreement is minimal
-            // add it a ballot
-            scores.increment(min(candidates, party => disagree(voter, party)));
-        }
-        return scores;
+        return NumberCounter.fromKeys(Array.from(voters, voter =>
+            min(candidates, party => disagree(voter, party))));
     };
 }
 
@@ -167,10 +162,7 @@ export function approvalVote<Voter, Party>(
     const cardinal = balancedCardinalVote({ nGrades: 2, disagree });
     return (voters, candidates) => {
         const scores = cardinal(voters, candidates);
-        const approvals = new Counter<Party>();
-        for (const [party, [_disapproval, approval]] of scores) {
-            approvals.increment(party, approval);
-        }
-        return approvals;
+        return NumberCounter.fromEntries(Array.from(scores.entries(),
+            ([party, [_disapproval, approval]]) => [party, approval!]));
     };
 }

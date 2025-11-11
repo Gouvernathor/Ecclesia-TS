@@ -32,12 +32,22 @@ export class Vote {
     }
 
     /**
+     * Compares two votes in order of decreasing ratio.
+     * The ties will be ordered by decreasing number of positive votes,
+     * and then by the order they came in.
+     * This is a function to be passed to Array.prototype.sort.
+     */
+    static compare(a: Vote, b: Vote): number {
+        return (b.ratio - a.ratio) || (b.votesFor - a.votesFor);
+    }
+
+    /**
      * Returns the votes in order of decreasing ratio.
      * The ties are ordered by decreasing number of positive votes,
      * and then by the order they came in.
+     * @deprecated Use Vote.compare instead.
      */
     static order(votes: Vote[]): Vote[] {
-        return votes
-            .sort((a, b) => (b.ratio - a.ratio) || (b.votesFor - a.votesFor));
+        return votes.sort(Vote.compare);
     }
 }

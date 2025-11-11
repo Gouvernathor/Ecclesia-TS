@@ -1,4 +1,4 @@
-import { Counter } from "@gouvernathor/python/collections";
+import { NumberCounter, type Counter } from "@gouvernathor/python/collections";
 import { type Simple } from "../ballots";
 import { type Attribution, type HasNSeats } from "../attribution";
 import { defaultMetric, type DisproportionMetric } from "./metrics";
@@ -43,7 +43,7 @@ export function proportionalFromRankIndexFunction<Party>(
         rankIndexFunction: RankIndexFunction,
     }
 ): RankIndexMethod<Party> & HasNSeats {
-    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party, number> => {
         const allVotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([party, v]) => [party, v / allVotes]));
 
@@ -52,7 +52,7 @@ export function proportionalFromRankIndexFunction<Party>(
         // the parties, sorted by increasing rankIndex value
         const parties = [...votes.keys()].sort((a, b) => rankIndexValues.get(a)! - rankIndexValues.get(b)!);
 
-        const seats = new Counter<Party>();
+        const seats = NumberCounter.fromEntries<Party>([]);
 
         s: for (let sn = 0; sn < nSeats; sn++) {
             // take the most deserving party
@@ -60,7 +60,7 @@ export function proportionalFromRankIndexFunction<Party>(
             // give it a seat
             seats.increment(winner);
             // update the rankIndex value of the party
-            rankIndexValues.set(winner, rankIndexFunction(fractions.get(winner)!, seats.get(winner)!));
+            rankIndexValues.set(winner, rankIndexFunction(fractions.get(winner)!, seats.get(winner)));
 
             // insert it in its (new) place in the sorted list of parties
             for (let pn = 0; pn < parties.length; pn++) {
@@ -105,7 +105,7 @@ export function boundedRankIndexMethod<Party>(
         metric?: DisproportionMetric<Party>,
     }
 ): RankIndexMethod<Party> {
-    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party, number> => {
         const allVotes = votes.total;
         const fractions = new Map([...votes.entries()].map(([party, v]) => [party, v / allVotes]));
 
@@ -114,7 +114,7 @@ export function boundedRankIndexMethod<Party>(
         // the parties, sorted by increasing rankIndex value
         const parties = [...votes.keys()].sort((a, b) => rankIndexValues.get(a)! - rankIndexValues.get(b)!);
 
-        const seats = new Counter<Party>();
+        const seats = NumberCounter.fromEntries<Party>([]);
 
         let bestSeats = seats.pos;
         // technically, most metrics give 0 for a 0-seats attribution

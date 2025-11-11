@@ -34,7 +34,7 @@ export class AttributionFailure extends Error { }
  * The return value's total() should be equal to the nSeats attributes - if any.
  */
 export interface Attribution<Party, B extends Ballots<Party>> {
-    (votes: B, rest?: Record<string, any>): Counter<Party>;
+    (votes: B, rest?: Record<string, any>): Counter<Party, number>;
 }
 // TODO: for all attributions where it can make sense to start with some apportionned seats,
 // add an option to pass some.

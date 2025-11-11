@@ -1,5 +1,5 @@
 import { enumerate, max } from "@gouvernathor/python";
-import { Counter, DefaultMap } from "@gouvernathor/python/collections";
+import { Counter, DefaultMap, NumberCounter } from "@gouvernathor/python/collections";
 import { fmean, median } from "@gouvernathor/python/statistics";
 import { Scores } from "../ballots";
 import { type Attribution, type HasNSeats } from "../attribution";
@@ -14,7 +14,7 @@ export function averageScore<Party>(
         nSeats: number
     }
 ): Attribution<Party, Scores<Party>> & HasNSeats {
-    const attrib = (votes: Scores<Party>, _rest = {}): Counter<Party> => {
+    const attrib = (votes: Scores<Party>, _rest = {}): Counter<Party, number> => {
         const counts = new DefaultMap<Party, number[]>(() => []);
         for (const [party, grades] of votes) {
             for (const [grade, qty] of enumerate(grades)) {
@@ -22,7 +22,7 @@ export function averageScore<Party>(
             }
         }
 
-        return new Counter([[max(counts.keys(), party => fmean(counts.get(party)!)), nSeats]]);
+        return NumberCounter.fromEntries([[max(counts.keys(), party => fmean(counts.get(party))), nSeats]]);
     }
     attrib.nSeats = nSeats;
     return attrib;
@@ -46,7 +46,7 @@ export function medianScore<Party>(
         contingency = averageScore({ nSeats });
     }
 
-    const attrib = (votes: Scores<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Scores<Party>, rest = {}): Counter<Party, number> => {
         const counts = new DefaultMap<Party, number[]>(() => []);
         for (const [party, grades] of votes) {
             for (const [grade, qty] of enumerate(grades)) {
@@ -61,11 +61,11 @@ export function medianScore<Party>(
         const [winner, ...winners] = [...medians.keys()].filter(p => medians.get(p) === winScore);
 
         if (winners.length === 0) { // no tie
-            return new Counter([[winner!, nSeats]]);
+            return NumberCounter.fromEntries([[winner!, nSeats]]);
         }
 
         winners.unshift(winner!);
-        const trimmedResults = Scores.fromEntries(winners.map(party => [party, counts.get(party)!]));
+        const trimmedResults = Scores.fromEntries(winners.map(party => [party, counts.get(party)]));
         return contingency(trimmedResults, rest);
     };
     attrib.nSeats = nSeats;

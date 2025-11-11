@@ -1,4 +1,4 @@
-import { Counter } from "@gouvernathor/python/collections";
+import { Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { type Simple } from "../ballots";
 import { type Attribution, AttributionFailure } from "../attribution";
 
@@ -35,11 +35,11 @@ export function addThresholdToSimpleAttribution<Party>(
         contingency?: Attribution<Party, Simple<Party>> | null,
     }
 ): Attribution<Party, Simple<Party>> {
-    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, rest = {}): Counter<Party, number> => {
         if (threshold > 0) {
             const original_votes = votes;
             const votes_threshold = threshold * votes.total;
-            votes = new Counter<Party>([...votes.entries()].filter(([_, v]) => v >= votes_threshold));
+            votes = NumberCounter.fromEntries([...votes.entries()].filter(([_, v]) => v >= votes_threshold));
             if (votes.size === 0) {
                 if (contingency === null) {
                     throw new AttributionFailure("No party reached the threshold");

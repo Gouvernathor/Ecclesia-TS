@@ -1,4 +1,4 @@
-import { Counter } from "@gouvernathor/python/collections";
+import { type Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { createRandomObj, type RandomObjParam } from "../../utils";
 import { type Simple } from "../ballots";
 import { type Attribution, type HasNSeats } from "../attribution";
@@ -19,9 +19,9 @@ export function randomize<Party>(
         nSeats: number,
     } & RandomObjParam
 ): Attribution<Party, Simple<Party>> & HasNSeats {
-    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party> => {
+    const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party, number> => {
         const randomObj = createRandomObj(randomParam);
-        return new Counter(randomObj.choices([...votes.keys()], { weights: [...votes.values()], k: nSeats }));
+        return NumberCounter.fromKeys(randomObj.choices([...votes.keys()], { weights: [...votes.values()], k: nSeats }));
     };
     attrib.nSeats = nSeats;
     return attrib;

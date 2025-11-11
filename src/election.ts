@@ -1,4 +1,4 @@
-import { Counter } from "@gouvernathor/python/collections";
+import { Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { type Collection } from "@gouvernathor/python/collections/abc";
 import { type Ballots } from "./election/ballots";
 import { type Voting } from "./election/voting";
@@ -13,7 +13,7 @@ import { createRandomObj, type RandomObjParam } from "./utils";
  * @returns A multi-set (a Counter) of elected representatives as returned by an Attribution.
  */
 export interface Election<Voter, Party> {
-    (voters: Collection<Voter>, candidates: Collection<Party>): Counter<Party>;
+    (voters: Collection<Voter>, candidates: Collection<Party>): Counter<Party, number>;
 }
 
 
@@ -26,7 +26,7 @@ export function standardElection<Voter, Party, B extends Ballots<Party>>(
         attributionMethod: Attribution<Party, B>,
     }
 ): Election<Voter, Party> {
-    return (pool: Collection<Voter>, candidates: Collection<Party>): Counter<Party> => {
+    return (pool: Collection<Voter>, candidates: Collection<Party>): Counter<Party, number> => {
         return attributionMethod(votingMethod(pool, candidates));
     };
 }
@@ -45,8 +45,8 @@ export function sortition<Citizen>(
         nSeats: number,
     } & RandomObjParam
 ): Election<Citizen, Citizen> {
-    return (citizens: Collection<Citizen>): Counter<Citizen> => {
+    return (citizens: Collection<Citizen>): Counter<Citizen, number> => {
         const randomObj = createRandomObj(randomParam);
-        return new Counter(randomObj.shuffled(citizens, nSeats));
+        return NumberCounter.fromKeys(randomObj.shuffled(citizens, nSeats));
     };
 }

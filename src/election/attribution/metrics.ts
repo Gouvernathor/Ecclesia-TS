@@ -1,8 +1,8 @@
-import { type Counter } from "@gouvernathor/python/collections";
+import { type ReadonlyCounter } from "@gouvernathor/python/collections";
 import { type Simple } from "../ballots";
 
 export interface DisproportionMetric<Party> {
-    (p0: {votes: Simple<Party>, seats: Counter<Party>}): number;
+    (p0: {votes: Simple<Party>, seats: ReadonlyCounter<Party, number>}): number;
 }
 
 /**
@@ -16,7 +16,7 @@ export interface DisproportionMetric<Party> {
 export function defaultMetric<Party>(
     { votes, seats }: {
         votes: Simple<Party>,
-        seats: Counter<Party>,
+        seats: ReadonlyCounter<Party, number>,
     }
 ): number {
     const allVotes = votes.total;

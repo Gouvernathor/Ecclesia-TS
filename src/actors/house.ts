@@ -1,4 +1,4 @@
-import { Counter } from "@gouvernathor/python/collections";
+import { Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { Election } from "../election";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { Vote } from "./vote";
@@ -36,7 +36,7 @@ export class District<Voter, Party> {
             this.nSeats = nSeats;
     }
 
-    election(candidates: Collection<Party>): Counter<Party> {
+    election(candidates: Collection<Party>): Counter<Party, number> {
         return this.electionMethod(this.voters, candidates);
     }
 }
@@ -51,17 +51,17 @@ export class District<Voter, Party> {
  *   District, for instance.
  */
 export class House<Voter, Party> {
-    districts: Map<District<Voter, Party>, Counter<Party>>;
+    districts: Map<District<Voter, Party>, Counter<Party, number>>;
     name?: string;
     majority?: number;
     constructor(
-        districts: Iterable<District<Voter, Party>> | Map<District<Voter, Party>, Counter<Party>>,
+        districts: Iterable<District<Voter, Party>> | Map<District<Voter, Party>, Counter<Party, number>>,
         { name, majority = .5 }: { name?: string, majority?: number } = {},
     ) {
         if (!(districts instanceof Map)) {
-            districts = new Map([...districts].map(d => [d, new Counter()]));
+            districts = new Map([...districts].map(d => [d, NumberCounter.fromEntries<Party>([])]));
         }
-        this.districts = districts as Map<District<Voter, Party>, Counter<Party>>;
+        this.districts = districts as Map<District<Voter, Party>, Counter<Party, number>>;
         if (name !== undefined)
             this.name = name;
         this.majority = majority;
@@ -73,8 +73,8 @@ export class House<Voter, Party> {
      * For the array (with repetitions) of the individual members, use the
      * members.elements() method.
      */
-    get members(): Counter<Party> {
-        const coun = new Counter<Party>();
+    get members(): Counter<Party, number> {
+        const coun = NumberCounter.fromEntries<Party>([]);
         for (const dmembers of this.districts.values()) {
             coun.update(dmembers);
         }
@@ -99,8 +99,8 @@ export class House<Voter, Party> {
     /**
      * Triggers an election in each electoral district, returns the members result.
      */
-    election(candidates: Collection<Party>): Counter<Party> {
-        const members = new Counter<Party>();
+    election(candidates: Collection<Party>): Counter<Party, number> {
+        const members = NumberCounter.fromEntries<Party>([]);
         for (const district of this.districts.keys()) {
             const elected = district.election(candidates);
             this.districts.set(district, elected);

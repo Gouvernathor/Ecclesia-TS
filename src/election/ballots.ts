@@ -5,7 +5,7 @@ import { ReadonlyCounter } from "@gouvernathor/python/collections";
  *
  * [[PS, 5], [LR: 7]] -> 5 ballots for PS, 7 for LR.
  */
-export interface Simple<Party> extends ReadonlyCounter<Party> { }
+export interface Simple<Party> extends ReadonlyCounter<Party, number> { }
 
 /**
  * A list of ballots, each ballot ordering parties by decreasing preference.

@@ -115,7 +115,7 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@gouvernathor/python": "^1.0.3",
+    "@gouvernathor/python": "^2.0.0",
     "@gouvernathor/rng": "^1.2.1"
   }
 }

@@ -1,5 +1,5 @@
 import { enumerate, max, min } from "@gouvernathor/python";
-import { Counter, DefaultMap } from "@gouvernathor/python/collections";
+import { type Counter, DefaultMap, NumberCounter } from "@gouvernathor/python/collections";
 import { Order } from "../ballots";
 import { type Attribution, AttributionFailure, type HasNSeats } from "../attribution";
 
@@ -15,12 +15,12 @@ export function instantRunoff<Party>(
         nSeats: number
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
-    const attrib = (votes: Order<Party>, _rest = {}): Counter<Party> => {
+    const attrib = (votes: Order<Party>, _rest = {}): Counter<Party, number> => {
         const blacklisted = new Set<Party>();
 
         const nParties = new Set(votes.flat()).size;
         for (let pn = 0; pn < nParties; pn++) {
-            const firstPlaces = new Counter<Party>();
+            const firstPlaces = NumberCounter.fromEntries<Party>([]);
             for (const ballot of votes) {
                 for (const party of ballot) {
                     if (!blacklisted.has(party)) {
@@ -33,10 +33,10 @@ export function instantRunoff<Party>(
             const total = firstPlaces.total;
             for (const [party, score] of firstPlaces) {
                 if (score / total > .5) {
-                    return new Counter([[party, nSeats]]);
+                    return NumberCounter.fromEntries([[party, nSeats]]);
                 }
             }
-            blacklisted.add(min(firstPlaces.keys(), p => firstPlaces.get(p)!));
+            blacklisted.add(min(firstPlaces.keys(), p => firstPlaces.get(p)));
         }
         throw new Error("Should not happen");
     };
@@ -57,14 +57,14 @@ export function bordaCount<Party>(
         nSeats: number
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
-    const attrib = (votes: Order<Party>, _rest = {}): Counter<Party> => {
-        const scores = new Counter<Party>();
+    const attrib = (votes: Order<Party>, _rest = {}): Counter<Party, number> => {
+        const scores = NumberCounter.fromEntries<Party>([]);
         for (const ballot of votes) {
             for (const [i, party] of enumerate(ballot.slice().reverse(), 1)) {
                 scores.increment(party, i);
             }
         }
-        return new Counter([[max(scores.keys(), p => scores.get(p)!), nSeats]]);
+        return NumberCounter.fromEntries([[max(scores.keys(), p => scores.get(p)), nSeats]]);
     };
     attrib.nSeats = nSeats;
     return attrib;
@@ -88,8 +88,8 @@ export function condorcet<Party>(
         contingency?: Attribution<Party, Order<Party>> | null,
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
-    const attrib = (votes: Order<Party>, rest = {}): Counter<Party> => {
-        const counts = new DefaultMap<Party, Counter<Party>>(() => new Counter());
+    const attrib = (votes: Order<Party>, rest = {}): Counter<Party, number> => {
+        const counts = new DefaultMap<Party, Counter<Party, number>>(() => NumberCounter.fromEntries([]));
         const majority= votes.length / 2;
 
         for (const ballot of votes) {
@@ -120,7 +120,7 @@ export function condorcet<Party>(
             return contingency(votes, rest);
         }
         const [winner] = win;
-        return new Counter([[winner!, nSeats]]);
+        return NumberCounter.fromEntries([[winner!, nSeats]]);
     };
     attrib.nSeats = nSeats;
     return attrib;
