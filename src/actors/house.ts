@@ -59,7 +59,7 @@ export class House<Voter, Party> {
         { name, majority = .5 }: { name?: string, majority?: number } = {},
     ) {
         if (!(districts instanceof Map)) {
-            districts = new Map([...districts].map(d => [d, NumberCounter.fromEntries<Party>([])]));
+            districts = new Map([...districts].map(d => [d, NumberCounter.fromEntries<Party>()]));
         }
         this.districts = districts as Map<District<Voter, Party>, Counter<Party, number>>;
         if (name !== undefined)
@@ -74,7 +74,7 @@ export class House<Voter, Party> {
      * members.elements() method.
      */
     get members(): Counter<Party, number> {
-        const coun = NumberCounter.fromEntries<Party>([]);
+        const coun = NumberCounter.fromEntries<Party>();
         for (const dmembers of this.districts.values()) {
             coun.update(dmembers);
         }
@@ -100,7 +100,7 @@ export class House<Voter, Party> {
      * Triggers an election in each electoral district, returns the members result.
      */
     election(candidates: Collection<Party>): Counter<Party, number> {
-        const members = NumberCounter.fromEntries<Party>([]);
+        const members = NumberCounter.fromEntries<Party>();
         for (const district of this.districts.keys()) {
             const elected = district.election(candidates);
             this.districts.set(district, elected);

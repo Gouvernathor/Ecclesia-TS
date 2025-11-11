@@ -20,7 +20,7 @@ export function instantRunoff<Party>(
 
         const nParties = new Set(votes.flat()).size;
         for (let pn = 0; pn < nParties; pn++) {
-            const firstPlaces = NumberCounter.fromEntries<Party>([]);
+            const firstPlaces = NumberCounter.fromEntries<Party>();
             for (const ballot of votes) {
                 for (const party of ballot) {
                     if (!blacklisted.has(party)) {
@@ -58,7 +58,7 @@ export function bordaCount<Party>(
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
     const attrib = (votes: Order<Party>, _rest = {}): Counter<Party, number> => {
-        const scores = NumberCounter.fromEntries<Party>([]);
+        const scores = NumberCounter.fromEntries<Party>();
         for (const ballot of votes) {
             for (const [i, party] of enumerate(ballot.slice().reverse(), 1)) {
                 scores.increment(party, i);
@@ -89,7 +89,7 @@ export function condorcet<Party>(
     }
 ): Attribution<Party, Order<Party>> & HasNSeats {
     const attrib = (votes: Order<Party>, rest = {}): Counter<Party, number> => {
-        const counts = new DefaultMap<Party, Counter<Party, number>>(() => NumberCounter.fromEntries([]));
+        const counts = new DefaultMap<Party, Counter<Party, number>>(() => NumberCounter.fromEntries());
         const majority= votes.length / 2;
 
         for (const ballot of votes) {

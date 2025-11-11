@@ -52,7 +52,7 @@ export function proportionalFromRankIndexFunction<Party>(
         // the parties, sorted by increasing rankIndex value
         const parties = [...votes.keys()].sort((a, b) => rankIndexValues.get(a)! - rankIndexValues.get(b)!);
 
-        const seats = NumberCounter.fromEntries<Party>([]);
+        const seats = NumberCounter.fromEntries<Party>();
 
         s: for (let sn = 0; sn < nSeats; sn++) {
             // take the most deserving party
@@ -114,7 +114,7 @@ export function boundedRankIndexMethod<Party>(
         // the parties, sorted by increasing rankIndex value
         const parties = [...votes.keys()].sort((a, b) => rankIndexValues.get(a)! - rankIndexValues.get(b)!);
 
-        const seats = NumberCounter.fromEntries<Party>([]);
+        const seats = NumberCounter.fromEntries<Party>();
 
         let bestSeats = seats.pos;
         // technically, most metrics give 0 for a 0-seats attribution
