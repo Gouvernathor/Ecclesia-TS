@@ -35,8 +35,7 @@ export function toShuffledVote<Voter, Party, B extends Ballots<Party>>(
 ): Voting<Voter, Party, B> {
     return (voters, candidates) => {
         const randomObj = createRandomObj(rest);
-        const partees = randomObj.shuffled(candidates);
-        return voting(voters, partees);
+        return voting(randomObj.shuffled(voters), randomObj.shuffled(candidates));
     };
 }
 
