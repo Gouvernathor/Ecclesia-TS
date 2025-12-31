@@ -14,6 +14,16 @@
         "default": "./dist/election.cjs"
       }
     },
+"./election/tally": {
+      "import": {
+        "types": "./dist/election/tally.d.ts",
+        "default": "./dist/election/tally.js"
+      },
+      "require": {
+        "types": "./dist/election/tally.d.cts",
+        "default": "./dist/election/tally.cjs"
+      }
+    },
     "./election/ballots": {
       "import": {
         "types": "./dist/election/ballots.d.ts",
