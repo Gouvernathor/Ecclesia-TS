@@ -1,6 +1,6 @@
 {
   "name": "ecclesia",
-  "version": "2.4.0",
+  "version": "3.0.28",
   "description": "Framework for political and electoral simulations",
   "type": "module",
   "exports": {
@@ -22,16 +22,6 @@
       "require": {
         "types": "./dist/election/tally.d.cts",
         "default": "./dist/election/tally.cjs"
-      }
-    },
-    "./election/ballots": {
-      "import": {
-        "types": "./dist/election/ballots.d.ts",
-        "default": "./dist/election/ballots.js"
-      },
-      "require": {
-        "types": "./dist/election/ballots.d.cts",
-        "default": "./dist/election/ballots.cjs"
       }
     },
     "./election/attribution": {
