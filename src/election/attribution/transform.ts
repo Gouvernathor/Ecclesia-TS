@@ -1,5 +1,5 @@
 import { Counter, NumberCounter } from "@gouvernathor/python/collections";
-import { type Simple } from "../ballots";
+import { type Simple } from "../tally";
 import { type Attribution, AttributionFailure } from "../attribution";
 
 /**

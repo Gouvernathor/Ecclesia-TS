@@ -1,6 +1,6 @@
 import { type Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { createRandomObj, type RandomObjParam } from "../../utils";
-import { type Simple } from "../ballots";
+import { type Simple } from "../tally";
 import { type Attribution, type HasNSeats } from "../attribution";
 
 /**

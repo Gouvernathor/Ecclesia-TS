@@ -1,5 +1,5 @@
 import { type ReadonlyCounter } from "@gouvernathor/python/collections";
-import { type Simple } from "../ballots";
+import { type Simple } from "../tally";
 
 export interface DisproportionMetric<Party> {
     (p0: {votes: Simple<Party>, seats: ReadonlyCounter<Party, number>}): number;

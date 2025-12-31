@@ -1,7 +1,7 @@
 import { enumerate, max } from "@gouvernathor/python";
 import { Counter, DefaultMap, NumberCounter } from "@gouvernathor/python/collections";
 import { fmean, median } from "@gouvernathor/python/statistics";
-import { Scores } from "../ballots";
+import { Scores } from "../tally";
 import { type Attribution, type HasNSeats } from "../attribution";
 
 /**

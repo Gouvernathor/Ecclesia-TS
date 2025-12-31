@@ -1,6 +1,6 @@
 import { divmod } from "@gouvernathor/python";
 import { NumberCounter, type Counter } from "@gouvernathor/python/collections";
-import { type Simple } from "../ballots";
+import { type Simple } from "../tally";
 import { type Attribution, type HasNSeats } from "../attribution";
 import { addThresholdToSimpleAttribution } from "../attribution/transform";
 import { type DivisorFunction, type DivisorMethod, type Proportional, proportionalFromDivisorFunction, proportionalFromRankIndexFunction, rankIndexFunctionFromDivisorFunction, type RankIndexMethod, stationaryDivisorFunction } from "./proportionalBase";

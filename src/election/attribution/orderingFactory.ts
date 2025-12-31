@@ -1,6 +1,6 @@
 import { enumerate, max, min } from "@gouvernathor/python";
 import { type Counter, DefaultMap, NumberCounter } from "@gouvernathor/python/collections";
-import { Order } from "../ballots";
+import { Order } from "../tally";
 import { type Attribution, AttributionFailure, type HasNSeats } from "../attribution";
 
 /**

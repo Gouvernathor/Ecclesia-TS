@@ -1,5 +1,5 @@
 import { NumberCounter, type Counter } from "@gouvernathor/python/collections";
-import { type Simple } from "../ballots";
+import { type Simple } from "../tally";
 import { type Attribution, type HasNSeats } from "../attribution";
 import { defaultMetric, type DisproportionMetric } from "./metrics";
 

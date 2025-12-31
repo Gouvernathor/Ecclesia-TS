@@ -1,6 +1,6 @@
 import { max } from "@gouvernathor/python";
 import { type Counter, NumberCounter } from "@gouvernathor/python/collections";
-import { type Simple } from "../ballots";
+import { type Simple } from "../tally";
 import { type Attribution, AttributionFailure, type HasNSeats } from "../attribution";
 
 /**

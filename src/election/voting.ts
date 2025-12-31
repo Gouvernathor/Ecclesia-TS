@@ -2,7 +2,7 @@ import { min } from "@gouvernathor/python";
 import { NumberCounter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
-import { Order, Scores, Simple } from "./ballots";
+import { Order, Scores, Simple } from "./tally";
 
 export interface DisagreementFunction<T, U> {
     (t: T, u: U): number;
