@@ -1,5 +1,4 @@
 import { type Counter } from "@gouvernathor/python/collections";
-import { type Ballots } from "../ballots";
 
 /**
  * To be thrown when an attribution fails to attribute seats,
@@ -33,8 +32,8 @@ export class AttributionFailure extends Error { }
  * It is a Counter mapping each party to the number of seats it won.
  * The return value's total() should be equal to the nSeats attributes - if any.
  */
-export interface Attribution<Party, B extends Ballots<Party>> {
-    (votes: B, rest?: Record<string, any>): Counter<Party, number>;
+export interface Attribution<Party, Tally> {
+    (votes: Tally, rest?: Record<string, any>): Counter<Party, number>;
 }
 // TODO: for all attributions where it can make sense to start with some apportionned seats,
 // add an option to pass some.

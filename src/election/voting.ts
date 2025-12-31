@@ -2,14 +2,14 @@ import { min } from "@gouvernathor/python";
 import { NumberCounter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
-import { Ballots, Order, Scores, Simple } from "./ballots";
+import { Order, Scores, Simple } from "./ballots";
 
 export interface DisagreementFunction<T, U> {
     (t: T, u: U): number;
 }
 
-export interface Voting<Voter, Party, B extends Ballots<Party>> {
-    (voters: Collection<Voter>, candidates: Collection<Party>): B;
+export interface Voting<Voter, Party, Tally> {
+    (voters: Collection<Voter>, candidates: Collection<Party>): Tally;
 }
 
 
@@ -28,11 +28,11 @@ export interface Voting<Voter, Party, B extends Ballots<Party>> {
  * If you want the generator to be seeded only once with a given seed, and reused afterwards,
  * seed it yourself and pass it as a random object to this function.
  */
-export function toShuffledVote<Voter, Party, B extends Ballots<Party>>(
+export function toShuffledVote<Voter, Party, Tally>(
     { voting, ...rest }: {
-        voting: Voting<Voter, Party, B>,
+        voting: Voting<Voter, Party, Tally>,
     } & RandomObjParam,
-): Voting<Voter, Party, B> {
+): Voting<Voter, Party, Tally> {
     return (voters, candidates) => {
         const randomObj = createRandomObj(rest);
         return voting(randomObj.shuffled(voters), randomObj.shuffled(candidates));

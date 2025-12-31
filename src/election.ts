@@ -1,6 +1,5 @@
 import { Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { type Collection } from "@gouvernathor/python/collections/abc";
-import { type Ballots } from "./election/ballots";
 import { type Voting } from "./election/voting";
 import { type Attribution } from "./election/attribution";
 import { createRandomObj, type RandomObjParam } from "./utils";
@@ -20,10 +19,10 @@ export interface Election<Voter, Party> {
 /**
  * Implements the most basic elections : combining a voting method and an attribution method.
  */
-export function standardElection<Voter, Party, B extends Ballots<Party>>(
+export function standardElection<Voter, Party, Tally>(
     { votingMethod, attributionMethod }: {
-        votingMethod: Voting<Voter, Party, B>,
-        attributionMethod: Attribution<Party, B>,
+        votingMethod: Voting<Voter, Party, Tally>,
+        attributionMethod: Attribution<Party, Tally>,
     }
 ): Election<Voter, Party> {
     return (pool: Collection<Voter>, candidates: Collection<Party>): Counter<Party, number> => {
