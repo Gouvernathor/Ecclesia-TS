@@ -36,16 +36,18 @@ An election method is usually built from a voting method and an attribution meth
 
 ### Voting methods
 
-A voting method is a function which transforms a pool of voters and a pool of candidates into a tally of ballots.
+There are two kinds of voting methods:
+- those to transform a pool of voters and a pool of candidates into a tally of ballots
+- those to extract a single ballot from one voter and a pool of candidates
 
-**This library does not simulate individual ballots by individual voters, but only a global tally of ballots (plural).**
-For instance, the ballot for a classic FPTP election is not the same as the ballot for approval voting, but the tally is the same : a number of ballot for each candidate.
-(There are other types of tallies, for instance for score voting or rank voting.)
-If you want to simulate individual voter choices, you will need to program the function yourself.
-However if you tally your ballots into a tally format supported by this library, you will still be able to use our attribution methods for the second part of the election.
+The nuance between a ballot (or even an iterable of ballots) and a tally is important to grasp.
+For instance, the ballot for a classic FPTP election (with a single name) is not the same as the ballot for approval voting (with any number of candidates in irrelevant order), but the tally is the same : a number of ballot for each candidate.
+(There are other types of ballots and tallies, for instance for score voting or rank voting.)
+If you want to simulate individual voter choices, you will want to use ballots.
+But generally, it is simpler and faster to use the former kind only, unless you want to make an explorable simulation where each step can be observed. There are tallying functions provided in order to turn a bunch of individual ballots into one tally of ballots.
 
 This library will require you to provide a disagreement function (and, sometimes, other parameters) between a given type of voter and candidate, in order to build a voting method for these two types.
-The standard built-in voting methods include the single vote, approval voting, ranked voting, and score voting.
+The standard built-in voting methods include the single vote, approval voting, ranked voting, and score voting - for both kinds of voting methods.
 
 ### Attribution methods
 
