@@ -2,11 +2,10 @@ import { min } from "@gouvernathor/python";
 import { NumberCounter } from "@gouvernathor/python/collections";
 import { Collection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
+import { DisagreementFunction } from "./voting-to-ballot";
 import { Order, Scores, Simple } from "./tally";
 
-export interface DisagreementFunction<T, U> {
-    (t: T, u: U): number;
-}
+export type { DisagreementFunction };
 
 export interface Voting<Voter, Party, Tally> {
     (voters: Collection<Voter>, candidates: Collection<Party>): Tally;
