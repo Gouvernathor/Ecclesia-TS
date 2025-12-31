@@ -5,7 +5,7 @@ import { ReadonlyCounter } from "@gouvernathor/python/collections";
  *
  * [[PS, 5], [LR: 7]] -> 5 ballots for PS, 7 for LR.
  */
-export interface Simple<Party> extends ReadonlyCounter<Party, number> { }
+interface Simple<Party> extends ReadonlyCounter<Party, number> { }
 
 /**
  * A list of ballots, each ballot ordering parties by decreasing preference.
@@ -20,7 +20,7 @@ export interface Simple<Party> extends ReadonlyCounter<Party, number> { }
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
+interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -35,12 +35,12 @@ export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
  * Any party not mapped will be assumed to have
  * an array of zeros (of length ngrades).
  */
-export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
+interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
     readonly ngrades: number;
     get(key: Party): ReadonlyArray<number>;
 }
 
-export namespace Scores {
+namespace Scores {
     function get<Party>(this: Scores<Party>, key: Party): ReadonlyArray<number> {
         const value = this.get(key);
         if (value === undefined) {
@@ -69,5 +69,14 @@ export namespace Scores {
     }
 }
 
+export {
+    /** @deprecated use the election/tally submodule instead */
+    Simple,
+    /** @deprecated use the election/tally submodule instead */
+    Order,
+    /** @deprecated use the election/tally submodule instead */
+    Scores,
+};
 
+/** @deprecated will be removed in 3.0 */
 export type Ballots<Party> = Simple<Party> | Order<Party> | Scores<Party>;
