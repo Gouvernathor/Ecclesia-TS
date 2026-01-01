@@ -37,16 +37,19 @@ export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
  */
 export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
     readonly ngrades: number;
-    get(key: Party): ReadonlyArray<number>;
+    get(key: Party): readonly number[];
 }
 
 export namespace Scores {
-    function get<Party>(this: Scores<Party>, key: Party): ReadonlyArray<number> {
-        const value = this.get(key);
-        if (value === undefined) {
-            return Array(this.ngrades).fill(0);
+    function makeGet<Candidate>(ths: ReadonlyMap<Candidate, readonly number[]>, ngrades: number) {
+        const superGet = ths.get.bind(ths);
+        return (key: Candidate) => {
+            const value = superGet(key);
+            if (value === undefined) {
+                return Array(ngrades).fill(0);
+            }
+            return value;
         }
-        return value!;
     }
 
     export function fromEntries<Party>(
@@ -55,16 +58,16 @@ export namespace Scores {
         if (elements.length === 0) {
             throw new Error("Use the fromGrades method to create an empty Scores instance");
         }
-        const ths = new Map(elements) as Partial<Scores<Party>> & { ngrades?: number };
+        const ths = new Map(elements) as ReadonlyMap<Party, readonly number[]> & { ngrades?: number };
         ths.ngrades = elements[0]![1].length;
-        ths.get = get.bind(ths as any);
+        ths.get = makeGet(ths, ths.ngrades);
         return ths as Scores<Party>;
     }
 
     export function fromGrades<Party>(ngrades: number): Scores<Party> {
-        const ths = new Map() as Partial<Scores<Party>> & { ngrades?: number };
+        const ths = new Map() as ReadonlyMap<Party, readonly number[]> & { ngrades?: number };
         ths.ngrades = ngrades;
-        ths.get = get.bind(ths as any);
+        ths.get = makeGet(ths, ngrades);
         return ths as Scores<Party>;
     }
 }
