@@ -8,60 +8,36 @@
       "import": {
         "types": "./dist/election.d.ts",
         "default": "./dist/election.js"
-      },
-      "require": {
-        "types": "./dist/election.d.cts",
-        "default": "./dist/election.cjs"
       }
     },
     "./election/tally": {
       "import": {
         "types": "./dist/election/tally.d.ts",
         "default": "./dist/election/tally.js"
-      },
-      "require": {
-        "types": "./dist/election/tally.d.cts",
-        "default": "./dist/election/tally.cjs"
       }
     },
     "./election/attribution": {
       "import": {
         "types": "./dist/election/attribution.d.ts",
         "default": "./dist/election/attribution.js"
-      },
-      "require": {
-        "types": "./dist/election/attribution.d.cts",
-        "default": "./dist/election/attribution.cjs"
       }
     },
     "./election/voting": {
       "import": {
         "types": "./dist/election/voting.d.ts",
         "default": "./dist/election/voting.js"
-      },
-      "require": {
-        "types": "./dist/election/voting.d.cts",
-        "default": "./dist/election/voting.cjs"
       }
     },
     "./election/voting-to-ballot": {
       "import": {
         "types": "./dist/election/voting-to-ballot.d.ts",
         "default": "./dist/election/voting-to-ballot.js"
-      },
-      "require": {
-        "types": "./dist/election/voting-to-ballot.d.cts",
-        "default": "./dist/election/voting-to-ballot.cjs"
       }
     },
     "./election/tallying": {
       "import": {
         "types": "./dist/election/tallying.d.ts",
         "default": "./dist/election/tallying.js"
-      },
-      "require": {
-        "types": "./dist/election/tallying.d.cts",
-        "default": "./dist/election/tallying.cjs"
       }
     },
 
@@ -69,40 +45,24 @@
       "import": {
         "types": "./dist/actors/opinionsArray.d.ts",
         "default": "./dist/actors/opinionsArray.js"
-      },
-      "require": {
-        "types": "./dist/actors/opinionsArray.d.cts",
-        "default": "./dist/actors/opinionsArray.cjs"
       }
     },
     "./actors/disagreement": {
       "import": {
         "types": "./dist/actors/disagreement.d.ts",
         "default": "./dist/actors/disagreement.js"
-      },
-      "require": {
-        "types": "./dist/actors/disagreement.d.cts",
-        "default": "./dist/actors/disagreement.cjs"
       }
     },
     "./actors/vote": {
       "import": {
         "types": "./dist/actors/vote.d.ts",
         "default": "./dist/actors/vote.js"
-      },
-      "require": {
-        "types": "./dist/actors/vote.d.cts",
-        "default": "./dist/actors/vote.cjs"
       }
     },
     "./actors/house": {
       "import": {
         "types": "./dist/actors/house.d.ts",
         "default": "./dist/actors/house.js"
-      },
-      "require": {
-        "types": "./dist/actors/house.d.cts",
-        "default": "./dist/actors/house.cjs"
       }
     }
   },
