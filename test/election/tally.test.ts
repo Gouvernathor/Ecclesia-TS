@@ -6,7 +6,7 @@ describe("Scores.fromEntries", () => {
         expect(() => Scores.fromEntries([])).toThrow();
     });
 
-    it("contains the passed values", () => {
+    it("contains the passed values (has & get)", () => {
         const instance = Scores.fromEntries([["c1", [1, 2, 3, 4, 5]], ["c2", [5, 6, 7, 8, 9]]]);
 
         expect(instance.has("c1")).toBe(true);
@@ -16,7 +16,7 @@ describe("Scores.fromEntries", () => {
         expect(instance.get("c2")[5]).toBeUndefined();
     });
 
-    it("does not contain other values", () => {
+    it("does not contain other values (has & get)", () => {
         const instance = Scores.fromEntries([[1n, [2, 3, 4]], [2n, [7, 8, 9]]]);
 
         expect(instance.has(3n)).toBe(false);
@@ -25,13 +25,53 @@ describe("Scores.fromEntries", () => {
     });
 
     it("has the correct ngrades", () => {
-        expect((Scores.fromEntries([[1n, [2, 3]], [2n, [7, 8]]])).ngrades).toBe(2);
+        expect((Scores.fromEntries([[1n, [2, 3, 4]], [2n, [7, 8, 9]]])).ngrades).toBe(3);
         expect((Scores.fromEntries([[1n, []], [2n, []]])).ngrades).toBe(0);
     });
+
+    describe("has the ReadonlyMap methods", () => {
+        it("forEach works", () => {
+            const map = Scores.fromEntries([[1n, [2, 3]], [2n, [7, 8]]]);
+            const keys: bigint[] = [];
+            const values: (readonly number[])[] = [];
+
+            map.forEach((v, k, m) => {
+                keys.push(k);
+                values.push(v);
+                expect(m).toBe(map);
+            });
+
+            expect(keys).toEqual([1n, 2n]);
+            expect(values).toEqual([[2, 3], [7, 8]]);
+        });
+
+        // get and has are already tested
+
+        it("size works", () => {
+            expect(Scores.fromEntries([["c1", [1, 2, 3, 4, 5]], ["c2", [5, 6, 7, 8, 9]]]).size).toBe(2);
+        });
+
+        it("[Symbol.iterator] works", () => {
+            expect(Array.from(Scores.fromEntries([[1n, [2, 3]], [2n, [7, 8]]])))
+                .toEqual([[1n, [2, 3]], [2n, [7, 8]]]);
+        });
+
+        it("entries works", () => {
+            expect(Array.from(Scores.fromEntries([[1n, [2, 3]], [2n, [7, 8]]]).entries()))
+                .toEqual([[1n, [2, 3]], [2n, [7, 8]]]);
+        });
+
+        it("keys works", () => {
+            expect(Array.from(Scores.fromEntries([[1n, [2, 3]], [2n, [7, 8]]]).keys()))
+                .toEqual([1n, 2n]);
+        });
+
+        it("values works", () => {
+            expect(Array.from(Scores.fromEntries([[1n, [2, 3]], [2n, [7, 8]]]).values()))
+                .toEqual([[2, 3], [7, 8]]);
+        });
+    });
 });
-// Scores.prototype.get
-// Scores.prototype.ngrades
-// ReadonlyMap methods
 
 
 // describe("Scores.fromGrades", () => {});
