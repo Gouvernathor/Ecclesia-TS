@@ -40,34 +40,36 @@ export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>>
     get(key: Party): readonly number[];
 }
 
-export namespace Scores {
-    function makeGet<Candidate>(ths: ReadonlyMap<Candidate, readonly number[]>, ngrades: number) {
-        const superGet = ths.get.bind(ths);
-        return (key: Candidate) => {
-            const value = superGet(key);
-            if (value === undefined) {
-                return Array(ngrades).fill(0);
-            }
-            return value;
-        }
-    }
+class BaseScores<Candidate>
+        extends Map<Candidate, ReadonlyArray<number>>
+        implements Scores<Candidate> {
+    ngrades!: number;
 
+    override get(key: Candidate): readonly number[] {
+        const value = super.get(key);
+        if (value === undefined) {
+            return Array(this.ngrades).fill(0);
+        }
+        return value;
+    }
+}
+
+export namespace Scores {
     export function fromEntries<Party>(
         elements: readonly [Party, readonly number[]][],
     ): Scores<Party> {
         if (elements.length === 0) {
             throw new Error("Use the fromGrades method to create an empty Scores instance");
         }
-        const ths = new Map(elements) as ReadonlyMap<Party, readonly number[]> & { ngrades?: number };
+        const ths = new BaseScores(elements);
         ths.ngrades = elements[0]![1].length;
-        ths.get = makeGet(ths, ths.ngrades);
-        return ths as Scores<Party>;
+        return ths;
     }
 
     export function fromGrades<Party>(ngrades: number): Scores<Party> {
         const ths = new Map() as ReadonlyMap<Party, readonly number[]> & { ngrades?: number };
         ths.ngrades = ngrades;
-        ths.get = makeGet(ths, ngrades);
+        ths.get = () => Array(ngrades).fill(0);
         return ths as Scores<Party>;
     }
 }
