@@ -74,7 +74,29 @@ describe("Scores.fromEntries", () => {
 });
 
 
-// describe("Scores.fromGrades", () => {});
-// Scores.prototype.get
-// Scores.prototype.ngrades
-// ReadonlyMap methods
+describe("Scores.fromGrades", () => {
+    it("has the correct ngrades", () => {
+        expect(Scores.fromGrades(100).ngrades).toBe(100);
+        expect(Scores.fromGrades(0).ngrades).toBe(0);
+    });
+
+    it("returns the expected arrays of the correct size", () => {
+        expect(Scores.fromGrades(10).get("f5"))
+            .toEqual([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        expect(Scores.fromGrades(0).get("c4"))
+            .toEqual([]);
+    });
+
+    it("is empty according to ReadonlyMap methods", () => {
+        const instance = Scores.fromGrades(10);
+
+        expect(() => instance.forEach(() => { throw new Error }))
+            .not.toThrow();
+        expect(instance.has("Ft")).toBe(false);
+        expect(instance.size).toBe(0);
+        expect(Array.from(instance)).toEqual([]);
+        expect(Array.from(instance.entries())).toEqual([]);
+        expect(Array.from(instance.keys())).toEqual([]);
+        expect(Array.from(instance.values())).toEqual([]);
+    });
+});
