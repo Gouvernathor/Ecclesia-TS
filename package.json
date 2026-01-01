@@ -71,7 +71,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -92,7 +92,8 @@
   "funding": "https://ko-fi.com/gouvernathor",
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.5",
-    "typescript": "*"
+    "typescript": "*",
+    "vitest": "^4.0.8"
   },
   "dependencies": {
     "@gouvernathor/python": "^2.1.1",
