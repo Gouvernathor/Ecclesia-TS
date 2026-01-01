@@ -5,7 +5,7 @@ import { ReadonlyCounter } from "@gouvernathor/python/collections";
  *
  * [[PS, 5], [LR: 7]] -> 5 ballots for PS, 7 for LR.
  */
-export interface Simple<Party> extends ReadonlyCounter<Party, number> { }
+export interface Simple<Candidate> extends ReadonlyCounter<Candidate, number> { }
 
 /**
  * A list of ballots, each ballot ordering parties by decreasing preference.
@@ -20,7 +20,7 @@ export interface Simple<Party> extends ReadonlyCounter<Party, number> { }
  * Note that not ranking all the candidates is permitted by this type,
  * although some attribution methods may not support it.
  */
-export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
+export interface Order<Candidate> extends ReadonlyArray<ReadonlyArray<Candidate>> { }
 
 /**
  * A mapping from each party to a list of number of ballots, one for each grade.
@@ -35,9 +35,9 @@ export interface Order<Party> extends ReadonlyArray<ReadonlyArray<Party>> { }
  * Any party not mapped will be assumed to have
  * an array of zeros (of length ngrades).
  */
-export interface Scores<Party> extends ReadonlyMap<Party, ReadonlyArray<number>> {
+export interface Scores<Candidate> extends ReadonlyMap<Candidate, ReadonlyArray<number>> {
     readonly ngrades: number;
-    get(key: Party): readonly number[];
+    get(key: Candidate): readonly number[];
 }
 
 class BaseScores<Candidate>
@@ -55,9 +55,9 @@ class BaseScores<Candidate>
 }
 
 export namespace Scores {
-    export function fromEntries<Party>(
-        elements: readonly [Party, readonly number[]][],
-    ): Scores<Party> {
+    export function fromEntries<Candidate>(
+        elements: readonly [Candidate, readonly number[]][],
+    ): Scores<Candidate> {
         if (elements.length === 0) {
             throw new Error("Use the fromGrades method to create an empty Scores instance");
         }
@@ -66,10 +66,10 @@ export namespace Scores {
         return ths;
     }
 
-    export function fromGrades<Party>(ngrades: number): Scores<Party> {
-        const ths = new Map() as ReadonlyMap<Party, readonly number[]> & { ngrades?: number };
+    export function fromGrades<Candidate>(ngrades: number): Scores<Candidate> {
+        const ths = new Map() as ReadonlyMap<Candidate, readonly number[]> & { ngrades?: number };
         ths.ngrades = ngrades;
         ths.get = () => Array(ngrades).fill(0);
-        return ths as Scores<Party>;
+        return ths as Scores<Candidate>;
     }
 }
