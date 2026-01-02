@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { NumberCounter } from "@gouvernathor/python/collections";
 import { AttributionFailure } from "../../../src/election/attribution/base";
 import { plurality, superMajority } from "../../../src/election/attribution/majorityFactory";
+import { Simple } from "../../../src/election/tally";
 
 describe("plurality", () => {
     it("fails with an empty tally", () => {
@@ -51,7 +52,7 @@ describe("plurality", () => {
 });
 
 describe("superMajority", () => {
-    it("fails with an empty tally", () => {
+    it("fails with an empty tally and no contingency", () => {
         const attrib1Seat = superMajority({ nSeats: 1, threshold: .5 });
         const attrib10Seat = superMajority({ nSeats: 10, threshold: .5 });
 
@@ -70,7 +71,55 @@ describe("superMajority", () => {
             .toThrow(AttributionFailure);
     });
 
-    it("fails when the threshold is not reached");
-    it("fails when the threshold is exactly met");
+    it("fails when the threshold is not reached with no contingency", () => {
+        const attrib375 = superMajority({ nSeats: 10, threshold: 3/8 });
+        const attrib5 = superMajority({ nSeats: 10, threshold: .5 });
+        const attrib6875 = superMajority({ nSeats: 10, threshold: 11/16 });
+
+        const tallyThird = NumberCounter.fromKeys("aabcde");
+        const tally625 = NumberCounter.fromKeys("aaaaabcd");
+
+        expect(() => attrib375(tallyThird)).toThrow(AttributionFailure);
+
+        expect(() => attrib5(tallyThird)).toThrow(AttributionFailure);
+
+        expect(() => attrib6875(tallyThird)).toThrow(AttributionFailure);
+        expect(() => attrib6875(tally625)).toThrow(AttributionFailure);
+    });
+    it("delegates to the contingency when the threshold is not reached", () => {
+        let timesCalled = 0;
+        const contingency = (t: any) => {
+            expect(t, "incorrect tally passed to the contingency")
+                .toBe(contingency.expected);
+            timesCalled += 1;
+            return null!;
+        };
+
+        const attrib375 = superMajority({ nSeats: 10, threshold: 3/8, contingency });
+        const attrib5 = superMajority({ nSeats: 10, threshold: .5, contingency });
+        const attrib6875 = superMajority({ nSeats: 10, threshold: 11/16, contingency });
+
+        const tallyThird = NumberCounter.fromKeys("aabcde");
+        const tally625 = NumberCounter.fromKeys("aaaaabcd");
+
+
+        contingency.expected = tallyThird;
+        attrib375(tallyThird);
+        expect(timesCalled).toBe(1);
+
+        attrib5(tallyThird);
+        expect(timesCalled).toBe(2);
+
+        attrib6875(tallyThird);
+        expect(timesCalled).toBe(3);
+
+        contingency.expected = tally625;
+        attrib6875(tally625);
+        expect(timesCalled).toBe(4);
+    });
+
+    it("fails when the threshold is exactly met with no contingency");
+    it("delegates to the contingency when the threshold is exactly met");
+
     it("allocates the seats when the threshold is satisfied");
 });
