@@ -34,5 +34,8 @@ export function tallyScoreToScores<Candidate>(
             rawScores.get(candidate)[scoreBasedOn0]! += 1;
         }
     }
+    if (rawScores.size === 0) {
+        return Scores.fromGrades(nScores);
+    }
     return Scores.fromEntries(Array.from(rawScores.entries()));
 }
