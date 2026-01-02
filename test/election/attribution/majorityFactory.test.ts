@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { NumberCounter } from "@gouvernathor/python/collections";
 import { AttributionFailure } from "../../../src/election/attribution/base";
 import { plurality, superMajority } from "../../../src/election/attribution/majorityFactory";
-import { Simple } from "../../../src/election/tally";
 
 describe("plurality", () => {
     it("fails with an empty tally", () => {
