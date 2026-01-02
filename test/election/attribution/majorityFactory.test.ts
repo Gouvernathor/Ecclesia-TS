@@ -133,7 +133,48 @@ describe("superMajority", () => {
         const tally6875 = NumberCounter.fromKeys("aaaaaaaaaaabbccd");
         expect(() => attrib6875(tally6875)).toThrow(AttributionFailure);
     });
-    it.todo("delegates to the contingency when the threshold is exactly met");
+    it("delegates to the contingency when the threshold is exactly met", () => {
+        const tally375 = NumberCounter.fromKeys("aaabcccd");
+        let wasCalled = false;
+        const contingency = (t: any) => {
+            expect(t).toBe(tally375);
+            wasCalled = true;
+            return null!;
+        };
+        const attrib375 = superMajority({ nSeats: 10, threshold: 3/8, contingency });
+
+        attrib375(tally375);
+
+        expect(wasCalled).toBe(true);
+    });
+    it("delegates to the contingency when the threshold is exactly met", () => {
+        const tally5 = NumberCounter.fromKeys("aaabcc");
+        let wasCalled = false;
+        const contingency = (t: any) => {
+            expect(t).toBe(tally5);
+            wasCalled = true;
+            return null!;
+        };
+        const attrib5 = superMajority({ nSeats: 10, threshold: .5, contingency });
+
+        attrib5(tally5);
+
+        expect(wasCalled).toBe(true);
+    });
+    it("delegates to the contingency when the threshold is exactly met", () => {
+        const tally6875 = NumberCounter.fromKeys("aaaaaaaaaaabbccd");
+        let wasCalled = false;
+        const contingency = (t: any) => {
+            expect(t).toBe(tally6875);
+            wasCalled = true;
+            return null!;
+        };
+        const attrib6875 = superMajority({ nSeats: 10, threshold: 11/16, contingency });
+
+        attrib6875(tally6875);
+
+        expect(wasCalled).toBe(true);
+    });
 
     it("allocates the seats when the threshold is satisfied", () => {
         const attrib375 = superMajority({ nSeats: 10, threshold: 3/8 });
