@@ -118,8 +118,39 @@ describe("superMajority", () => {
         expect(timesCalled).toBe(4);
     });
 
-    it("fails when the threshold is exactly met with no contingency");
-    it("delegates to the contingency when the threshold is exactly met");
+    it("fails when the threshold is exactly met with no contingency", () => {
+        const attrib375 = superMajority({ nSeats: 10, threshold: 3/8 });
+        const tally375 = NumberCounter.fromKeys("aaabcccd");
+        expect(() => attrib375(tally375)).toThrow(AttributionFailure);
+    });
+    it("fails when the threshold is exactly met with no contingency", () => {
+        const attrib5 = superMajority({ nSeats: 10, threshold: .5 });
+        const tally5 = NumberCounter.fromKeys("aaabcc");
+        expect(() => attrib5(tally5)).toThrow(AttributionFailure);
+    });
+    it("fails when the threshold is exactly met with no contingency", () => {
+        const attrib6875 = superMajority({ nSeats: 10, threshold: 11/16 });
+        const tally6875 = NumberCounter.fromKeys("aaaaaaaaaaabbccd");
+        expect(() => attrib6875(tally6875)).toThrow(AttributionFailure);
+    });
+    it.todo("delegates to the contingency when the threshold is exactly met");
 
-    it("allocates the seats when the threshold is satisfied");
+    it("allocates the seats when the threshold is satisfied", () => {
+        const attrib375 = superMajority({ nSeats: 10, threshold: 3/8 });
+        const seats375 = attrib375(NumberCounter.fromKeys("aabcccd"));
+        expect(seats375.total).toBe(10);
+        expect(seats375.get("c")).toBe(10);
+    });
+    it("allocates the seats when the threshold is satisfied", () => {
+        const attrib5 = superMajority({ nSeats: 10, threshold: .5 });
+        const seats5 = attrib5(NumberCounter.fromKeys("aaaabbc"));
+        expect(seats5.total).toBe(10);
+        expect(seats5.get("a")).toBe(10);
+    });
+    it("allocates the seats when the threshold is satisfied", () => {
+        const attrib6875 = superMajority({ nSeats: 10, threshold: 11/16 });
+        const seats6875 = attrib6875(NumberCounter.fromKeys("aaaaaaaaaaabbcd"));
+        expect(seats6875.total).toBe(10);
+        expect(seats6875.get("a")).toBe(10);
+    });
 });
