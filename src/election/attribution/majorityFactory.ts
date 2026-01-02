@@ -15,10 +15,12 @@ export function plurality<Party>(
     }
 ): Attribution<Party, Simple<Party>> & HasNSeats {
     const attrib = (votes: Simple<Party>, _rest = {}): Counter<Party, number> => {
-        const win = max(votes.keys(), p => votes.get(p)!);
+        if (votes.size > 0) {
+            const win = max(votes.keys(), p => votes.get(p)!);
 
-        if (votes.get(win) > 0) {
-            return NumberCounter.fromEntries([[win, nSeats]]);
+            if (votes.get(win) > 0) {
+                return NumberCounter.fromEntries([[win, nSeats]]);
+            }
         }
         throw new AttributionFailure("No party won any vote");
     };
@@ -41,10 +43,12 @@ export function superMajority<Party>(
     }
 ): Attribution<Party, Simple<Party>> & HasNSeats {
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party, number> => {
-        const win = max(votes.keys(), p => votes.get(p)!);
+        if (votes.size > 0) {
+            const win = max(votes.keys(), p => votes.get(p)!);
 
-        if ((votes.get(win) / votes.total) > threshold) {
-            return NumberCounter.fromEntries([[win, nSeats]]);
+            if ((votes.get(win) / votes.total) > threshold) {
+                return NumberCounter.fromEntries([[win, nSeats]]);
+            }
         }
         if (contingency === null) {
             throw new AttributionFailure("No party reached the threshold");
