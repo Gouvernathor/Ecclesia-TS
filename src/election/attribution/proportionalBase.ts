@@ -60,11 +60,12 @@ export function proportionalFromRankIndexFunction<Party>(
             // give it a seat
             seats.increment(winner);
             // update the rankIndex value of the party
-            rankIndexValues.set(winner, rankIndexFunction(fractions.get(winner)!, seats.get(winner)));
+            const winnerRankIndexValue = rankIndexFunction(fractions.get(winner)!, seats.get(winner));
+            rankIndexValues.set(winner, winnerRankIndexValue);
 
             // insert it in its (new) place in the sorted list of parties
             for (let pn = 0; pn < parties.length; pn++) {
-                if (rankIndexValues.get(parties[pn]!)! >= rankIndexValues.get(winner)!) {
+                if (rankIndexValues.get(parties[pn]!)! >= winnerRankIndexValue) {
                     parties.splice(pn, 0, winner);
                     continue s;
                 }
@@ -137,11 +138,12 @@ export function boundedRankIndexMethod<Party>(
             }
 
             // update the rankIndex value of the party
-            rankIndexValues.set(winner, rankIndexFunction(fractions.get(winner)!, seats.get(winner)!));
+            const winnerRankIndexValue = rankIndexFunction(fractions.get(winner)!, seats.get(winner));
+            rankIndexValues.set(winner, winnerRankIndexValue);
 
             // insert it in its (new) place in the sorted list of parties
             for (let pn = 0; pn < parties.length; pn++) {
-                if (rankIndexValues.get(parties[pn]!)! >= rankIndexValues.get(winner)!) {
+                if (rankIndexValues.get(parties[pn]!)! >= winnerRankIndexValue) {
                     parties.splice(pn, 0, winner);
                     continue s;
                 }
