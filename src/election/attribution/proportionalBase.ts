@@ -80,6 +80,68 @@ export function proportionalFromRankIndexFunction<Party>(
 }
 
 /**
+ * A function creating a proportional rank-index attribution method
+ * from a rank-index function,
+ * making it so that each candidate has at least a given number of seats.
+ *
+ * @param minNSeatPerCandidate the minimum number of seats for each candidate.
+ * @param minNSeats the minimum number of seats in the resulting attribution. Overrides minNSeatsPerCandidate.
+ * @param maxNSeats the maximum number of seats in the resulting attribution. Overrides minNSeatsPerCandidate (and minNSeats).
+ */
+export function flooredRankIndexMethod<Party>(
+    {
+        rankIndexFunction,
+        minNSeatPerCandidate = 1,
+        minNSeats = 0,
+        maxNSeats = Infinity,
+    }: {
+        rankIndexFunction: RankIndexFunction,
+        minNSeatPerCandidate?: number,
+        minNSeats?: number,
+        maxNSeats?: number,
+    }
+): RankIndexMethod<Party> {
+    return (votes: Simple<Party>): Counter<Party, number> => {
+        const allVotes = votes.total;
+        const fractions = new Map([...votes.entries()].map(([party, v]) => [party, v / allVotes]));
+
+        const rankIndexValues = new Map([...fractions.entries()].map(([party, f]) => [party, rankIndexFunction(f, 0)]));
+
+        // the parties, sorted by increasing rankIndex value
+        const parties = [...votes.keys()].sort((a, b) => rankIndexValues.get(a)! - rankIndexValues.get(b)!);
+        const remainingParties = new Set(parties);
+
+        const seats = NumberCounter.fromEntries<Party>();
+
+        s: for (let sn = 0; minNSeats <= sn || (remainingParties.size && sn < maxNSeats); sn++) {
+            // take the most deserving party
+            const winner = parties.pop()!;
+            // give it a seat
+            seats.increment(winner);
+            const newWinnerSeats = seats.get(winner);
+            // update the rankIndex value of the party
+            const winnerRankIndexValue = rankIndexFunction(fractions.get(winner)!, newWinnerSeats);
+            rankIndexValues.set(winner, winnerRankIndexValue);
+            // update the satisfaction of the minimum
+            if (newWinnerSeats >= minNSeatPerCandidate) {
+                remainingParties.delete(winner);
+            }
+
+            // insert it in its (new) place in the sorted list of parties
+            for (let pn = 0; pn < parties.length; pn++) {
+                if (rankIndexValues.get(parties[pn]!)! >= winnerRankIndexValue) {
+                    parties.splice(pn, 0, winner);
+                    continue s;
+                }
+            }
+            parties.push(winner);
+        }
+
+        return seats;
+    };
+}
+
+/**
  * Creates a rank-index (proportional) attribution method in which
  * the total number of seats is NOT fixed.
  * Instead, it takes a metric of disproportionality
