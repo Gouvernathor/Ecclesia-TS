@@ -37,29 +37,29 @@ An election method is usually built from a voting method and an attribution meth
 ### Voting methods
 
 There are two kinds of voting methods:
-- those to transform a pool of voters and a pool of candidates into a tally of ballots
-- those to extract a single ballot from one voter and a pool of candidates
+- those to turn a pool of voters and a pool of candidates into a tally of ballots
+- those to turn one voter and a pool of candidates into a single ballot
 
 The nuance between a ballot (or even an iterable of ballots) and a tally is important to grasp.
-For instance, the ballot for a classic FPTP election (with a single name) is not the same as the ballot for approval voting (with any number of candidates in irrelevant order), but the tally is the same : a number of ballot for each candidate.
+For instance, the ballot for a classic FPTP election (with a single name) is not the same as the ballot for approval voting (with any number of candidates in irrelevant order), yet their tally is the same : a number of ballot for each candidate.
 (There are other types of ballots and tallies, for instance for score voting or rank voting.)
 If you want to simulate individual voter choices, you will want to use ballots.
-But generally, it is simpler and faster to use the former kind only, unless you want to make an explorable simulation where each step can be observed. There are tallying functions provided in order to turn a bunch of individual ballots into one tally of ballots.
+But generally, it is simpler and faster to use tallies only, unless you want to make an explorable simulation where each step can be observed. There are tallying functions provided in order to turn a bunch of individual ballots into one tally of ballots.
 
 This library will require you to provide a disagreement function (and, sometimes, other parameters) between a given type of voter and candidate, in order to build a voting method for these two types.
-The standard built-in voting methods include the single vote, approval voting, ranked voting, and score voting - for both kinds of voting methods.
+The standard built-in voting methods include the single vote, approval voting, ranked voting, and score voting - for both ballot-based and tally-based voting methods.
 
 ### Attribution methods
 
 An attribution method is a function which transforms a tally of ballots into a seat attribution.
-Notably, the attribution system does not know of the voters, only of the candidates - which are part of the ballots.
+Notably, the attribution system does not know of the voters, only of the candidates − which are part of the ballots − and so have no use for disagreement functions.
 
 Attribution methods usually support only a single type of ballot, which will inform the return type you require of the voting method, and limit the available choice of voting methods.
 Some choices may be functionally equivalent, but will not be represented the same way;
-for example it is said that approval voting is just score voting with two available scores, but the attribution of an approval vote will generally be conducted the same way as that of a single vote.
+for example it is said that approval voting is just score voting with two available scores, but the attribution process after an approval vote will generally be conducted the same way as that of a single vote.
 If you want an attribution for score votings, you will need a different voting method function (with a different return type) than the typical approval voting method.
 
 ### Utilities
 
-Also included in this library is a number of functions which will change the behavior of your attribution, election, or voting methods (which are functions).
+Also included in this library is a number of functions which will change the behavior of your attribution, election, or voting methods (which are all functions).
 For instance, by adding an electoral threshold to a proportional attribution, or by pre-shuffling the candidates and voters to make a voting method more balanced.
