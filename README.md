@@ -63,3 +63,10 @@ If you want an attribution for score votings, you will need a different voting m
 
 Also included in this library is a number of functions which will change the behavior of your attribution, election, or voting methods (which are all functions).
 For instance, by adding an electoral threshold to a proportional attribution, or by pre-shuffling the candidates and voters to make a voting method more balanced.
+
+## exact
+
+The /exact modules provide alternate versions of a number of function and types from their non-exact counterparts.
+
+The idea is that the "vanilla" version uses standard javascript number mathematics, which means fast-ish computations at the cost of using floating-point inaccurate operations.
+Instead, the exact versions use bigints and fractions, rational numbers to get exact results.
