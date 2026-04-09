@@ -35,4 +35,8 @@ export type Tuple<
  * the typing system does not recognize that the type extends readonly array.
  * Using methods such as map will require a (double) cast first to any then to readonly T[].
  */
-export type ReadonlyTuple<T, N extends number> = Readonly<Tuple<T, N>>;
+export type ReadonlyTuple<
+  T,
+  N extends number,
+  R extends readonly T[] = readonly [],
+> = R['length'] extends N ? R : ReadonlyTuple<T, N, readonly [T, ...R]>;
