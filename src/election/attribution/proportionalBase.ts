@@ -9,10 +9,10 @@ import { defaultMetric, type DisproportionMetric } from "./metrics";
  */
 export interface Proportional<Party> extends Attribution<Party, Simple<Party>> {};
 
-// TODO: doesn't it always implement HasNSeats ?
 /**
  * An specific kind of proportional attribution method,
- * based on a rank-index function, and which
+ * based on a rank-index function,
+ * and which has a lot of interesting properties.
  */
 export interface RankIndexMethod<Party> extends Proportional<Party> {};
 
