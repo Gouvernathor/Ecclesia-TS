@@ -1,7 +1,7 @@
 {
     "extends": "@tsconfig/strictest/tsconfig.json",
     "compilerOptions": {
-        "target": "es2019",
+        "target": "es2020",
         "module": "preserve",
 
         "rootDir": "src",
