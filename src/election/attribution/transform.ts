@@ -1,6 +1,6 @@
 import { Counter, NumberCounter } from "@gouvernathor/python/collections";
 import { type Simple } from "../tally";
-import { type Attribution, AttributionFailure } from "../attribution";
+import { type Attribution, AttributionFailure } from "../attribution/base";
 
 /**
  * Transforms a standard proportional attribution method into one that requires a certain threshold
