@@ -1,6 +1,6 @@
 import { min } from "@gouvernathor/python";
 import { NumberCounter } from "@gouvernathor/python/collections";
-import { Collection } from "@gouvernathor/python/collections/abc";
+import { ReadonlyCollection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
 import { DisagreementFunction } from "./voting-to-ballot";
 import { Order, Scores, Simple } from "./tally";
@@ -8,7 +8,7 @@ import { Order, Scores, Simple } from "./tally";
 export type { DisagreementFunction };
 
 export interface Voting<Voter, Party, Tally> {
-    (voters: Collection<Voter>, candidates: Collection<Party>): Tally;
+    (voters: ReadonlyCollection<Voter>, candidates: ReadonlyCollection<Party>): Tally;
 }
 
 

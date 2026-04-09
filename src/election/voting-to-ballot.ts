@@ -1,5 +1,5 @@
 import { min } from "@gouvernathor/python";
-import { Collection } from "@gouvernathor/python/collections/abc";
+import { ReadonlyCollection } from "@gouvernathor/python/collections/abc";
 import { Approval, Ranked, Score, Single } from "./ballot";
 
 export interface DisagreementFunction<T, U> {
@@ -7,7 +7,7 @@ export interface DisagreementFunction<T, U> {
 }
 
 export interface VotingToBallot<Voter, Candidate, Ballot> {
-    (voter: Voter, candidates: Collection<Candidate>): Ballot;
+    (voter: Voter, candidates: ReadonlyCollection<Candidate>): Ballot;
 }
 
 

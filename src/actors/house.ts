@@ -1,6 +1,6 @@
 import { Counter, NumberCounter } from "@gouvernathor/python/collections";
+import { ReadonlyCollection } from "@gouvernathor/python/collections/abc";
 import { Election } from "../election";
-import { Collection } from "@gouvernathor/python/collections/abc";
 import { Vote } from "./vote";
 import { DisagreementFunction } from "../election/voting";
 
@@ -36,7 +36,7 @@ export class District<Voter, Party> {
             this.nSeats = nSeats;
     }
 
-    election(candidates: Collection<Party>): Counter<Party, number> {
+    election(candidates: ReadonlyCollection<Party>): Counter<Party, number> {
         return this.electionMethod(this.voters, candidates);
     }
 }
@@ -99,7 +99,7 @@ export class House<Voter, Party> {
     /**
      * Triggers an election in each electoral district, returns the members result.
      */
-    election(candidates: Collection<Party>): Counter<Party, number> {
+    election(candidates: ReadonlyCollection<Party>): Counter<Party, number> {
         const members = NumberCounter.fromEntries<Party>();
         for (const district of this.districts.keys()) {
             const elected = district.election(candidates);
