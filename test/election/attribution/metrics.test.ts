@@ -23,6 +23,17 @@ describe("defaultMetric", () => {
         expect(() => defaultMetric({ votes, seats }).not.toThrow();
     });
 
+    it("returns consistent results when a party has a very low number of seats", () => {
+        const votes = NumberCounter.fromKeys("aaabbc");
+        const seatsNoC = NumberCounter.fromKeys("a".repeat(150)+"b".repeat(100));
+        const seatsWithC = NumberCounter.fromKeys("a".repeat(150)+"b".repeat(100)+"c");
+
+        const metricResultNoC = defaultMetric({ votes, seats: seatsNoC });
+        const metricResultWithC = defaultMetric({ votes, seats: seatsWithC });
+
+        expect(metricResultNoC).toBeGreaterThan(metricResultWithC);
+    });
+
     it("returns a decreasing value for increasing accuracy", () => {
         const votes = NumberCounter.fromKeys("a".repeat(101)+"b".repeat(100)+"c".repeat(99));
         const seats1 = NumberCounter.fromKeys("a".repeat(8)+"b".repeat(2)+"c".repeat(2));
