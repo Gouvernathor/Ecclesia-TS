@@ -22,7 +22,7 @@ export function defaultMetric<Party>(
     const allVotes = votes.total;
     const allSeats = seats.total;
     let suum = 0;
-    for (const party of seats.keys()) {
+    for (const party of votes.keys()) {
         const partyVotes = votes.get(party)!;
         const partySeats = seats.get(party)!;
         suum += Math.abs(allSeats * partyVotes / allVotes - partySeats);
