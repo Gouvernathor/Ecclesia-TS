@@ -36,11 +36,11 @@ export function addThresholdToSimpleAttribution<Party>(
         contingency?: Attribution<Party, Simple<Party>> | null,
     }
 ): Attribution<Party, Simple<Party>> {
-    const thresholdFraction = Fraction.fromAny(threshold).asIrreducible();
+    const thresholdFraction = Fraction.fromAny(threshold);
     const attrib = (votes: Simple<Party>, rest = {}): Counter<Party, number> => {
         if (thresholdFraction.gt(0n)) {
             const original_votes = votes;
-            const votes_threshold = thresholdFraction.mul(votes.total).asIrreducible();
+            const votes_threshold = thresholdFraction.mul(votes.total);
             votes = BigIntCounter.fromEntries([...votes.entries()].filter(([_, v]) => votes_threshold.lte(v)));
             if (votes.size === 0) {
                 if (contingency === null) {
