@@ -9,9 +9,6 @@ export interface DisproportionMetric<Party> {
  * Returns the mean value (across all candidates) of the absolute difference
  * between the theoretical, (f)ra(c)tional number of seats and the allocated number of seats.
  * The bigger, the less proportional.
- *
- * Compared to a sum or mean of absolute differences of percentage,
- * this
  */
 export function defaultMetric<Party>(
     { votes, seats }: {
