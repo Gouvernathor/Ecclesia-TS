@@ -1,0 +1,10 @@
+default:
+  image: node:24.14.1
+
+stages:
+  - test
+
+test-job:
+  stage: test
+  script:
+    - npm test
