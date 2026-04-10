@@ -100,7 +100,7 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@gouvernathor/fraction.ts": "^1.0.1",
+    "@gouvernathor/fraction.ts": "^1.1.0",
     "@gouvernathor/python": "^2.2.1",
     "@gouvernathor/rng": "^1.2.1"
   }
