@@ -14,13 +14,13 @@ describe("defaultMetric", () => {
     it("does not error out when a party has no votes", () => {
         const votes = NumberCounter.fromKeys("aaabbc");
         const seats = NumberCounter.fromKeys("abcd");
-        expect(() => defaultMetric({ votes, seats })).not.toThrow();
+        expect(defaultMetric({ votes, seats })).not.toBeNaN();
     });
 
     it("does not error out when a party has no seats", () => {
         const votes = NumberCounter.fromKeys("aaabbc");
         const seats = NumberCounter.fromKeys("ab");
-        expect(() => defaultMetric({ votes, seats })).not.toThrow();
+        expect(defaultMetric({ votes, seats })).not.toBeNaN();
     });
 
     it("returns consistent results when a party has a very low number of seats", () => {
