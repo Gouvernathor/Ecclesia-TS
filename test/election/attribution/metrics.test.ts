@@ -11,8 +11,17 @@ describe("defaultMetric", () => {
         expect(metricResult).toBe(0);
     });
 
-    it("does not error out when a party has no votes", () => {});
-    it("does not error out when a party has no seats", () => {});
+    it("does not error out when a party has no votes", () => {
+        const votes = NumberCounter.fromKeys("aaabbc");
+        const seats = NumberCounter.fromKeys("abcd");
+        expect(() => defaultMetric({ votes, seats }).not.toThrow();
+    });
+
+    it("does not error out when a party has no seats", () => {
+        const votes = NumberCounter.fromKeys("aaabbc");
+        const seats = NumberCounter.fromKeys("ab");
+        expect(() => defaultMetric({ votes, seats }).not.toThrow();
+    });
 
     it("returns a decreasing value for increasing accuracy", () => {
         const votes = NumberCounter.fromKeys("a".repeat(101)+"b".repeat(100)+"c".repeat(99));
