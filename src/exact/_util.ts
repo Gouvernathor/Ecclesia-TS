@@ -1,5 +1,6 @@
 import { Fraction, FractionAble } from "@gouvernathor/fraction.ts";
 
+export const FRAC0: Fraction = Fraction.fromNumeric(0n);
 export const FRAC1: Fraction = Fraction.fromNumeric(1n);
 
 export function max<T extends FractionAble>(array: Iterable<T>): T {
