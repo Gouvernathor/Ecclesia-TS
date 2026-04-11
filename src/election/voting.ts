@@ -1,5 +1,5 @@
 import { min } from "@gouvernathor/python";
-import { NumberCounter } from "@gouvernathor/python/collections";
+import { DefaultMap, NumberCounter } from "@gouvernathor/python/collections";
 import { ReadonlyCollection } from "@gouvernathor/python/collections/abc";
 import { createRandomObj, type RandomObjParam } from "../utils";
 import { DisagreementFunction } from "./voting-to-ballot";
@@ -97,7 +97,7 @@ export function cardinalVote<Voter, Candidate>(
     }
 ): Voting<Voter, Candidate, Scores<Candidate>> {
     return (voters, candidates) => {
-        const scores = Scores.fromGrades<Candidate>(nGrades);
+        const scores = new DefaultMap<Candidate, number[]>(() => Array(nGrades).fill(0));
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
@@ -106,10 +106,10 @@ export function cardinalVote<Voter, Candidate>(
                     nGrades - 1,
                     Math.floor(nGrades) * (1 - disagree(voter, party)),
                 );
-                (scores.get(party) as number[])[grade]!++;
+                scores.get(party)[grade]!++;
             }
         }
-        return scores;
+        return Scores.fromEntries([...scores]);
     };
 }
 

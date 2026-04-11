@@ -1,10 +1,10 @@
-import { BigIntCounter } from "@gouvernathor/python/collections";
+import { BigIntCounter, DefaultMap } from "@gouvernathor/python/collections";
+import { Fraction } from "@gouvernathor/fraction.ts";
+import { Order } from "../../election/tally";
 import { Voting } from "../../election/voting";
 import { Scores, Simple } from "./tally";
 import { DisagreementFunction } from "./voting-to-ballot";
 import { FRAC1, max, min, minBy } from "../_util";
-import { Order } from "../../election/tally";
-import { Fraction } from "@gouvernathor/fraction.ts";
 
 /**
  * The most basic and widespread voting system : each voter casts one ballot for
@@ -62,7 +62,7 @@ export function cardinalVote<Voter, Candidate>(
     }
 ): Voting<Voter, Candidate, Scores<Candidate>> {
     return (voters, candidates) => {
-        const scores = Scores.fromGrades<Candidate>(nGrades);
+        const scores = new DefaultMap<Candidate, bigint[]>(() => Array(nGrades).fill(0n));
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
@@ -71,10 +71,10 @@ export function cardinalVote<Voter, Candidate>(
                     nGrades - 1,
                     (FRAC1.sub(disagree(voter, party))).mul(Math.floor(nGrades)),
                 ]);
-                (scores.get(party) as bigint[])[+grade]!++;
+                scores.get(party)[+grade]!++;
             }
         }
-        return scores;
+        return Scores.fromEntries([...scores]);
     };
 }
 
