@@ -31,7 +31,8 @@ export function orderingVote<Voter, Candidate>(
     }
 ): VotingToBallot<Voter, Candidate, Ranked<Candidate>> {
     return (voter, candidates) =>
-        Array.from(candidates).sort((a, b) => Fraction.compare(disagree(voter, a), disagree(voter, b)));
+        Array.from(candidates)
+            .sort((a, b) => Fraction.compare(disagree(voter, a), disagree(voter, b)));
 }
 
 /**
