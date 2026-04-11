@@ -123,7 +123,7 @@ export function balancedCardinalVote<Voter, Candidate>(
     }
 ): Voting<Voter, Candidate, Scores<Candidate>> {
     return (voters, candidates) => {
-        const scores = Scores.fromGrades<Candidate>(nGrades);
+        const scores = new DefaultMap<Candidate, number[]>(() => Array(nGrades).fill(0));
 
         // if the disagreement is .0, the grade will be ngrades-1 and not ngrades
         for (const voter of voters) {
@@ -140,10 +140,10 @@ export function balancedCardinalVote<Voter, Candidate>(
                     nGrades - 1,
                     Math.floor(nGrades * (prefs.get(party)! - minPref) / maxPref),
                 );
-                (scores.get(party) as number[])[grade]!++;
+                scores.get(party)[grade]!++;
             }
         }
-        return scores;
+        return Scores.fromEntries([...scores]);
     };
 }
 
