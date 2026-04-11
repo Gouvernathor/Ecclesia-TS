@@ -62,8 +62,10 @@ export function cardinalVote<Voter, Candidate>(
 ): VotingToBallot<Voter, Candidate, Score<Candidate>> {
     return (voter, candidates) =>
         new Map(Array.from(candidates, candidate => {
-            const grade = Math.min(nScores - 1,
-                    Math.floor(nScores) * (1 - disagree(voter, candidate)));
+            const grade = Math.min(
+                nScores - 1,
+                Math.floor(nScores) * (1 - disagree(voter, candidate)),
+            );
             return [candidate, grade];
         }));
 }
@@ -90,8 +92,10 @@ export function balancedCardinalVote<Voter, Candidate>(
         }
 
         return new Map(Array.from(candidates, candidate => {
-            const grade = Math.min(nScores - 1,
-                Math.floor(nScores * (prefs.get(candidate)! - minPref) / maxPref));
+            const grade = Math.min(
+                nScores - 1,
+                Math.floor(nScores * (prefs.get(candidate)! - minPref) / maxPref),
+            );
             return [candidate, grade];
         }));
     };
