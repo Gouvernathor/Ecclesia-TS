@@ -1,8 +1,8 @@
 import { type ReadonlyCounter } from "@gouvernathor/python/collections";
 import { type Simple } from "../tally";
 
-export interface DisproportionMetric<Party> {
-    (p0: {votes: Simple<Party>, seats: ReadonlyCounter<Party, number>}): number;
+export interface DisproportionMetric<Candidate> {
+    (p0: {votes: Simple<Candidate>, seats: ReadonlyCounter<Candidate, number>}): number;
 }
 
 /**
@@ -13,10 +13,10 @@ export interface DisproportionMetric<Party> {
  * Compared to a sum or mean of absolute differences of percentage,
  * this
  */
-export function defaultMetric<Party>(
+export function defaultMetric<Candidate>(
     { votes, seats }: {
-        votes: Simple<Party>,
-        seats: ReadonlyCounter<Party, number>,
+        votes: Simple<Candidate>,
+        seats: ReadonlyCounter<Candidate, number>,
     }
 ): number {
     const allVotes = votes.total;
