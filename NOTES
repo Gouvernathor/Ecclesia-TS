@@ -1,0 +1,62 @@
+bigints
+
+add a parallel election/bigint directory and modules ?
+
+
+
+Order
+
+the format is impotent : it stores only the individual ballots (so no benefit or feature being provided) and it stores a meaningless ordering
+instead, create a Ranked (or RankedCount or RankedTally) that keeps the information about multiplicity, but discards order, aka a multiset, aka a Counter of individual Ranked ballots
+add the new format and deprecate the former one - the deprecation advice should be to use the new type's elements() method to get an iterable of the same values as the array previously did
+adapt all functions taking the format (deprecate the former ones)
+also add docstrings to the Counter methods...
+
+
+
+Add STV in ordering methods (maybe as a submodule, with the variants)
+
+
+
+add a mutable Scores exported implementation
+rename fromGrades to empty (same parameter), alias-deprecate the existing function
+the mutable implem has the same static methods as the interface OR a constructor that takes either a number, or an existing Scores instance, or a non-empty iterable
+
+
+
+tests:
+    done:
+        ballot.ts (vide)
+        tally.ts
+        tallying.ts
+        utils.ts
+        attribution/
+            base.ts
+            majorityFactory.ts
+
+    exempté car trop arbitraire (pour l'instant):
+        voting-to-ballot.ts
+        voting.ts
+    p-ê faire des sanity tests, pas d'exception, pas de valeur aberrante ?
+
+    reste:
+        attribution/
+            orderingFactory.ts
+            proportionalBase.ts
+            proportionalFactory.ts
+            randomFactory.ts
+            scoreFactory.ts
+            transform.ts
+            metrics.ts
+        attribution.ts
+        election.ts
+        actors/
+            ...
+
+
+
+
+
+
+ce qu'ils répriment n'est pas contraire aux intérets du parti, seulement aux intérets de ceux qui contrôlent sa direction
+ils tournent le dos aux intérets des militants - qui sont seuls à même, dans un parti démocratique, de juger des intérets de la classe ouvrière
