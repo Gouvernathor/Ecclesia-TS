@@ -90,12 +90,12 @@ export function condorcet<Party>(
 ): Attribution<Party, Order<Party>> & HasNSeats {
     const attrib = (votes: Order<Party>, rest = {}): Counter<Party, number> => {
         const counts = new DefaultMap<Party, Counter<Party, number>>(() => NumberCounter.fromEntries());
-        const majority= votes.length / 2;
+        const majority = votes.length / 2;
 
         for (const ballot of votes) {
             for (const [i, party1] of enumerate(ballot)) {
                 for (const party2 of ballot.slice(i + 1)) {
-                    counts.get(party1)!.increment(party2);
+                    counts.get(party1).increment(party2);
                 }
             }
         }
